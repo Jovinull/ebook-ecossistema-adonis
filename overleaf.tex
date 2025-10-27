@@ -1012,20 +1012,20 @@ import db from '@adonisjs/lucid/services/db'
 
 A DI cria um acoplamento frouxo: em vez de buscar uma dependência, o objeto a recebe no construtor. No AdonisJS, você pode usar o decorador \texttt{@inject()} para pedir que o container resolva as dependências.
 
-\begin{lstlisting}[language=typescript, caption={Injetando \texttt{Disk} com \texttt{@inject()}}]
+\begin{lstlisting}[language=TypeScript, caption={Injetando \texttt{Disk} com \texttt{@inject()}}, label={lst:inject_disk}]
 import { Disk } from '@adonisjs/drive'
 import { inject } from '@adonisjs/core'
 
 @inject()
 export class PostService {
-constructor(protected disk: Disk) {}
+  constructor(protected disk: Disk) {}
 
-async save(post: Post, coverImage: File) {
-const name = 'cover.jpg'
-await this.disk.put(name, coverImage)
-post.coverImage = name
-await post.save()
-}
+  async save(post: Post, coverImage: File) {
+    const name = 'cover.jpg'
+    await this.disk.put(name, coverImage)
+    post.coverImage = name
+    await post.save()
+  }
 }
 \end{lstlisting}
 
@@ -1038,19 +1038,19 @@ await post.save()
 
 \begin{examplebox}
   \textbf{Usando service} (conciso e direto):
-  \begin{lstlisting}[language=typescript]
+  \begin{lstlisting}[language=TypeScript, caption={Obtendo instância via \texttt{Container Service}}, label={lst:service_use}]
 import drive from '@adonisjs/drive/services/main'
 
 export class PostService {
-async save(post: Post, coverImage: File) {
-const name = 'cover.jpg'
-const disk = drive.use('s3')
-await disk.put(name, coverImage)
-post.coverImage = name
-await post.save()
+  async save(post: Post, coverImage: File) {
+    const name = 'cover.jpg'
+    const disk = drive.use('s3')
+    await disk.put(name, coverImage)
+    post.coverImage = name
+    await post.save()
+  }
 }
-}
-\end{lstlisting}
+  \end{lstlisting}
 \end{examplebox}
 
 \begin{tipbox}
@@ -1061,21 +1061,22 @@ await post.save()
 
 DI facilita trocar dependências nos testes. Para experiências similares com \textit{services}, o AdonisJS fornece APIs de \textit{fake}.
 
-\begin{lstlisting}[language=typescript, caption={Trocando disk por \textit{fake} em testes}]
+\begin{lstlisting}[language=TypeScript, caption={Trocando \texttt{disk} por \textit{fake} em testes}, label={lst:drive_fake}]
 import drive from '@adonisjs/drive/services/main'
 import { PostService } from '#services/post_service'
 
 test('save post', async ({ assert }) => {
-drive.fake('s3') // substitui por driver em memória
+  drive.fake('s3') // substitui por driver em memória
 
-const postService = new PostService()
-await postService.save(post, coverImage)
+  const postService = new PostService()
+  await postService.save(post, coverImage)
 
-assert.isTrue(await drive.use('s3').exists('cover.jpg'))
+  assert.isTrue(await drive.use('s3').exists('cover.jpg'))
 
-drive.restore('s3') // restaura implementação real
+  drive.restore('s3') // restaura implementação real
 })
 \end{lstlisting}
+
 
 \begin{infobox}
   Fakes permitem validar comportamento sem I/O real (ex.: sem subir S3), mantendo testes rápidos e determinísticos.
@@ -1102,25 +1103,26 @@ A seguir, alguns bindings do container e seus \textit{services} correspondentes:
 
 \textit{Service Providers} são classes com métodos de ciclo de vida para registrar/estender bindings, executar ações de \textit{boot/start/ready} e reagir ao encerramento. Eles são referenciados em \texttt{adonisrc.ts} no array \texttt{providers} e podem ser escopados por ambiente.
 
-\begin{lstlisting}[language=typescript, caption={Ex.: provider mínimo com \texttt{register}/\texttt{boot}}]
+\begin{lstlisting}[language=TypeScript, caption={Ex.: provider mínimo com \texttt{register}/\texttt{boot}}, label={lst:provider_minimo}]
 import { ApplicationService } from '@adonisjs/core/types'
+// import { Database } from '#/path/to/database' // exemplo de import, ajuste conforme seu projeto
 
 export default class AppProvider {
-constructor(protected app: ApplicationService) {}
+  constructor(protected app: ApplicationService) {}
 
-register() {
-this.app.container.bind('db', () => new Database())
-}
+  register() {
+    this.app.container.bind('db', () => new Database())
+  }
 
-async boot() {
-this.app.container.resolving('validator', (validator) => {
-validator.rule('foo', () => {})
-})
-}
+  async boot() {
+    this.app.container.resolving('validator', (validator) => {
+      validator.rule('foo', () => {})
+    })
+  }
 
-async start() {}
-async ready() {}
-async shutdown() {}
+  async start() {}
+  async ready() {}
+  async shutdown() {}
 }
 \end{lstlisting}
 
@@ -1132,12 +1134,13 @@ async shutdown() {}
 
 O AdonisJS usa \textbf{Async Local Storage} para isolar dados por requisição. Isso permite recuperar o \textit{contexto} (\texttt{HttpContext}) em qualquer parte do fluxo assíncrono, sem repassar variáveis manualmente.
 
-\begin{lstlisting}[language=typescript, caption={Acessando o contexto atual via ALS}]
+\begin{lstlisting}[language=TypeScript, caption={Acessando o contexto atual via ALS}, label={lst:als_request_id}]
 import { HttpContext } from '@adonisjs/core/http'
 
 export function useRequestId(): string | undefined {
-const ctx = HttpContext.get() // contexto "da vez" (escopo de req)
-return ctx?.request.header('x-request-id')
+  // Contexto "da vez" (escopo da requisição) via AsyncLocalStorage do AdonisJS
+  const ctx = HttpContext.get()
+  return ctx?.request.header('x-request-id')
 }
 \end{lstlisting}
 
@@ -1230,26 +1233,29 @@ Uma saída seria instanciar manualmente o \texttt{Emitter} e reaproveitá-lo, ma
 \paragraph{Com config provider (recomendado).}
 O \textbf{config provider} é uma função que recebe a \texttt{Application} e resolve dependências pelo container no momento certo. Assim, você só constrói o driver quando alguém usa o serviço (ex.: \texttt{hash}):
 
-\begin{lstlisting}[language=typescript, caption={Hash com config provider}]
+\begin{lstlisting}[language=TypeScript, caption={Hash com \texttt{configProvider}}, label={lst:hash_config_provider}]
 import { configProvider } from '@adonisjs/core'
 
 export default {
-default: 'scrypt',
-list: {
-scrypt: configProvider.create(async (app) => {
-const emitter = await app.container.make('emitter')
+  default: 'scrypt',
+  list: {
+    scrypt: configProvider.create(async (app) => {
+      const emitter = await app.container.make('emitter')
 
-  return () => {
-    const { Scrypt } = await import('@adonisjs/core/hash/drivers/scrypt')
-    return new Scrypt({
-      cost: 16384,
-      blockSize: 8,
-      parallelization: 1,
-      maxMemory: 33554432,
-    }, emitter)
-  }
-})
-}
+      return () => {
+        const { Scrypt } = await import('@adonisjs/core/hash/drivers/scrypt')
+        return new Scrypt(
+          {
+            cost: 16_384,
+            blockSize: 8,
+            parallelization: 1,
+            maxMemory: 33_554_432,
+          },
+          emitter
+        )
+      }
+    }),
+  },
 }
 \end{lstlisting}
 
