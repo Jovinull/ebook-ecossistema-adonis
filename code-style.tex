@@ -1,0 +1,149 @@
+% ==============================
+% Estilo para códigos fonte
+% ==============================
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+
+\lstset{
+  inputencoding=utf8,
+  extendedchars=true,
+}
+
+% ==============================
+% Linguagem: JavaScript
+% ==============================
+\lstdefinelanguage{JavaScript}{
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with, let, const, await, async, yield},
+  keywordstyle=\color{RoyalBlue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, from, as, interface, extends, public, private, protected, static, readonly, this, type},
+  ndkeywordstyle=\color{BurntOrange}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=true,
+  comment=[l]//,
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{ForestGreen},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`
+}
+
+% ==============================
+% Linguagem: TypeScript
+% ==============================
+\lstdefinelanguage{TypeScript}{
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with, let, const, await, async, yield},
+  keywordstyle=\color{RoyalBlue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, from, as, interface, extends, public, private, protected, static, readonly, namespace, type, enum, any, unknown, never, string, number, boolean, bigint, symbol, infer, keyof, typeof, this},
+  ndkeywordstyle=\color{BurntOrange}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=true,
+  comment=[l]//,
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{ForestGreen},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`
+}
+
+% ==============================
+% Linguagem: JSON
+% ==============================
+\lstdefinelanguage{json}{
+    basicstyle=\ttfamily\footnotesize,
+    showstringspaces=false,
+    backgroundcolor=\color{gray!8},
+    literate=
+     *{0}{{{\color{blue}0}}}{1}
+      {1}{{{\color{blue}1}}}{1}
+      {2}{{{\color{blue}2}}}{1}
+      {3}{{{\color{blue}3}}}{1}
+      {4}{{{\color{blue}4}}}{1}
+      {5}{{{\color{blue}5}}}{1}
+      {6}{{{\color{blue}6}}}{1}
+      {7}{{{\color{blue}7}}}{1}
+      {8}{{{\color{blue}8}}}{1}
+      {9}{{{\color{blue}9}}}{1}
+      {:}{{{\color{black}:}}}{1}
+      {,}{{{\color{black},}}}{1}
+      {"}{{{\color{ForestGreen}"}}}{1},
+}
+
+% ==============================
+% Linguagem: SQL (Lucid ORM)
+% ==============================
+\lstdefinelanguage{SQL}{
+    keywords={SELECT, INSERT, UPDATE, DELETE, FROM, WHERE, AND, OR, NOT, NULL, VALUES, INTO, CREATE, TABLE, PRIMARY, KEY, FOREIGN, REFERENCES, ON, JOIN, INNER, LEFT, RIGHT, FULL, OUTER, AS, ORDER, GROUP, BY, HAVING, LIMIT, OFFSET, DROP, ALTER, ADD, COLUMN, IF, EXISTS, DEFAULT, SERIAL},
+    keywordstyle=\color{RoyalBlue}\bfseries,
+    comment=[l]--,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{ForestGreen},
+    morestring=[b]',
+    morestring=[b]",
+    sensitive=false
+}
+
+% ==============================
+% Linguagem: Shell (Adonis CLI)
+% ==============================
+\lstdefinelanguage{bash}{
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{RoyalBlue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{ForestGreen},
+    morecomment=[l]{\#},
+    morestring=[b]",
+    morestring=[b]'
+}
+
+% ==============================
+% Linguagem: ENV Files
+% ==============================
+\lstdefinelanguage{dotenv}{
+    basicstyle=\ttfamily\footnotesize,
+    sensitive=false,
+    morecomment=[l]{\#},
+    commentstyle=\color{gray}\itshape,
+    morestring=[b]",
+    stringstyle=\color{ForestGreen}
+}
+
+% ==============================
+% Configuração Global
+% ==============================
+\lstset{
+    backgroundcolor=\color{gray!8},
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{RoyalBlue}\bfseries,
+    stringstyle=\color{ForestGreen},
+    commentstyle=\color{gray}\itshape,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    frame=single,
+    rulecolor=\color{gray!50},
+    tabsize=2,
+    breaklines=true,
+    captionpos=b,
+    showstringspaces=false,
+    inputencoding=utf8,
+    extendedchars=true,
+    literate=
+      {á}{{\'a}}1 {ã}{{\~a}}1 {â}{{\^a}}1 {à}{{\`a}}1
+      {é}{{\'e}}1 {ê}{{\^e}}1
+      {í}{{\'i}}1
+      {ó}{{\'o}}1 {õ}{{\~o}}1 {ô}{{\^o}}1
+      {ú}{{\'u}}1 {ü}{{\"u}}1
+      {ç}{{\c{c}}}1
+      {Á}{{\'A}}1 {Â}{{\^A}}1 {Ã}{{\~A}}1
+      {É}{{\'E}}1 {Ê}{{\^E}}1
+      {Í}{{\'I}}1
+      {Ó}{{\'O}}1 {Õ}{{\~O}}1 {Ô}{{\^O}}1
+      {Ú}{{\'U}}1
+      {Ç}{{\c{C}}}1
+      {`}{\textasciigrave}1
+}

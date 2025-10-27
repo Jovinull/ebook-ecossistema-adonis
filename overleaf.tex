@@ -1,0 +1,1892 @@
+\documentclass[12pt,oneside]{book}
+
+% =======================
+% Pacotes essenciais
+% =======================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{textcomp}              % símbolos extras com pdfLaTeX
+\usepackage{lmodern}               % família Latin Modern (T1)
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{lipsum}
+\usepackage{setspace}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{parskip}
+\usepackage{tcolorbox}
+\usepackage{makeidx}
+\makeindex
+
+% Fontes profissionais
+\usepackage[sfdefault]{sourcesanspro} % Texto (sans como padrão)
+\usepackage{FiraMono}                  % Código (monoespaçada)
+
+% =======================
+% Estilo dos códigos (Importação externa)
+% =======================
+\input{code-style.tex}
+
+% Espaçamento confortável
+\setstretch{1.2}
+
+% =======================
+% Aparência dos títulos
+% =======================
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries\color{RoyalBlue}}
+  {\thechapter\hspace{0.5em}}{0pt}{}
+
+\titleformat{\section}[block]
+  {\normalfont\Large\bfseries\color{MidnightBlue}}
+  {\thesection\hspace{0.5em}}{0pt}{}
+
+\titleformat{\subsection}[block]
+  {\normalfont\large\bfseries\color{black}}
+  {\thesubsection\hspace{0.5em}}{0pt}{}
+
+% =======================
+% Aparência do sumário
+% =======================
+\renewcommand{\contentsname}{Sumário}
+
+\titlecontents{chapter}
+  [1em]{\addvspace{0.5em}\bfseries\color{RoyalBlue}}
+  {\thecontentslabel\hspace{0.5em}}{}{\hfill\contentspage}
+
+\titlecontents{section}
+  [2.5em]{\small\color{MidnightBlue}}
+  {\thecontentslabel\hspace{0.5em}}{}{\hfill\contentspage}
+
+\titlecontents{subsection}
+  [4.5em]{\footnotesize\color{black}}
+  {\thecontentslabel\hspace{0.5em}}{}{\hfill\contentspage}
+
+% =======================
+% Caixas Profissionais
+% =======================
+\tcbset{
+  boxsep=5pt, left=5pt, right=5pt, top=5pt, bottom=5pt,
+  colframe=RoyalBlue, colback=gray!5,
+  arc=4pt, boxrule=0.7pt
+}
+
+\newtcolorbox{infobox}[1][]{
+  colback=blue!5!white, colframe=RoyalBlue, title={Informação}, #1
+}
+\newtcolorbox{warningbox}[1][]{
+  colback=red!5!white, colframe=red!60, title={Atenção}, #1
+}
+\newtcolorbox{tipbox}[1][]{
+  colback=green!5!white, colframe=ForestGreen, title={Dica}, #1
+}
+\newtcolorbox{examplebox}[1][]{
+  colback=yellow!10!white, colframe=Goldenrod, title={Exemplo}, #1
+}
+
+% =======================
+% Metadados
+% =======================
+\title{Título do Ebook}
+\author{Felipe Jovino dos Santos}
+\date{\today}
+
+% =======================
+% Hyperlinks (carregar quase por último no PREÂMBULO)
+% =======================
+\usepackage[hidelinks]{hyperref}
+\urlstyle{same} % manter estilo de URL igual ao texto
+\hypersetup{
+  unicode=true,
+  pdftitle={Título do Ebook},
+  pdfauthor={Felipe Jovino dos Santos}
+}
+
+
+% =======================
+% Documento
+% =======================
+\begin{document}
+
+% Capa
+\begin{titlepage}
+  \centering
+  \vspace*{5cm}
+  {\Huge\bfseries Ecossistema AdonisJS: Guia Completo para Desenvolvedores\par}
+  \vspace{2cm}
+  {\Large\itshape Felipe Jovino dos Santos\par}
+  \vfill
+  {\large \today\par}
+\end{titlepage}
+
+\clearpage
+
+% Ficha Catalográfica
+\thispagestyle{empty}
+\begin{center}
+  \textbf{Ficha Catalográfica}\\
+  \rule{0.8\textwidth}{0.5pt}\\[1em]
+  \begin{minipage}{0.8\textwidth}\small
+    SANTOS, Felipe Jovino dos Santos.\\
+    \textbf{Título do Ebook}: Ecossistema AdonisJS: Guia Completo para Desenvolvedores / Felipe Jovino dos Santos. -- 1. ed. -- [Local], \the\year.\\
+    \vspace{0.5em}
+    \textbf{1.} Programação. \textbf{2.} Desenvolvimento de Software. \textbf{3.} Tecnologias.\\
+    \textit{CDD 005.1}
+  \end{minipage}
+\end{center}
+
+\clearpage
+
+% Direitos Autorais
+\thispagestyle{empty}
+\begin{center}
+  \vspace*{\fill}
+  \begin{minipage}{0.8\textwidth}
+    \centering
+
+    \textbf{Copyright © \the\year\ Felipe Jovino dos Santos} \\[0.5cm]
+    Este livro está licenciado sob \textbf{Creative Commons Atribuição-NãoComercial 4.0 Internacional}.\\
+    Permite-se compartilhar, copiar, distribuir e adaptar, com crédito ao autor e sem fins comerciais.\\[0.3cm]
+
+    Termos completos: \url{https://creativecommons.org/licenses/by-nc/4.0/deed.pt}
+
+    \textit{Primeira edição – \the\year}
+  \end{minipage}
+  \vspace*{\fill}
+\end{center}
+
+\clearpage
+
+% Sumário
+\tableofcontents
+\clearpage
+
+% =======================
+% Prefácio
+% =======================
+\chapter*{Prefácio}
+\addcontentsline{toc}{chapter}{Prefácio}
+
+O desenvolvimento web moderno exige muito mais do que apenas saber programar. Ele demanda compreender ecossistemas, ferramentas e boas práticas que, quando bem aplicadas, não só aceleram o desenvolvimento, mas também garantem a escalabilidade, segurança e manutenibilidade de projetos.
+
+O \textbf{AdonisJS} é mais do que um framework. Ele representa uma proposta robusta, opinativa e elegante para o desenvolvimento backend em Node.js, oferecendo uma experiência de desenvolvimento fortemente inspirada nos frameworks maduros do ecossistema PHP e Ruby. Mais do que isso, ele é sustentado por um ecossistema completo: \textbf{Lucid ORM}, \textbf{EdgeJS}, \textbf{VineJS} e \textbf{Japa}, que juntos oferecem soluções integradas para banco de dados, templates, validação e testes.
+
+Este livro surge da necessidade — que também é minha, enquanto desenvolvedor backend que utiliza o AdonisJS profissionalmente — de termos uma fonte única, organizada, objetiva e prática. Um material que sirva tanto como guia de aprendizagem quanto como referência técnica para o dia a dia de quem trabalha com este framework.
+
+Embora a documentação oficial do AdonisJS seja extremamente bem estruturada, a proposta aqui é apresentar o conteúdo de forma sequencial, didática e aprofundada, consolidando os principais conceitos, práticas, padrões de desenvolvimento e, principalmente, trazendo reflexões baseadas na minha experiência real utilizando o AdonisJS em projetos profissionais.
+
+Ao longo destas páginas, você encontrará não apenas comandos, códigos e conceitos, mas também boas práticas, sugestões arquiteturais, alertas sobre armadilhas comuns e dicas valiosas que dificilmente são percebidas na primeira leitura da documentação — e que muitas vezes só são compreendidas no uso prático e na solução de problemas reais.
+
+Este livro foi pensado para quem deseja dominar o \textbf{ecossistema completo do AdonisJS} — desde a criação de APIs robustas, gestão de dados com o \textbf{Lucid ORM}, desenvolvimento de templates dinâmicos com o \textbf{EdgeJS}, até a construção de testes eficientes com o \textbf{Japa} e validações poderosas com o \textbf{VineJS}.
+
+\medskip
+
+\noindent Este material reflete não apenas minha jornada com o AdonisJS, mas também minha trajetória profissional. Atualmente, sou bacharelando em Sistemas de Informação pelo Instituto Federal de Sergipe (IFS), com sólida atuação em desenvolvimento Full Stack utilizando tecnologias como \textbf{AdonisJS}, \textbf{Next.js}, \textbf{TypeScript} e \textbf{PostgreSQL}, além de uma ampla vivência em \textbf{microeletrônica} e \textbf{sistemas embarcados} com \textbf{ESP32}.
+
+Atuei como pesquisador no \textbf{Laboratório de Inovação e Criatividade (LABIC)}, desenvolvendo projetos que unem \textbf{Inteligência Artificial}, eletrônica e sistemas embarcados. Fui participante da \textbf{Mostra Nacional de Robótica 2023}, além de autor de publicações acadêmicas sobre acesso à formação em IA para pessoas de baixa renda. Minha atuação também incluiu papel como \textbf{instrutor} e \textbf{mentor} em diversos projetos de capacitação tecnológica, como o \textbf{Projeto Aprendiz 4.0} e a \textbf{Residência em TIC}.
+
+Hoje também compartilho conhecimento como \textbf{criador de conteúdo educacional} no YouTube, buscando democratizar o acesso à tecnologia e capacitar profissionais da área de desenvolvimento de software.
+
+Minha missão com este livro é a mesma que carrego em toda minha trajetória: \textbf{tornar o conhecimento acessível}, descomplicado e aplicável. Que esta obra te ajude não só a dominar o AdonisJS, mas também a construir projetos mais profissionais, escaláveis e de alta qualidade.
+
+\medskip
+
+\noindent Boa leitura e bons códigos!
+
+\bigskip
+
+\noindent \textbf{Felipe Jovino dos Santos} \\
+\textit{Desenvolvedor Full Stack | Especialista em AdonisJS | Criador de Conteúdo | Pesquisador em IA e Sistemas Embarcados}
+
+% =======================
+% Objetivos
+% =======================
+\chapter*{Objetivos do Livro}
+\addcontentsline{toc}{chapter}{Objetivos do Livro}
+
+Este livro tem como principal objetivo ser uma fonte de referência completa e prática sobre o \textbf{ecossistema AdonisJS}, reunindo conhecimentos teóricos, técnicos e aplicáveis em um único material.
+
+Os objetivos específicos são:
+
+\begin{itemize}
+  \item \textbf{Apresentar de forma estruturada e sequencial todos os componentes do ecossistema AdonisJS}, incluindo Lucid ORM, EdgeJS, VineJS e Japa.
+  \item \textbf{Fornecer uma visão abrangente, prática e profissional} sobre o desenvolvimento backend com Node.js utilizando AdonisJS.
+  \item \textbf{Ensinar boas práticas, padrões arquiteturais e organização de projetos}, contribuindo para o desenvolvimento de aplicações robustas, escaláveis e seguras.
+  \item \textbf{Capacitar o leitor a compreender profundamente cada ferramenta}, desde conceitos básicos até tópicos avançados como autenticação, segurança, testes, deploy e performance.
+  \item \textbf{Servir como material de apoio, consulta e aperfeiçoamento contínuo} para desenvolvedores de todos os níveis, desde iniciantes até profissionais experientes.
+  \item \textbf{Promover a autonomia do leitor no desenvolvimento de APIs e sistemas completos}, utilizando todo o potencial oferecido pelo ecossistema AdonisJS.
+\end{itemize}
+
+% =======================
+% Público-Alvo
+% =======================
+\chapter*{Público-Alvo}
+\addcontentsline{toc}{chapter}{Público-Alvo}
+
+Este livro foi desenvolvido para atender diferentes perfis de profissionais e entusiastas da tecnologia que desejam dominar o ecossistema AdonisJS e suas ferramentas complementares. O conteúdo foi cuidadosamente estruturado para ser acessível, progressivo e ao mesmo tempo aprofundado.
+
+\begin{itemize}
+  \item \textbf{Iniciantes em desenvolvimento backend}, que buscam um guia didático e bem estruturado para dar os primeiros passos no desenvolvimento de APIs, sistemas e aplicações com Node.js.
+  \item \textbf{Estudantes de cursos técnicos, de graduação e de pós-graduação em áreas de tecnologia}, que desejam complementar sua formação com práticas modernas e alinhadas ao mercado.
+  \item \textbf{Desenvolvedores frontend que desejam migrar ou expandir suas competências para o backend}, encontrando no AdonisJS uma abordagem familiar, estruturada e produtiva.
+  \item \textbf{Desenvolvedores backend de outras linguagens (como PHP, Python, Java ou C\#)}, que desejam adotar o ecossistema Node.js com uma curva de aprendizado mais suave, através de um framework inspirado nos padrões de frameworks maduros.
+  \item \textbf{Profissionais experientes que desejam aprimorar seus conhecimentos em arquitetura de software, boas práticas, testes, segurança, deploy e desenvolvimento backend moderno} com foco em produtividade e escalabilidade.
+  \item \textbf{Empreendedores, freelancers e equipes técnicas} que buscam uma base sólida para desenvolver produtos digitais, APIs robustas e sistemas de alta qualidade utilizando o ecossistema AdonisJS.
+\end{itemize}
+
+
+% =======================
+% Como Utilizar o Livro
+% =======================
+\chapter*{Como Utilizar Este Livro}
+\addcontentsline{toc}{chapter}{Como Utilizar Este Livro}
+
+Este livro foi cuidadosamente estruturado para oferecer uma jornada de aprendizado progressiva e prática. Cada parte e capítulo segue uma ordem lógica, começando pelos fundamentos e avançando até tópicos mais complexos, sempre mantendo uma abordagem didática, orientada a exemplos e alinhada às boas práticas do desenvolvimento backend moderno.
+
+Embora seja altamente recomendado que você leia os capítulos na sequência, principalmente se estiver começando, este material também foi projetado para servir como uma referência prática no seu dia a dia profissional. Sempre que necessário, você pode consultar seções específicas de maneira independente, seja para revisar conceitos, buscar exemplos de implementação, esclarecer dúvidas ou aprofundar seu entendimento sobre algum tema.
+
+Ao longo do livro, você encontrará explicações teóricas, exemplos de código comentados, boxes de dicas, alertas e boas práticas, além de capítulos dedicados à integração entre os principais componentes do ecossistema AdonisJS: Lucid ORM, EdgeJS, VineJS e Japa.
+
+Utilize este material tanto como um guia de estudo quanto como um manual de referência no desenvolvimento de aplicações backend profissionais, escaláveis e seguras com Node.js e AdonisJS.
+
+% =======================
+%  AdonisJS Framework
+% =======================
+\part{AdonisJS Framework}
+
+\chapter{Prefácio e Introdução}
+
+\section{Introdução}
+
+AdonisJS é muito mais do que apenas um framework backend para Node.js — ele é uma proposta clara de como construir aplicações robustas, seguras e escaláveis com uma experiência de desenvolvimento impecável. Enquanto outros frameworks se apoiam em uma filosofia minimalista — delegando ao desenvolvedor a escolha de dezenas de pacotes para formar seu stack — AdonisJS oferece uma abordagem opiniosa, porém elegante, fornecendo um ecossistema completo com tudo que você precisa para começar e terminar um projeto profissional.
+
+O que diferencia o AdonisJS não é apenas sua adoção irrestrita do TypeScript desde o núcleo, mas a clareza e organização que ele oferece na construção de aplicações. Aqui, você não perde tempo decidindo sobre estrutura de pastas, gerenciamento de middlewares, autenticação, ou como lidar com tarefas como uploads, envio de emails ou agendamento de jobs. Tudo isso já vem padronizado, seguindo boas práticas e integrado nativamente.
+
+Além disso, o framework é frontend agnostic. Isso significa que você é livre para escolher entre trabalhar com templates server-side utilizando EdgeJS, construir uma API REST ou GraphQL, ou até mesmo utilizar uma abordagem híbrida como Inertia, integrando React, Vue ou qualquer outro frontend moderno com o backend.
+
+A curva de aprendizado é proporcionalmente suave para quem já tem conhecimento prévio de conceitos como MVC, roteamento e bancos de dados relacionais, mas, ao mesmo tempo, profundamente enriquecedora, pois o AdonisJS incentiva o uso de padrões profissionais desde o início.
+
+O ecossistema inclui ferramentas como:
+
+\begin{itemize}
+  \item \textbf{EdgeJS}, um dos melhores template engines da atualidade, com sintaxe clara e integração profunda.
+  \item \textbf{Lucid ORM}, que proporciona uma experiência de banco de dados robusta, simples, mas poderosa, comparável a ORMs maduros como Eloquent (Laravel) ou Sequelize.
+  \item \textbf{VineJS}, um sistema de validação tipado, absurdamente robusto e elegante, que evita dores de cabeça comuns na validação de dados.
+  \item \textbf{Japa}, um framework de testes moderno, leve e extremamente eficiente para o desenvolvimento seguro e sustentável de aplicações.
+\end{itemize}
+
+A comunidade é ativa, vibrante e extremamente receptiva. Você pode contar com o Discord oficial, discussões no GitHub, redes sociais e contribuições constantes de desenvolvedores apaixonados pelo projeto.
+
+Ao longo deste capítulo e deste livro, você não vai apenas aprender o que está na documentação. Vai entender como o AdonisJS se comporta na prática, quais são os padrões que funcionam melhor, quais armadilhas evitar, além de receber dicas que só quem utiliza AdonisJS em projetos reais — desde APIs simples até sistemas complexos em produção — pode compartilhar.
+
+Seja bem-vindo(a) a um dos melhores frameworks web da atualidade no ecossistema Node.js.
+
+\chapter{Primeiros Passos}
+\section{Instalação}
+
+\begin{infobox}
+  Antes de começar, é fundamental ter instalado em seu ambiente o \textbf{Node.js} na versão \textbf{20 ou superior}. O AdonisJS depende diretamente dessa versão mínima para funcionar corretamente.
+\end{infobox}
+
+\subsection{Verificando o Node.js}
+
+Verifique se possui o Node.js instalado com o seguinte comando no terminal:
+
+\begin{lstlisting}[language=bash, caption={Verificando a versão do Node.js}]
+node -v
+# Saída esperada: v20.x.x ou superior
+\end{lstlisting}
+
+Se não tiver, você pode instalar diretamente pelo site oficial \url{https://nodejs.org} ou, preferencialmente, utilizar o \textbf{Volta} (\url{https://volta.sh}) — um gerenciador de versões que permite maior controle e consistência no ambiente de desenvolvimento.
+
+\subsection{Criando um Novo Projeto}
+
+O AdonisJS oferece um comando simples para inicializar um novo projeto utilizando o seguinte comando:
+
+\begin{lstlisting}[language=bash, caption={Criando um novo projeto AdonisJS}]
+npm init adonisjs@latest nome-do-projeto
+\end{lstlisting}
+
+\begin{warningbox}
+  Quando utilizar parâmetros no comando \texttt{npm init}, lembre-se de adicionar \texttt{--} (dois hífens) antes dos parâmetros para garantir que o npm os repasse corretamente.
+\end{warningbox}
+
+\subsection{Parâmetros mais comuns}
+
+Você pode personalizar seu projeto logo na criação usando os seguintes parâmetros:
+
+\begin{itemize}
+  \item \texttt{--kit}: Define o kit inicial do projeto. Opções: \texttt{web}, \texttt{api}, \texttt{slim}, \texttt{inertia}.
+  \item \texttt{--db}: Define o banco de dados. Opções: \texttt{sqlite}, \texttt{postgres}, \texttt{mysql}, \texttt{mssql}.
+  \item \texttt{--git-init}: Inicializa um repositório Git (opcional).
+  \item \texttt{--auth-guard}: Define o tipo de autenticação: \texttt{session}, \texttt{access\_tokens} ou \texttt{basic\_auth}.
+\end{itemize}
+
+\subsection{Exemplos práticos}
+
+\begin{examplebox}
+  Criar um projeto básico, perguntando todas as opções:
+\end{examplebox}
+
+\begin{lstlisting}[language=bash]
+npm init adonisjs@latest nome-do-projeto
+\end{lstlisting}
+
+\begin{examplebox}
+  Criar um projeto API usando PostgreSQL:
+\end{examplebox}
+
+\begin{lstlisting}[language=bash]
+npm init adonisjs@latest nome-do-projeto -- --kit=api --db=postgres
+\end{lstlisting}
+
+\begin{examplebox}
+  Criar um projeto Web com MySQL:
+\end{examplebox}
+
+\begin{lstlisting}[language=bash]
+npm init adonisjs@latest nome-do-projeto -- --kit=web --db=mysql
+\end{lstlisting}
+
+\begin{examplebox}
+  Criar um projeto com autenticação baseada em tokens:
+\end{examplebox}
+
+\begin{lstlisting}[language=bash]
+npm init adonisjs@latest nome-do-projeto -- --kit=api --auth-guard=access_tokens
+\end{lstlisting}
+
+\subsection{Escolhendo o Starter Kit}
+
+O AdonisJS oferece quatro tipos principais de starter kits, cada um pensado para um tipo de projeto:
+
+\begin{description}
+  \item[\textbf{Web}] Para aplicações que renderizam HTML no backend usando EdgeJS.
+  \item[\textbf{API}] Ideal para backends que servem dados em JSON (para apps mobile, frontend em React, Vue, etc.).
+  \item[\textbf{Slim}] Uma versão mínima do framework, sem ORM, sem autenticação e sem templates.
+  \item[\textbf{Inertia}] Para quem deseja construir SPAs server-driven, usando React, Vue, Solid ou Svelte no frontend.
+\end{description}
+
+\begin{tipbox}
+  Se sua aplicação não precisa de um frontend robusto, o kit \texttt{web} oferece extrema produtividade utilizando apenas EdgeJS para renderização no servidor.
+\end{tipbox}
+
+\subsection{Iniciando o servidor de desenvolvimento}
+
+Após criar o projeto, execute o servidor com:
+
+\begin{lstlisting}[language=bash, caption={Iniciando o servidor}]
+node ace serve --hmr
+\end{lstlisting}
+
+Acesse no navegador:
+
+\begin{lstlisting}[language=bash]
+http://localhost:3333
+\end{lstlisting}
+
+\subsection{Build para produção}
+
+Compile sua aplicação para produção com:
+
+\begin{lstlisting}[language=bash, caption={Gerando build de produção}]
+node ace build
+\end{lstlisting}
+
+O código será gerado na pasta \texttt{build/} e está pronto para ser executado com Node.js.
+
+\subsection{Configurando o ambiente de desenvolvimento}
+
+O projeto já vem com \texttt{ESLint} e \texttt{Prettier} configurados com os padrões recomendados pela equipe do AdonisJS.
+
+\begin{lstlisting}[language=bash, caption={Executando ferramentas de lint e format}]
+# Lint
+npm run lint
+
+# Lint com correções automáticas
+npm run lint -- --fix
+
+# Format usando Prettier
+npm run format
+\end{lstlisting}
+
+\begin{tipbox}
+  Recomendo instalar as extensões do AdonisJS, EdgeJS e Japa para VSCode. Elas oferecem recursos como:
+  \begin{itemize}
+    \item Highlight e snippets.
+    \item Rodar comandos Ace direto do VSCode.
+    \item Visualizar rotas e migrations.
+  \end{itemize}
+\end{tipbox}
+
+\section{Primeiro Projeto}
+
+Ao criar um projeto com AdonisJS, você não está apenas iniciando um backend. Você está construindo uma aplicação com uma arquitetura sólida, uma base fortemente tipada e uma série de ferramentas integradas que tornam o desenvolvimento muito mais produtivo.
+
+Depois de executar:
+
+\begin{lstlisting}[language=bash, caption={Criando o projeto}]
+npm init adonisjs@latest nome-do-projeto
+\end{lstlisting}
+
+E rodar:
+
+\begin{lstlisting}[language=bash, caption={Iniciando o servidor}]
+node ace serve --hmr
+\end{lstlisting}
+
+Você verá sua aplicação rodando em:
+
+\begin{lstlisting}[language=bash]
+http://localhost:3333
+\end{lstlisting}
+
+Por padrão, o projeto já vem com:
+
+\begin{itemize}
+  \item Uma API pronta (se você escolheu o kit \texttt{api}).
+  \item Estrutura MVC bem definida.
+  \item Gerenciamento de banco com Lucid ORM.
+  \item Sistema de autenticação (se escolhido).
+  \item Validações robustas com VineJS.
+  \item Logs, tratamento de erros, middlewares e muito mais.
+\end{itemize}
+
+\begin{infobox}
+  O projeto já está totalmente funcional após o primeiro comando. O AdonisJS gera uma estrutura produtiva desde o primeiro momento, permitindo que você foque no que realmente importa: as regras de negócio.
+\end{infobox}
+
+\section{Estrutura de Diretórios}
+
+\begin{tipbox}
+  O AdonisJS oferece uma estrutura de diretórios opinativa, pensada para escalar e manter sua aplicação organizada. Entretanto, você tem total liberdade para ajustá-la conforme as necessidades do seu projeto.
+\end{tipbox}
+
+A seguir, uma visão geral da estrutura padrão:
+
+\begin{lstlisting}[language=bash, caption={Estrutura de Diretórios}]
+app/              # Código principal (controllers, models, services...)
+config/           # Configurações da aplicação
+contracts/        # Interfaces de tipos compartilhadas
+database/         # Migrations e seeders
+public/           # Arquivos estáticos (CSS, JS, imagens)
+resources/        # Templates Edge e arquivos do frontend
+start/            # Arquivos de boot (rotas, eventos, env, etc.)
+tests/            # Testes unitários e funcionais
+tmp/              # Arquivos temporários (logs, uploads em dev)
+providers/        # Service Providers personalizados
+types/            # Tipagens e contratos auxiliares
+\end{lstlisting}
+
+\subsection*{Principais Diretórios}
+
+\begin{description}
+  \item[\textbf{app/}] Onde vive sua lógica de negócio. Controllers, Models, Services, Validators, Middlewares, Listeners e Events.
+  \item[\textbf{config/}] Arquivos de configuração (banco, cache, autenticação, etc.).
+  \item[\textbf{start/}] Arquivos carregados na inicialização da aplicação (\texttt{routes.ts}, \texttt{kernel.ts}, \texttt{events.ts}, \texttt{env.ts}).
+  \item[\textbf{resources/}] Views EdgeJS e assets do frontend.
+  \item[\textbf{database/}] Migrations e Seeders.
+  \item[\textbf{providers/}] Service Providers para extender funcionalidades do framework.
+  \item[\textbf{types/}] Arquivos TypeScript para contratos e definições de tipos.
+  \item[\textbf{public/}] Arquivos estáticos acessíveis externamente (\texttt{/style.css} → \url{http://localhost:3333/style.css}).
+\end{description}
+
+\begin{examplebox}
+  O arquivo \texttt{start/routes.ts} é onde você define suas rotas HTTP.
+  O \texttt{app/controllers/} guarda os controllers que recebem essas requisições.
+  O \texttt{app/services/} pode ser usado para regras de negócio mais complexas.
+\end{examplebox}
+
+\section{Ambiente e Configurações}
+
+A configuração no AdonisJS é simples, escalável e baseada em dois pilares fundamentais:
+
+\begin{itemize}
+  \item Arquivos dentro da pasta \texttt{config/}.
+  \item Variáveis de ambiente (\texttt{.env}).
+\end{itemize}
+
+\subsection{Configurações do Projeto}
+
+Todos os arquivos da pasta \texttt{config/} são módulos TypeScript e podem ser importados diretamente:
+
+\begin{lstlisting}[language=typescript, caption={Importando diretamente}]
+import { appKey } from '#config/app'
+import database from '#config/database'
+\end{lstlisting}
+
+Ou, de forma dinâmica, utilizando o \texttt{config service}:
+
+\begin{lstlisting}[language=typescript, caption={Acessando via Config Service}]
+import config from '@adonisjs/core/services/config'
+
+const key = config.get('app.appKey')
+const dbConnection = config.get('database.connection')
+\end{lstlisting}
+
+\begin{tipbox}
+  Usar o \texttt{config service} permite acessar as configurações dentro de Providers, Edge Templates e ambientes onde importações diretas não funcionam.
+\end{tipbox}
+
+\subsection{Variáveis de Ambiente}
+
+O arquivo \texttt{start/env.ts} controla as variáveis de ambiente, valida suas existências e tipos:
+
+\begin{lstlisting}[language=typescript, caption={Exemplo básico de env.ts}]
+import Env from '@adonisjs/core/env'
+
+export default await Env.create(new URL('../', import.meta.url), {
+  HOST: Env.schema.string({ format: 'host' }),
+  PORT: Env.schema.number(),
+  APP_KEY: Env.schema.string(),
+  NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
+})
+\end{lstlisting}
+
+O \texttt{env.get()} é utilizado para acessar os valores:
+
+\begin{lstlisting}[language=typescript, caption={Lendo valores do .env}]
+import env from '#start/env'
+
+const port = env.get('PORT')
+const nodeEnv = env.get('NODE_ENV')
+\end{lstlisting}
+
+\begin{warningbox}
+  Se uma variável não estiver declarada no arquivo \texttt{start/env.ts}, o AdonisJS acusará erro de boot — isso garante segurança e previsibilidade.
+\end{warningbox}
+
+\subsection{Estrutura do .env}
+
+\begin{lstlisting}[language=bash, caption={Exemplo de .env}]
+HOST=0.0.0.0
+PORT=3333
+APP_KEY=sua-chave-secreta
+NODE_ENV=development
+DB_CONNECTION=pg
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=senha
+DB_DATABASE=adonis
+\end{lstlisting}
+
+\subsection{Configurações no Edge Templates}
+
+\begin{lstlisting}[caption={Utilizando config e env nas views}]
+<a href="{{ config('app.appUrl') }}">Home</a>
+<span>{{ env.get('NODE_ENV') }}</span>
+\end{lstlisting}
+
+\begin{infobox}
+  O acesso a variáveis no Edge é restrito ao server-side. Nenhuma informação sensível vaza para o cliente.
+\end{infobox}
+
+\subsection{Alterando Configuração em Tempo de Execução}
+
+Você pode alterar valores durante a execução:
+
+\begin{lstlisting}[language=typescript]
+import config from '@adonisjs/core/services/config'
+
+config.set('app.appUrl', 'https://meusite.com')
+\end{lstlisting}
+
+\begin{warningbox}
+  Essa alteração é feita apenas em memória, válida para toda a instância da aplicação até ser reiniciada. Isso não altera os arquivos no disco.
+\end{warningbox}
+
+\begin{tipbox}
+  Boas práticas:
+  \begin{itemize}
+    \item Nunca versionar arquivos \texttt{.env} em repositórios públicos.
+    \item Utilizar chaves seguras para \texttt{APP\_KEY} e senhas de banco.
+    \item Configurar múltiplos arquivos \texttt{.env} para ambientes diferentes: \texttt{.env.development.local}, \texttt{.env.production}.
+  \end{itemize}
+\end{tipbox}
+
+\chapter{Conceitos Fundamentais}
+
+\section{Ciclo de Vida da Aplicação}
+
+O ciclo de vida da aplicação no AdonisJS define todas as etapas desde a inicialização até o encerramento da aplicação. Compreender esse ciclo é fundamental para estruturar corretamente Service Providers, configuração, eventos e qualquer funcionalidade que dependa da ordem de carregamento dos componentes.
+
+\subsection{Visão Geral do Ciclo de Vida}
+
+Ao executar uma aplicação AdonisJS, ela passa por um pipeline bem definido de estados, que varia de acordo com o ambiente (\textit{web}, \textit{console}, \textit{test} ou \textit{repl}). Cada estado libera determinados recursos, como container, providers, serviços e eventos.
+
+As principais fases são:
+
+\begin{itemize}
+  \item \textbf{Created}: Estado inicial da aplicação, imediatamente após a criação da instância da classe \texttt{Application}.
+
+  \item \textbf{Initiated}: Ocorre após a leitura do arquivo \texttt{adonisrc.ts} e validação das variáveis de ambiente.
+
+  \item \textbf{Booted}: Todos os Service Providers foram registrados e executaram seus métodos \texttt{register()} e \texttt{boot()}. O container está pronto para fornecer dependências.
+
+  \item \textbf{Ready}: A aplicação está pronta para processar requisições HTTP, executar comandos ou rodar testes, dependendo do ambiente.
+
+  \item \textbf{Terminating}: Estado transitório iniciado quando ocorre um sinal de término (\texttt{SIGTERM}, \texttt{SIGINT} ou falha do servidor). Usado para encerramento controlado, como fechar conexões e liberar recursos.
+
+  \item \textbf{Terminated}: A aplicação encerrou completamente e os recursos foram liberados.
+\end{itemize}
+
+\subsection{Entrypoints da Aplicação}
+
+Os pontos de entrada da aplicação estão localizados no diretório \texttt{bin/}, cada um responsável por um ambiente:
+
+\begin{itemize}
+  \item \texttt{bin/server.ts}: Inicia o servidor HTTP (\texttt{node ace serve}).
+  \item \texttt{bin/console.ts}: Executa comandos via CLI (\texttt{node ace ...}).
+  \item \texttt{bin/test.ts}: Executa os testes com Japa.
+\end{itemize}
+
+Todos esses arquivos utilizam o módulo \texttt{Ignitor}, que executa três passos:
+
+\begin{enumerate}
+  \item Cria uma instância da classe \texttt{Application}.
+  \item Inicializa (\textit{boot}) a aplicação e os Service Providers.
+  \item Executa a ação principal, como iniciar o servidor HTTP, rodar testes ou comandos.
+\end{enumerate}
+
+\subsection{Fases do Lifecycle}
+
+O ciclo de vida é dividido nas seguintes fases, com hooks específicos:
+
+\begin{itemize}
+  \item \textbf{Initiating}: Antes da leitura do arquivo \texttt{adonisrc.ts}.
+
+  \item \textbf{Booting}: Antes da execução dos métodos \texttt{register()} e \texttt{boot()} dos Service Providers.
+
+  \item \textbf{Booted}: Após todos os providers serem registrados e inicializados.
+
+  \item \textbf{Starting}: Antes de carregar arquivos de preload e antes da aplicação estar pronta.
+
+  \item \textbf{Ready}: Após a aplicação estar totalmente pronta, seja para aceitar requisições HTTP, executar comandos ou rodar testes.
+
+  \item \textbf{Terminating}: Quando o processo inicia o encerramento (\texttt{SIGTERM}, \texttt{SIGINT}).
+\end{itemize}
+
+\subsection{Lifecycle por Ambiente}
+
+\begin{description}
+  \item[Web] Mantém a aplicação no estado \textit{Ready} enquanto o servidor HTTP estiver rodando. A terminação ocorre por erro, \texttt{SIGINT} ou \texttt{SIGTERM}.
+
+  \item[Test] Executa as fases \texttt{pre-start} e \texttt{post-start}, roda os testes, e após, inicia a terminação.
+
+  \item[Console] O comando define se a aplicação será iniciada. É possível controlar se o app fica vivo (\texttt{staysAlive}) e se deve iniciar o ciclo completo (\texttt{startApp}).
+
+  \item[REPL] Inicializa como console, mas muda o ambiente internamente para \texttt{repl} após o carregamento inicial.
+\end{description}
+
+\subsection{Lifecycle Hooks}
+
+O AdonisJS fornece hooks para executar funções durante as transições de estado. Esses hooks podem ser definidos:
+
+\begin{itemize}
+  \item Diretamente no código (\texttt{app.booted()}, \texttt{app.ready()}, \texttt{app.terminating()}).
+  \item Dentro de Service Providers, usando os métodos:
+        \begin{itemize}
+          \item \texttt{register()}
+          \item \texttt{boot()}
+          \item \texttt{start()}
+          \item \texttt{ready()}
+          \item \texttt{shutdown()}
+        \end{itemize}
+\end{itemize}
+
+\subsection{Respondendo a Sinais do Sistema}
+
+A aplicação responde a sinais POSIX como:
+
+\begin{itemize}
+  \item \texttt{SIGTERM} – sinal de encerramento padrão.
+  \item \texttt{SIGINT} – encerramento via terminal (Ctrl+C).
+\end{itemize}
+
+É possível escutar esses sinais:
+
+\begin{lstlisting}[language=typescript]
+import app from '@adonisjs/core/services/app'
+
+app.listen('SIGTERM', () => {
+  console.log('Encerrando aplicação...')
+})
+\end{lstlisting}
+
+\subsection{Estados da Aplicação}
+
+Os estados da aplicação podem ser consultados em tempo de execução:
+
+\begin{lstlisting}[language=typescript]
+import app from '@adonisjs/core/services/app'
+
+console.log(app.isBooted)     // true se estiver bootado
+console.log(app.isReady)      // true se estiver pronto
+console.log(app.isTerminating)// true se estiver encerrando
+console.log(app.isTerminated) // true se já encerrou
+\end{lstlisting}
+
+\subsection{Estrutura do Arquivo \texttt{adonisrc.ts}}
+
+O arquivo \texttt{adonisrc.ts} define a configuração global da aplicação, incluindo:
+
+\begin{itemize}
+  \item Diretórios (\texttt{app/}, \texttt{config/}, \texttt{providers/}, etc.).
+  \item Service Providers utilizados.
+  \item Arquivos de preload.
+  \item Metadados e aliases de comandos.
+  \item Configuração dos testes.
+\end{itemize}
+
+Exemplo simplificado:
+
+\begin{lstlisting}[language=typescript]
+export default defineConfig({
+  providers: [
+    () => import('./providers/app_provider'),
+    () => import('@adonisjs/core/providers/http_provider')
+  ],
+  preloads: [
+    () => import('./start/view')
+  ],
+  metaFiles: [
+    {
+      pattern: 'resources/views/**/*.edge',
+      reloadServer: false
+    }
+  ]
+})
+\end{lstlisting}
+
+O ciclo de vida da aplicação no AdonisJS permite um controle refinado de como e quando os componentes da aplicação são carregados, inicializados, disponibilizados e encerrados. Entender esse fluxo é essencial para implementar corretamente Service Providers, middlewares, jobs, tasks e garantir que sua aplicação seja robusta, escalável e mantenha a integridade dos recursos utilizados.
+
+\section{Service Providers}
+
+Os \textit{Service Providers} são o coração do AdonisJS e representam o principal ponto de extensão e configuração da aplicação. Eles são responsáveis por registrar dependências, inicializar serviços, executar código durante o ciclo de vida da aplicação e ampliar as funcionalidades do framework.
+
+\subsection{O que são Service Providers}
+
+Um \textit{Service Provider} é uma classe que contém métodos especiais chamados de \textbf{lifecycle hooks}, que são executados em momentos específicos do ciclo de vida da aplicação.
+
+Eles são usados para:
+
+\begin{itemize}
+  \item Registrar dependências no container de IoC.
+  \item Inicializar serviços ou estender funcionalidades.
+  \item Executar ações antes ou depois da aplicação estar pronta.
+  \item Realizar tarefas de encerramento (graceful shutdown).
+\end{itemize}
+
+Eles são fundamentais tanto no desenvolvimento da sua própria aplicação quanto na criação de pacotes externos.
+
+\subsection{Registro de Providers}
+
+Os providers são registrados no arquivo \texttt{adonisrc.ts}, dentro da propriedade \texttt{providers}:
+
+\begin{lstlisting}[language=typescript]
+export default defineConfig({
+  providers: [
+    () => import('./providers/app_provider'),
+    () => import('@adonisjs/core/providers/http_provider')
+  ]
+})
+\end{lstlisting}
+
+Também é possível restringir o provider para rodar apenas em determinados ambientes:
+
+\begin{lstlisting}[language=typescript]
+{
+  providers: [
+    {
+      file: () => import('./providers/app_provider'),
+      environment: ['web', 'console']
+    }
+  ]
+}
+\end{lstlisting}
+
+\subsection{Estrutura de um Service Provider}
+
+Um provider é uma classe TypeScript (ou JavaScript) exportada como \texttt{default} e que implementa métodos específicos.
+
+\begin{lstlisting}[language=typescript]
+import { ApplicationService } from '@adonisjs/core/types'
+
+export default class AppProvider {
+  constructor(protected app: ApplicationService) {}
+
+  register() {}
+  async boot() {}
+  async start() {}
+  async ready() {}
+  async shutdown() {}
+}
+\end{lstlisting}
+
+\subsection{Ciclo de Vida dos Providers}
+
+Cada método do provider é executado em uma fase específica do ciclo da aplicação:
+
+\begin{description}
+  \item[\textbf{register()}] Método síncrono. Usado para registrar dependências no container. Não é possível acessar serviços que dependem de async neste momento.
+
+  \item[\textbf{boot()}] Executado após todos os \texttt{register()}. Aqui você pode acessar e modificar serviços já registrados, além de adicionar macros, regras de validação ou estender funcionalidades.
+
+  \item[\textbf{start()}] Executado antes de \texttt{ready()}. Serve para executar inicializações necessárias para o funcionamento completo da aplicação.
+
+  \item[\textbf{ready()}] Executado quando a aplicação está totalmente pronta. No ambiente web, isso ocorre após o servidor HTTP estar ouvindo requisições; no ambiente console, antes da execução dos comandos; nos testes, antes de rodar os testes; e no REPL, antes de abrir o prompt.
+
+  \item[\textbf{shutdown()}] Executado no processo de encerramento (\textit{graceful shutdown}). Usado para fechar conexões, encerrar processos ou limpar recursos.
+\end{description}
+
+\subsection{Exemplos Práticos}
+
+\subsubsection{Registrando uma dependência no container}
+
+\begin{lstlisting}[language=typescript]
+register() {
+  this.app.container.bind('db', () => {
+    return new Database()
+  })
+}
+\end{lstlisting}
+
+\subsubsection{Estendendo o Validator com uma regra personalizada}
+
+\begin{lstlisting}[language=typescript]
+async boot() {
+  const validator = await this.app.container.make('validator')
+
+  validator.rule('cpf', (value) => {
+    // validação de CPF
+    return isValidCPF(value)
+  })
+}
+\end{lstlisting}
+
+\subsubsection{Respondendo ao ambiente no start()}
+
+\begin{lstlisting}[language=typescript]
+async start() {
+  if (this.app.getEnvironment() === 'web') {
+    console.log('Rodando no servidor HTTP')
+  }
+
+  if (this.app.getEnvironment() === 'console') {
+    console.log('Rodando um comando CLI')
+  }
+}
+\end{lstlisting}
+
+\subsubsection{Encerrando conexões no shutdown()}
+
+\begin{lstlisting}[language=typescript]
+async shutdown() {
+  await this.app.container.make('db').close()
+}
+\end{lstlisting}
+
+\subsection{Extensão do Framework}
+
+Além de registrar e inicializar serviços, providers são usados para \textbf{extender o próprio AdonisJS}. Isso é feito através de:
+
+\begin{itemize}
+  \item \textbf{Macros}: adicionam métodos nas classes.
+  \item \textbf{Getters}: adicionam propriedades computadas.
+\end{itemize}
+
+\subsubsection{Exemplo de Macro}
+
+\begin{lstlisting}[language=typescript]
+import { Request } from '@adonisjs/core/http'
+
+Request.macro('wantsJSON', function (this: Request) {
+  const firstType = this.types()[0]
+  return firstType?.includes('/json') || false
+})
+\end{lstlisting}
+
+\textbf{Uso no código:}
+
+\begin{lstlisting}[language=typescript]
+if (request.wantsJSON()) {
+  // retorna JSON
+}
+\end{lstlisting}
+
+\subsubsection{Exemplo de Getter}
+
+\begin{lstlisting}[language=typescript]
+Request.getter('hasRequestId', function (this: Request) {
+  return this.header('x-request-id')
+})
+\end{lstlisting}
+
+\textbf{Uso:}
+
+\begin{lstlisting}[language=typescript]
+if (request.hasRequestId) {
+  console.log('Requisição tem um ID')
+}
+\end{lstlisting}
+
+\subsection{Classes que Suportam Macros e Getters}
+
+\begin{itemize}
+  \item \texttt{Application}
+  \item \texttt{Request}
+  \item \texttt{Response}
+  \item \texttt{HttpContext}
+  \item \texttt{Route}, \texttt{RouteGroup}, \texttt{RouteResource}, \texttt{BriskRoute}
+  \item \texttt{ExceptionHandler}
+  \item \texttt{MultipartFile}
+\end{itemize}
+
+\subsection{Quando Usar Service Providers}
+
+\begin{itemize}
+  \item Sempre que criar serviços que precisam ser globais para sua aplicação.
+  \item Quando for necessário estender funcionalidades do framework (Request, Response, Validator, etc.).
+  \item Na criação de pacotes, bibliotecas internas ou APIs para sua empresa.
+  \item Para inicializar conexões, carregar configurações complexas, agendar tarefas ou ouvir eventos.
+\end{itemize}
+
+\section{IoC Container e Dependency Injection}
+
+O \textit{IoC Container} do AdonisJS é o núcleo de composição da aplicação. Ele centraliza a criação/configuração de objetos, evitando \textit{boilerplate} e promovendo baixo acoplamento. Nesta seção, vamos entender como o container funciona, como usar \textit{Dependency Injection} (DI), quando preferir \textit{Container Services} e como o \textit{Async Local Storage} (ALS) fornece um escopo de requisição para isolar contexto.
+
+\subsection*{Por que um IoC Container?}
+
+Sem um container, cada uso de uma classe exigiria inicialização manual e passagem de dependências (config, logger, conexões, etc.). Isso polui o código e torna difícil padronizar a criação de objetos.
+
+\begin{examplebox}
+  \textbf{Sem container} (inicialização manual):
+  \begin{lstlisting}[language=typescript]
+import { Database } from '@adonisjs/lucid'
+
+export const db = new Database(
+// injetar config e outras dependências manualmente
+)
+\end{lstlisting}
+
+  \textbf{Com container} (instância pré-configurada):
+  \begin{lstlisting}[language=typescript]
+import app from '@adonisjs/core/services/app'
+
+const db = await app.container.make('lucid.db')
+\end{lstlisting}
+\end{examplebox}
+
+\begin{infobox}
+  Ao delegar ao container a construção das instâncias, você mantém a base coesa e consistente, sem código repetitivo de inicialização.
+\end{infobox}
+
+\subsection*{Container Services: um atalho idiomático}
+
+Chamar \texttt{app.container.make(...)} funciona, mas tem inconvenientes editoriais e de legibilidade. Para resolver, os pacotes expõem \textit{Container Services}: módulos que encapsulam a resolução via container e permitem \texttt{import} direto.
+
+\begin{examplebox}
+  \textbf{Sem service} (chamada explícita ao container):
+  \begin{lstlisting}[language=typescript]
+import app from '@adonisjs/core/services/app'
+
+const db = await app.container.make('lucid.db')
+\end{lstlisting}
+
+  \textbf{Com service} (import direto):
+  \begin{lstlisting}[language=typescript]
+import db from '@adonisjs/lucid/services/db'
+// internamente: const db = await app.container.make('lucid.db')
+\end{lstlisting}
+\end{examplebox}
+
+\begin{warningbox}
+  \texttt{container.make} não se beneficia de auto-imports do editor; já os \textit{services} funcionam como qualquer módulo, melhorando a DX.
+\end{warningbox}
+
+\subsection*{Dependency Injection (DI) no AdonisJS}
+
+A DI cria um acoplamento frouxo: em vez de buscar uma dependência, o objeto a recebe no construtor. No AdonisJS, você pode usar o decorador \texttt{@inject()} para pedir que o container resolva as dependências.
+
+\begin{lstlisting}[language=typescript, caption={Injetando \texttt{Disk} com \texttt{@inject()}}]
+import { Disk } from '@adonisjs/drive'
+import { inject } from '@adonisjs/core'
+
+@inject()
+export class PostService {
+constructor(protected disk: Disk) {}
+
+async save(post: Post, coverImage: File) {
+const name = 'cover.jpg'
+await this.disk.put(name, coverImage)
+post.coverImage = name
+await post.save()
+}
+}
+\end{lstlisting}
+
+\subsection*{Container Services \textit{vs.} Dependency Injection}
+
+\begin{description}
+  \item[\textbf{Container Services}] Código mais conciso: você importa um service (ex.: \texttt{drive}) e obtém a instância que precisa (ex.: \texttt{drive.use('s3')}).
+  \item[\textbf{Dependency Injection}] Desacoplamento explícito e testabilidade por construção: a classe declara o que precisa e recebe pelo construtor.
+\end{description}
+
+\begin{examplebox}
+  \textbf{Usando service} (conciso e direto):
+  \begin{lstlisting}[language=typescript]
+import drive from '@adonisjs/drive/services/main'
+
+export class PostService {
+async save(post: Post, coverImage: File) {
+const name = 'cover.jpg'
+const disk = drive.use('s3')
+await disk.put(name, coverImage)
+post.coverImage = name
+await post.save()
+}
+}
+\end{lstlisting}
+\end{examplebox}
+
+\begin{tipbox}
+  Escolher um ou outro é questão de estilo arquitetural. Em domínios complexos (vários mocks/stubs), DI brilha; em casos simples, \textit{services} agilizam.
+\end{tipbox}
+
+\subsection*{Testes com Container Services}
+
+DI facilita trocar dependências nos testes. Para experiências similares com \textit{services}, o AdonisJS fornece APIs de \textit{fake}.
+
+\begin{lstlisting}[language=typescript, caption={Trocando disk por \textit{fake} em testes}]
+import drive from '@adonisjs/drive/services/main'
+import { PostService } from '#services/post_service'
+
+test('save post', async ({ assert }) => {
+drive.fake('s3') // substitui por driver em memória
+
+const postService = new PostService()
+await postService.save(post, coverImage)
+
+assert.isTrue(await drive.use('s3').exists('cover.jpg'))
+
+drive.restore('s3') // restaura implementação real
+})
+\end{lstlisting}
+
+\begin{infobox}
+  Fakes permitem validar comportamento sem I/O real (ex.: sem subir S3), mantendo testes rápidos e determinísticos.
+\end{infobox}
+
+\subsection*{Bindings e services mais comuns}
+
+A seguir, alguns bindings do container e seus \textit{services} correspondentes:
+
+\begin{itemize}
+  \item \textbf{app}: \verb|@adonisjs/core/services/app|
+  \item \textbf{ace}: \verb|@adonisjs/core/services/kernel|
+  \item \textbf{config}: \verb|@adonisjs/core/services/config|
+  \item \textbf{encryption}: \verb|@adonisjs/core/services/encryption|
+  \item \textbf{emitter}: \verb|@adonisjs/core/services/emitter|
+  \item \textbf{hash}: \verb|@adonisjs/core/services/hash|
+  \item \textbf{logger}: \verb|@adonisjs/core/services/logger|
+  \item \textbf{router}: \verb|@adonisjs/core/services/router|
+  \item \textbf{server}: \verb|@adonisjs/core/services/server|
+  \item \textbf{testUtils}: \verb|@adonisjs/core/services/test_utils|
+\end{itemize}
+
+\subsection*{Service Providers (registrando no container)}
+
+\textit{Service Providers} são classes com métodos de ciclo de vida para registrar/estender bindings, executar ações de \textit{boot/start/ready} e reagir ao encerramento. Eles são referenciados em \texttt{adonisrc.ts} no array \texttt{providers} e podem ser escopados por ambiente.
+
+\begin{lstlisting}[language=typescript, caption={Ex.: provider mínimo com \texttt{register}/\texttt{boot}}]
+import { ApplicationService } from '@adonisjs/core/types'
+
+export default class AppProvider {
+constructor(protected app: ApplicationService) {}
+
+register() {
+this.app.container.bind('db', () => new Database())
+}
+
+async boot() {
+this.app.container.resolving('validator', (validator) => {
+validator.rule('foo', () => {})
+})
+}
+
+async start() {}
+async ready() {}
+async shutdown() {}
+}
+\end{lstlisting}
+
+\begin{tipbox}
+  Use providers para “plug-ins de aplicação”: registrar bindings, estender validação, ligar observabilidade, etc. Para injeção pontual em uma classe, prefira DI.
+\end{tipbox}
+
+\subsection*{Async Local Storage (ALS) e escopo de requisição}
+
+O AdonisJS usa \textbf{Async Local Storage} para isolar dados por requisição. Isso permite recuperar o \textit{contexto} (\texttt{HttpContext}) em qualquer parte do fluxo assíncrono, sem repassar variáveis manualmente.
+
+\begin{lstlisting}[language=typescript, caption={Acessando o contexto atual via ALS}]
+import { HttpContext } from '@adonisjs/core/http'
+
+export function useRequestId(): string | undefined {
+const ctx = HttpContext.get() // contexto "da vez" (escopo de req)
+return ctx?.request.header('x-request-id')
+}
+\end{lstlisting}
+
+\begin{infobox}
+  Com ALS, cada requisição tem seu próprio “universo” assíncrono. Logs, métricas e \textit{tracing} podem incluir \texttt{requestId} sem poluir assinaturas de funções.
+\end{infobox}
+
+\begin{warningbox}
+  O acesso ao container/serviços depende do estado da aplicação. Antes do \textbf{boot}, bindings não estão disponíveis. Utilize \texttt{app.isBooted}, \texttt{app.isReady} e os hooks de lifecycle para sincronizar ações.
+\end{warningbox}
+
+\subsection*{Ambientes, estados e utilitários da \texttt{Application}}
+
+A classe \texttt{Application} expõe o \textbf{ambiente} (web/console/test/repl), o \textbf{estado} (created/initiated/booted/ready/terminated), utilitários de caminho (ex.: \texttt{configPath()}, \texttt{migrationsPath()}, \texttt{viewsPath()}) e sinais de processo.
+
+\begin{lstlisting}[language=typescript, caption={Consultando ambiente/estado e usando paths}]
+import app from '@adonisjs/core/services/app'
+
+console.log(app.getEnvironment()) // 'web' | 'console' | 'test' | 'repl'
+console.log(app.isReady) // true quando pronto
+
+const migration = app.migrationsPath('users.ts')
+// /project_root/database/migrations/users.ts
+\end{lstlisting}
+
+\begin{examplebox}
+  \textbf{Sinais de processo} (graceful shutdown):
+  \begin{lstlisting}[language=typescript]
+import app from '@adonisjs/core/services/app'
+
+app.listen('SIGTERM', () => {
+// encerrar conexões, drenar filas, etc.
+})
+\end{lstlisting}
+\end{examplebox}
+
+\subsection*{Resumo prático}
+
+\begin{itemize}
+  \item Use \textbf{Container Services} para código conciso e melhor DX (\texttt{import db from ...}).
+  \item Prefira \textbf{DI} quando precisar de mocks/stubs fáceis e baixo acoplamento explícito.
+  \item \textbf{Fakes} de services viabilizam testes rápidos sem I/O real.
+  \item \textbf{ALS} fornece escopo por requisição: recupere \texttt{HttpContext} sem repasse manual.
+  \item \textbf{Providers} registram/estendem bindings e se integram ao lifecycle.
+\end{itemize}
+
+\section{Configuração e Arquivos de Ambiente}
+
+O sistema de configuração do AdonisJS é baseado em módulos dentro de \texttt{config/} e no uso de variáveis de ambiente declaradas/validadas em \texttt{start/env.ts}. Além disso, o arquivo \texttt{.adonisrc.ts} (ou \texttt{.adonisrc.json} em projetos legados) define metadados do workspace, \textit{providers}, \textit{preloads}, \textit{metaFiles} e ajustes de diretórios.
+
+\subsection*{Configuração em \texttt{config/} e variáveis \texttt{.env}}
+
+Cada arquivo em \texttt{config/} exporta a configuração de um subsistema (banco, hash, cache, etc.). Esses módulos podem ser importados diretamente ou acessados via \texttt{config service}. Os valores vêm do \texttt{.env}, validados por \texttt{start/env.ts}. Isso garante previsibilidade: se uma variável exigida não existir ou não passar na validação, a aplicação nem \textit{boota}.
+
+\begin{tipbox}
+  Boas práticas: manter \texttt{.env} fora do versionamento; usar chaves fortes; separar \texttt{.env} por ambiente (ex.: \texttt{.env.development.local}, \texttt{.env.production}); centralizar validações em \texttt{start/env.ts}.
+\end{tipbox}
+
+\subsection*{Config Providers}
+
+Alguns arquivos em \texttt{config/} (como \texttt{config/hash.ts}) não exportam um objeto simples; eles usam \textbf{config providers} para adiar a computação da configuração até depois que a aplicação foi \textit{bootada}, quando o container já está disponível.
+
+\paragraph{Sem config provider (conceito ilustrativo).}
+Se não houvesse \textit{provider}, você teria que instanciar \texttt{Scrypt} diretamente (e possivelmente suas dependências):
+
+\begin{lstlisting}[language=typescript, caption={Hash sem provider (ilustrativo)}]
+import { Scrypt } from '@adonisjs/core/hash/drivers/scrypt'
+
+export default {
+default: 'scrypt',
+list: {
+scrypt: () => new Scrypt({
+cost: 16384,
+blockSize: 8,
+parallelization: 1,
+maxMemory: 33554432,
+})
+}
+}
+\end{lstlisting}
+
+Se o driver precisasse do \texttt{Emitter} (para emitir eventos), tentar resolvê-lo via service antes do \textit{boot} falharia, pois os services do container não estão prontos quando os arquivos de \texttt{config/} são importados.
+
+\begin{warningbox}
+  Importar services do container dentro de arquivos \texttt{config/*} antes do \textbf{boot} resulta em erro, pois o container ainda não está disponível nesse momento.
+\end{warningbox}
+
+Uma saída seria instanciar manualmente o \texttt{Emitter} e reaproveitá-lo, mas isso adiciona \textit{boilerplate} e “quebra” a centralização de dependências no container.
+
+\paragraph{Com config provider (recomendado).}
+O \textbf{config provider} é uma função que recebe a \texttt{Application} e resolve dependências pelo container no momento certo. Assim, você só constrói o driver quando alguém usa o serviço (ex.: \texttt{hash}):
+
+\begin{lstlisting}[language=typescript, caption={Hash com config provider}]
+import { configProvider } from '@adonisjs/core'
+
+export default {
+default: 'scrypt',
+list: {
+scrypt: configProvider.create(async (app) => {
+const emitter = await app.container.make('emitter')
+
+  return () => {
+    const { Scrypt } = await import('@adonisjs/core/hash/drivers/scrypt')
+    return new Scrypt({
+      cost: 16384,
+      blockSize: 8,
+      parallelization: 1,
+      maxMemory: 33554432,
+    }, emitter)
+  }
+})
+}
+}
+\end{lstlisting}
+
+\begin{infobox}
+  Com \textit{config providers}, dependências são resolvidas somente quando o serviço é utilizado, evitando acesso prematuro ao container e reduzindo \textit{boilerplate}.
+\end{infobox}
+
+\paragraph{Como acesso a configuração resolvida?}
+Os serviços expõem a configuração efetiva. Exemplo com \texttt{hash}:
+
+\begin{lstlisting}[language=typescript, caption={Lendo config resolvida do serviço}]
+import hash from '@adonisjs/core/services/hash'
+
+console.log(hash.config)
+\end{lstlisting}
+
+\subsection*{Arquivos \texttt{.env} e \texttt{start/env.ts}}
+
+O arquivo \texttt{start/env.ts} valida e tipa as variáveis de ambiente. Em runtime, você as lê por \texttt{env.get('CHAVE')}. Variáveis ausentes/invalidas fazem o \textit{boot} falhar — intencional para segurança e previsibilidade.
+
+\begin{warningbox}
+  Se uma variável necessária não estiver declarada/validada em \texttt{start/env.ts}, a aplicação falha no \textit{boot}. Corrija \texttt{.env} e/ou o schema no \texttt{env.ts}.
+\end{warningbox}
+
+\subsection*{\texttt{.adonisrc.ts} (ou \texttt{.adonisrc.json} legado)}
+
+O \texttt{.adonisrc.ts} define as configurações de workspace: \textit{providers}, \textit{preloads}, \textit{metaFiles}, \textit{commands}, \textit{directories}, \textit{tests} e mais. Ele é importado por ferramentas fora do ciclo normal da aplicação; portanto, não inclua nele código específico de \textit{runtime} ou condicionais de ambiente.
+
+\begin{lstlisting}[language=bash, caption={Inspecionando o RC file}]
+node ace inspect:rcfile
+\end{lstlisting}
+
+Você pode ler o RC já parseado via \texttt{app.rcFile}:
+
+\begin{lstlisting}[language=typescript, caption={Acessando RC com o \texttt{app} service}]
+import app from '@adonisjs/core/services/app'
+
+console.log(app.rcFile)
+\end{lstlisting}
+
+\paragraph{Diretórios.}
+Mapeia as pastas usadas por \textit{scaffolding} e comandos:
+
+\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - diretórios}]
+export default defineConfig({
+directories: {
+config: 'config',
+commands: 'commands',
+contracts: 'contracts',
+public: 'public',
+providers: 'providers',
+languageFiles: 'resources/lang',
+migrations: 'database/migrations',
+seeders: 'database/seeders',
+factories: 'database/factories',
+views: 'resources/views',
+start: 'start',
+tmp: 'tmp',
+tests: 'tests',
+httpControllers: 'app/controllers',
+models: 'app/models',
+services: 'app/services',
+exceptions: 'app/exceptions',
+mails: 'app/mails',
+middleware: 'app/middleware',
+policies: 'app/policies',
+validators: 'app/validators',
+events: 'app/events',
+listeners: 'app/listeners',
+stubs: 'stubs',
+}
+})
+\end{lstlisting}
+
+\paragraph{Preloads.}
+Arquivos importados logo após o \textit{boot} dos providers, com opção de restringir por ambiente:
+
+\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - preloads}]
+export default defineConfig({
+preloads: [
+() => import('./start/view.js'),
+{
+file: () => import('./start/view.js'),
+environment: ['web', 'console', 'test']
+}
+]
+})
+\end{lstlisting}
+
+\paragraph{MetaFiles.}
+Arquivos não TS/JS que devem ir para o \textit{build} (Edge, i18n, \texttt{public/**}):
+
+\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - metaFiles}]
+export default defineConfig({
+metaFiles: [
+{ pattern: 'public/**', reloadServer: false },
+{ pattern: 'resources/views/**/*.edge', reloadServer: false },
+]
+})
+\end{lstlisting}
+
+\paragraph{Commands e aliases.}
+Registro \textit{lazy} de comandos e aliases memoráveis:
+
+\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - commands/aliases}]
+export default defineConfig({
+commands: [
+() => import('@adonisjs/core/commands'),
+() => import('@adonisjs/lucid/commands')
+],
+commandsAliases: {
+migrate: 'migration:run',
+up: 'migration:run'
+}
+})
+\end{lstlisting}
+
+\paragraph{Tests.}
+Configura suites e \textit{timeouts} do test runner:
+
+\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - tests}]
+export default defineConfig({
+tests: {
+timeout: 2000,
+forceExit: false,
+suites: [
+{
+name: 'functional',
+files: ['tests/functional/**/*.spec.ts'],
+timeout: 30000
+}
+]
+}
+})
+\end{lstlisting}
+
+\paragraph{Providers.}
+Lista e ordena os \textit{service providers}, com possibilidade de limitar por ambiente:
+
+\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - providers}]
+export default defineConfig({
+providers: [
+() => import('@adonisjs/core/providers/app_provider'),
+() => import('@adonisjs/core/providers/http_provider'),
+() => import('@adonisjs/core/providers/hash_provider'),
+() => import('./providers/app_provider.js'),
+
+```
+{ file: () => import('@adonisjs/core/providers/http_provider'), environment: ['web'] },
+{ file: () => import('./providers/app_provider.js'), environment: ['web', 'console', 'test'] },
+```
+
+]
+})
+\end{lstlisting}
+
+\paragraph{Assets bundler.}
+Se o \textit{auto-detect} do bundler não atender, defina como rodar \texttt{dev} e \texttt{build}:
+
+\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - assetsBundler}]
+export default defineConfig({
+assetsBundler: {
+name: 'vite',
+devServer: { command: 'vite', args: [] },
+build: { command: 'vite', args: ['build'] },
+}
+})
+\end{lstlisting}
+
+\begin{examplebox}
+  \textbf{Fluxo recomendado}:
+  \begin{enumerate}
+    \item Declare e valide variáveis em \texttt{start/env.ts}.
+    \item Leia-as em \texttt{config/*}, preferindo \textit{config providers} quando houver dependências do container.
+    \item Organizze \texttt{.adonisrc.ts} para refletir sua arquitetura: \textit{providers} na ordem correta, \textit{preloads} por ambiente, \textit{metaFiles} adequados e diretórios coerentes.
+  \end{enumerate}
+\end{examplebox}
+
+\begin{infobox}
+  \textbf{Resumo}: \texttt{config/} centraliza opções dos subsistemas; \texttt{.env}+\texttt{start/env.ts} garantem segurança e tipos; \textit{config providers} evitam acesso prematuro ao container; \texttt{.adonisrc.ts} descreve o workspace (providers, preloads, metaFiles, diretórios, testes e comandos).
+\end{infobox}
+
+\section{Ciclo HTTP e HttpContext}
+
+O AdonisJS é, primariamente, um \textit{web framework}: ele inicializa um servidor HTTP, roteia requisições, aplica \textit{middlewares}, executa \textit{controllers}, trata exceções e serializa respostas. Nesta seção, detalhamos esse fluxo e o papel do \texttt{HttpContext} (ctx) como “porta-objetos” da requisição.
+
+\subsection*{Camada HTTP — visão geral}
+
+A camada HTTP é composta por módulos construídos do zero (não há microframework oculto):
+
+\begin{itemize}
+  \item \textbf{Router}: define endpoints (rotas) e seus \textit{handlers} (closure ou método de controller).
+  \item \textbf{Controllers}: classes que organizam a lógica de tratamento HTTP por recurso/ação.
+  \item \textbf{HttpContext (ctx)}: criado \emph{por requisição}; contém \texttt{request}, \texttt{response}, usuário autenticado, etc.
+  \item \textbf{Middleware}: \textit{pipeline} no padrão \textit{Chain of Responsibility} para interceptar/curtar o fluxo.
+  \item \textbf{Global Exception Handler}: ponto único para transformar exceções em respostas e/ou reportá-las.
+  \item \textbf{Server}: integra router, middlewares e exception handler e expõe o \texttt{handle} que o Node usa.
+\end{itemize}
+
+\begin{infobox}
+  O \texttt{HttpContext} é efêmero e específico de cada requisição.
+  Ele viaja por todo o ciclo: \textit{middlewares} (\(\rightarrow\)) rota/controller (\(\rightarrow\)) exception handler.
+\end{infobox}
+
+\subsection*{Como o servidor HTTP inicia}
+
+O servidor é preparado quando o \texttt{Server} executa \texttt{boot()} (disparado via Ignitor em \texttt{bin/server.ts}). Nessa fase, o framework:
+
+\begin{itemize}
+  \item Monta o \textit{pipeline} de \textbf{server middlewares}.
+  \item Compila as \textbf{rotas}.
+  \item Importa/instancia o \textbf{global exception handler}.
+\end{itemize}
+
+Rotas, \texttt{kernel} e handler global devem estar definidos antes do \textit{boot}; isso é feito via \texttt{start/routes.ts} e \texttt{start/kernel.ts} (preloads).
+
+\subsection*{Ciclo de uma requisição HTTP}
+
+\begin{enumerate}
+  \item \textbf{Criação do HttpContext}: ao chegar uma requisição, o servidor cria uma instância de \texttt{HttpContext} e a passa por referência a \textit{middlewares}, \textit{handlers} e exception handler. Se o \textit{AsyncLocalStorage} estiver habilitado, a mesma instância fica disponível no armazenamento local assíncrono.
+  \item \textbf{Server middlewares}: executados sempre (mesmo sem rota correspondente), podendo responder antes de alcançar o handler.
+  \item \textbf{Matching de rota}: se nada respondeu, procura-se uma rota para \texttt{req.url}. Sem correspondência, retorna 404.
+  \item \textbf{Middlewares de rota}: executa globais do router e os nomeados da rota, ainda podendo encerrar o fluxo.
+  \item \textbf{Handler da rota}: por fim, o \textit{handler} é invocado. Exceções em qualquer etapa são delegadas ao exception handler global.
+  \item \textbf{Serialização da resposta}: com \texttt{response.send(...)} ou retorno de valor, o framework serializa o corpo e define cabeçalhos.
+\end{enumerate}
+
+\begin{warningbox}
+  O \texttt{HttpContext} existe apenas durante o processamento da requisição. Não armazene referências dele em \textit{singletons} ou variáveis estáticas.
+\end{warningbox}
+
+\subsection*{Acessando o HttpContext}
+
+O \texttt{HttpContext} é o primeiro parâmetro de \textit{handlers}, métodos de \textit{controllers}, \textit{middlewares} e do exception handler global.
+
+\paragraph{Route handler (closure).}
+\begin{lstlisting}[language=typescript, caption={Handler recebendo \texttt{ctx}}]
+import router from '@adonisjs/core/services/router'
+
+router.get('/', (ctx) => {
+console.log(ctx.inspect())
+})
+\end{lstlisting}
+
+\paragraph{Desestruturando propriedades.}
+\begin{lstlisting}[language=typescript]
+import router from '@adonisjs/core/services/router'
+
+router.get('/', ({ request, response }) => {
+console.log(request.url())
+console.log(request.headers())
+console.log(request.qs())
+console.log(request.body())
+
+response.send({ hello: 'world' })
+})
+\end{lstlisting}
+
+\paragraph{Controller.}
+\begin{lstlisting}[language=typescript]
+import { HttpContext } from '@adonisjs/core/http'
+
+export default class HomeController {
+async index({ request, response }: HttpContext) {
+// ...
+}
+}
+\end{lstlisting}
+
+\paragraph{Middleware.}
+\begin{lstlisting}[language=typescript]
+import { HttpContext } from '@adonisjs/core/http'
+
+export default class AuthMiddleware {
+async handle({ request, response }: HttpContext, next: () => Promise<void>) {
+// ...
+await next()
+}
+}
+\end{lstlisting}
+
+\paragraph{Exception handler global.}
+\begin{lstlisting}[language=typescript]
+import { HttpContext, HttpExceptionHandler } from '@adonisjs/core/http'
+
+export default class ExceptionHandler extends HttpExceptionHandler {
+async handle(error: unknown, ctx: HttpContext) {
+return super.handle(error, ctx)
+}
+
+async report(error: unknown, ctx: HttpContext) {
+return super.report(error, ctx)
+}
+}
+\end{lstlisting}
+
+\subsection*{Injetando HttpContext via Dependency Injection}
+
+Se você usa \textit{DI}, pode declarar \texttt{HttpContext} como dependência (construtor ou método), e o container injeta o contexto da requisição em andamento. Garanta que o middleware \verb|#middleware/container_bindings_middleware| esteja registrado em \texttt{start/kernel.ts} para permitir \texttt{bindings} por requisição.
+
+\begin{lstlisting}[language=typescript, caption={Injeção do \texttt{HttpContext} em service e controller}]
+import { inject } from '@adonisjs/core'
+import { HttpContext } from '@adonisjs/core/http'
+
+@inject()
+export default class UserService {
+constructor(protected ctx: HttpContext) {}
+all() {
+// usar this.ctx conforme necessário
+return []
+}
+}
+
+// Controller
+import { inject } from '@adonisjs/core'
+import { HttpContext } from '@adonisjs/core/http'
+import UserService from '#services/user_service'
+
+export default class UsersController {
+@inject()
+index(ctx: HttpContext, userService: UserService) {
+return userService.all()
+}
+}
+\end{lstlisting}
+
+\subsection*{Acessando o contexto via Async Local Storage}
+
+Você também pode recuperar o contexto em qualquer parte do código usando \texttt{AsyncLocalStorage} (exposto pelo framework):
+
+\begin{lstlisting}[language=typescript, caption={Acessando \texttt{HttpContext} globalmente (ALS)}]
+import { HttpContext } from '@adonisjs/core/http'
+
+export default class UserService {
+all() {
+const ctx = HttpContext.getOrFail()
+console.log(ctx.request.url())
+return []
+}
+}
+\end{lstlisting}
+
+\begin{tipbox}
+  ALS evita “encadear” \texttt{ctx} manualmente por múltiplas camadas. Ainda assim, prefira DI quando quiser explicitar dependências e facilitar \textit{test doubles}.
+\end{tipbox}
+
+\subsection*{Propriedades comuns do \texttt{ctx}}
+
+Conforme você instala pacotes, novas propriedades podem ser adicionadas ao contexto. Algumas padrão:
+
+\begin{itemize}
+  \item \texttt{ctx.request}: requisição HTTP (corpo, headers, query).
+  \item \texttt{ctx.response}: resposta HTTP (status, headers, \texttt{send}).
+  \item \texttt{ctx.logger}: logger por requisição.
+  \item \texttt{ctx.route}: rota correspondente; inclui metadados do \textit{match}.
+  \item \texttt{ctx.params}: parâmetros dinâmicos da rota.
+  \item \texttt{ctx.subdomains}: subdomínios da rota (quando aplicável).
+  \item \texttt{ctx.session}: sessão da requisição (se habilitada).
+  \item \texttt{ctx.auth}: autenticador (login/guards).
+  \item \texttt{ctx.view}: renderizador Edge (SSR).
+  \item \texttt{ctx.ally}: \textit{social login} (Ally).
+  \item \texttt{ctx.bouncer}: autorização (políticas).
+  \item \texttt{ctx.i18n}: internacionalização.
+\end{itemize}
+
+\subsection*{Estendendo o HttpContext}
+
+Você pode adicionar \textit{macros} e \textit{getters} ao contexto em runtime e, em seguida, declarar as tipagens via \textit{module augmentation}.
+
+\begin{lstlisting}[language=typescript, caption={Macros e getters no \texttt{HttpContext}}]
+import { HttpContext } from '@adonisjs/core/http'
+
+// implementação
+HttpContext.macro('aMethod', function (this: HttpContext) {
+return 'value'
+})
+HttpContext.getter('aProperty', function (this: HttpContext) {
+return 'value'
+})
+
+// tipagem
+declare module '@adonisjs/core/http' {
+export interface HttpContext {
+aMethod: () => string
+aProperty: string
+}
+}
+\end{lstlisting}
+
+\begin{warningbox}
+  Declare as tipagens (augmentation) para o TypeScript reconhecer os novos membros; sem isso, o projeto compila mas perde ajuda de tipos/autocompletar.
+\end{warningbox}
+
+\subsection*{Criando \textit{dummy context} em testes}
+
+Dentro de aplicações AdonisJS, use o service \verb|@adonisjs/core/services/test_utils| para criar um \texttt{HttpContext} falso:
+
+\begin{lstlisting}[language=typescript, caption={\texttt{testUtils.createHttpContext}}]
+import testUtils from '@adonisjs/core/services/test_utils'
+
+const ctx = testUtils.createHttpContext()
+// ctx.route e ctx.params são undefined por padrão (sem rota real).
+\end{lstlisting}
+
+Também é possível fornecer \texttt{req}/\texttt{res} personalizados:
+
+\begin{lstlisting}[language=typescript]
+import { createServer } from 'node:http'
+import testUtils from '@adonisjs/core/services/test_utils'
+
+createServer((req, res) => {
+const ctx = testUtils.createHttpContext({ req, res })
+// ...
+})
+\end{lstlisting}
+
+Para pacotes externos (fora de apps AdonisJS), use a \texttt{HttpContextFactory}:
+
+\begin{lstlisting}[language=typescript, caption={\texttt{HttpContextFactory} para pacotes}]
+import { HttpContextFactory } from '@adonisjs/core/factories/http'
+
+const ctx = new HttpContextFactory().create()
+\end{lstlisting}
+
+\begin{examplebox}
+  \textbf{Resumo do ciclo}:
+  \begin{enumerate}
+    \item Servidor inicia e compila middlewares/rotas/handler global.
+    \item Chega a requisição (\(\rightarrow\)) cria \texttt{ctx}.
+    \item Executa server middlewares (\(\rightarrow\)) \textit{match} de rota.
+    \item Executa middlewares da rota (\(\rightarrow\)) handler.
+    \item Serializa resposta ou delega exceção ao handler global.
+  \end{enumerate}
+\end{examplebox}
+
+\section{Middlewares}
+\begin{itemize}
+  \item Funcionamento no ciclo HTTP.
+  \item Criação de Middlewares globais e locais.
+  \item Utilização do HttpContext dentro dos Middlewares.
+\end{itemize}
+
+\section{Eventos e Listeners}
+\begin{itemize}
+  \item Sistema de eventos interno.
+  \item Criação de eventos, listeners e práticas recomendadas.
+  \item Diferença entre eventos síncronos e assíncronos.
+\end{itemize}
+
+\section{Jobs e Filas}
+\begin{itemize}
+  \item Conceito de processamento assíncrono.
+  \item Definição de Jobs e enfileiramento de tarefas.
+  \item Workers — funcionamento e boas práticas.
+\end{itemize}
+
+\section{Task Scheduler}
+\begin{itemize}
+  \item Sistema de agendamento de tarefas recorrentes.
+  \item Criação de tasks programadas.
+  \item Integração com Jobs e Eventos.
+\end{itemize}
+
+\chapter{Fundamentos}
+\section{Rotas}
+\section{Controllers}
+\section{Request e Response}
+\section{Validations}
+\section{Enviando Emails}
+\section{Uploads de Arquivos}
+\section{Logger}
+\section{Environment Variables}
+
+\chapter{Banco de Dados com Lucid}
+\section{Introdução ao Lucid}
+\section{Migrations e Models}
+\section{Query Builder}
+\section{Relationships}
+\section{Hooks e Scopes}
+\section{Serialization}
+\section{Factories e Seeders}
+\section{Transações}
+
+\chapter{Autenticação e Autorização}
+\section{Autenticação com Tokens}
+\section{Session Auth}
+\section{Middleware de Autenticação}
+\section{RBAC - Roles e Permissões}
+
+\chapter{Segurança}
+\section{Proteção CSRF}
+\section{Validação de Dados}
+\section{Protegendo Rotas}
+\section{CORS e Headers}
+\section{Env Security}
+
+\chapter{Views e Templates com EdgeJS}
+\section{Introdução ao Edge}
+\section{Sintaxe e Templates}
+\section{Interpolação}
+\section{Condicionais e Loops}
+\section{Partials e Layouts}
+\section{Slots, Props e Injeção}
+\section{Debugging no Edge}
+\section{Criando Custom Tags}
+
+\chapter{Testes com Japa}
+\section{Introdução ao Japa}
+\section{Instalação e Configuração}
+\section{Testando Código Assíncrono}
+\section{Agrupando Testes}
+\section{Hooks de Ciclo de Vida}
+\section{Datasets}
+\section{Macros de Teste}
+\section{Test Suites e Exceptions}
+\section{Coverage e Test Reporters}
+
+\chapter{Aprofundando no AdonisJS}
+\section{Ace Commands}
+\section{Criando Comandos Customizados}
+\section{Digging Deeper: Internals}
+\section{Boas Práticas}
+\section{Debugging e Performance}
+\section{Deploy e Produção}
+
+\chapter{Referências}
+\section{Documentação Oficial}
+\section{Comunidade e Recursos}
+\section{Repositórios e Links Úteis}
+
+% ======================
+% Lucid ORM
+\part{Lucid ORM}
+
+\chapter{Introdução ao Lucid}
+\section{Instalação e Uso}
+\section{Debugging e Troubleshooting}
+\section{Transações e Paginação}
+\section{Database Seeders}
+\section{Validation Rules}
+
+\chapter{Query Builders}
+\section{Select Query Builder}
+\section{Insert Query Builder}
+\section{Raw Queries}
+
+\chapter{Migrations}
+\section{Introdução}
+\section{Schema Builder}
+\section{Table Builder}
+
+\chapter{Models}
+\section{CRUD Operations}
+\section{Hooks}
+\section{Query Builder em Models}
+\section{Naming Strategy}
+\section{Query Scopes}
+\section{Serialização de Models}
+\section{Relacionamentos}
+\section{Model Factories}
+
+% ======================
+% VineJS - Validação
+\part{VineJS - Validações Poderosas}
+
+\chapter{Guia de Uso do VineJS}
+\section{Introdução}
+\section{Getting Started}
+\section{Schema 101}
+\section{HTML Forms e Surpresas}
+\section{Validações Condicionais}
+\section{Field Context}
+\section{Mensagens Customizadas}
+\section{Error Reporter}
+\section{Helpers}
+
+\chapter{Tipos de Schema}
+\section{String}
+\section{Boolean}
+\section{Number}
+\section{Date}
+\section{Accepted}
+\section{Enum}
+\section{Literal}
+\section{Object}
+\section{Record}
+\section{Array}
+\section{Tuple}
+\section{Union}
+\section{Any}
+
+\chapter{Extendendo VineJS}
+\section{Criando Custom Rules}
+\section{Criando Custom Schema Types}
+
+% ======================
+% Japa - Test Runner
+\part{Japa - Framework de Testes}
+
+\chapter{Guia de Testes com Japa}
+\section{Introdução}
+\section{Instalação e Uso}
+\section{Testando Código Assíncrono}
+\section{Grouping Tests}
+\section{Lifecycle Hooks}
+\section{Datasets}
+\section{Test Macros}
+\section{Exceptions e Test Suites}
+\section{Filtering Tests e Skipping Tests}
+\section{Bail Mode}
+\section{Test Reporters}
+\section{Coverage}
+
+\chapter{Plugins}
+\section{Assert}
+\section{OpenAPI Assertions}
+\section{Expect}
+\section{API Client}
+\section{Browser Client}
+\section{File System}
+\section{Expect Types}
+\section{Snapshot}
+
+% =======================
+% Glossário
+% =======================
+\chapter*{Glossário}
+\addcontentsline{toc}{chapter}{Glossário}
+\begin{description}
+  \item[API] Interface de Programação de Aplicações.
+  \item[Framework] Estrutura que fornece suporte para desenvolvimento.
+  \item[Compilador] Programa que traduz código para linguagem de máquina.
+\end{description}
+
+% =======================
+% Índice de Termos
+% =======================
+\printindex
+
+\end{document}
