@@ -1,0 +1,16 @@
+{{#var entity = generators.createEntity('user')}}
+{{#var modelName = generators.modelName(entity.name)}}
+{{#var modelRef = string.camelCase(modelName)}}
+{{#var fileName = string(modelName).snakeCase().suffix('_resource').ext('.ts').toString()}}
+
+{{{
+  exports({
+    to: app.makePath('app/api_resources', entity.path, fileName)
+  })
+}}}
+
+export default class {{ modelName }}Resource {
+  serialize({{ modelRef }}: {{ modelName }}) {
+    return {{ modelRef }}.toJSON()
+  }
+}

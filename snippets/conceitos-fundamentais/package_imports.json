@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "imports": {
+    "#controllers/*": "./app/controllers/*.js",
+    "#models/*": "./app/models/*.js",
+    "#services/*": "./app/services/*.js",
+    "#policies/*": "./app/policies/*.js"
+  }
+}

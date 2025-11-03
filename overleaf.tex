@@ -295,10 +295,11 @@ Seja bem-vindo(a) a um dos melhores frameworks web da atualidade no ecossistema 
 
 Verifique se possui o Node.js instalado com o seguinte comando no terminal:
 
-\begin{lstlisting}[language=bash, caption={Verificando a versão do Node.js}]
-node -v
-# Saída esperada: v20.x.x ou superior
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Verificando a versão do Node.js},
+  label={lst:node_version_check}
+]{snippets/primeiros-passos/node_version_check.sh}
 
 Se não tiver, você pode instalar diretamente pelo site oficial \url{https://nodejs.org} ou, preferencialmente, utilizar o \textbf{Volta} (\url{https://volta.sh}) — um gerenciador de versões que permite maior controle e consistência no ambiente de desenvolvimento.
 
@@ -306,9 +307,11 @@ Se não tiver, você pode instalar diretamente pelo site oficial \url{https://no
 
 O AdonisJS oferece um comando simples para inicializar um novo projeto utilizando o seguinte comando:
 
-\begin{lstlisting}[language=bash, caption={Criando um novo projeto AdonisJS}]
-npm init adonisjs@latest nome-do-projeto
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Criando um novo projeto AdonisJS},
+  label={lst:adonis_new_project}
+]{snippets/primeiros-passos/adonis_new_project.sh}
 
 \begin{warningbox}
   Quando utilizar parâmetros no comando \texttt{npm init}, lembre-se de adicionar \texttt{--} (dois hífens) antes dos parâmetros para garantir que o npm os repasse corretamente.
@@ -331,33 +334,41 @@ Você pode personalizar seu projeto logo na criação usando os seguintes parâm
   Criar um projeto básico, perguntando todas as opções:
 \end{examplebox}
 
-\begin{lstlisting}[language=bash]
-npm init adonisjs@latest nome-do-projeto
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Criando um novo projeto AdonisJS},
+  label={lst:adonis_new_project_basic}
+]{snippets/primeiros-passos/adonis_new_project_basic.sh}
 
 \begin{examplebox}
   Criar um projeto API usando PostgreSQL:
 \end{examplebox}
 
-\begin{lstlisting}[language=bash]
-npm init adonisjs@latest nome-do-projeto -- --kit=api --db=postgres
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Projeto API com PostgreSQL},
+  label={lst:adonis_new_project_api_postgres}
+]{snippets/primeiros-passos/adonis_new_project_api_postgres.sh}
 
 \begin{examplebox}
   Criar um projeto Web com MySQL:
 \end{examplebox}
 
-\begin{lstlisting}[language=bash]
-npm init adonisjs@latest nome-do-projeto -- --kit=web --db=mysql
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Projeto Web com MySQL},
+  label={lst:adonis_new_project_web_mysql}
+]{snippets/primeiros-passos/adonis_new_project_web_mysql.sh}
 
 \begin{examplebox}
   Criar um projeto com autenticação baseada em tokens:
 \end{examplebox}
 
-\begin{lstlisting}[language=bash]
-npm init adonisjs@latest nome-do-projeto -- --kit=api --auth-guard=access_tokens
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Projeto API com guard de autenticação por tokens},
+  label={lst:adonis_new_project_api_tokens}
+]{snippets/primeiros-passos/adonis_new_project_api_tokens.sh}
 
 \subsection{Escolhendo o Starter Kit}
 
@@ -378,23 +389,29 @@ O AdonisJS oferece quatro tipos principais de starter kits, cada um pensado para
 
 Após criar o projeto, execute o servidor com:
 
-\begin{lstlisting}[language=bash, caption={Iniciando o servidor}]
-node ace serve --hmr
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Iniciando o servidor},
+  label={lst:server_start}
+]{snippets/primeiros-passos/server_start.sh}
 
 Acesse no navegador:
 
-\begin{lstlisting}[language=bash]
-http://localhost:3333
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={URL local da aplicação},
+  label={lst:open_localhost}
+]{snippets/primeiros-passos/open_localhost.txt}
 
 \subsection{Build para produção}
 
 Compile sua aplicação para produção com:
 
-\begin{lstlisting}[language=bash, caption={Gerando build de produção}]
-node ace build
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Gerando build de produção},
+  label={lst:build_production}
+]{snippets/primeiros-passos/build_production.sh}
 
 O código será gerado na pasta \texttt{build/} e está pronto para ser executado com Node.js.
 
@@ -402,16 +419,11 @@ O código será gerado na pasta \texttt{build/} e está pronto para ser executad
 
 O projeto já vem com \texttt{ESLint} e \texttt{Prettier} configurados com os padrões recomendados pela equipe do AdonisJS.
 
-\begin{lstlisting}[language=bash, caption={Executando ferramentas de lint e format}]
-# Lint
-npm run lint
-
-# Lint com correções automáticas
-npm run lint -- --fix
-
-# Format usando Prettier
-npm run format
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Executando ferramentas de lint e format},
+  label={lst:lint_format}
+]{snippets/primeiros-passos/lint_format.sh}
 
 \begin{tipbox}
   Recomendo instalar as extensões do AdonisJS, EdgeJS e Japa para VSCode. Elas oferecem recursos como:
@@ -428,21 +440,27 @@ Ao criar um projeto com AdonisJS, você não está apenas iniciando um backend. 
 
 Depois de executar:
 
-\begin{lstlisting}[language=bash, caption={Criando o projeto}]
-npm init adonisjs@latest nome-do-projeto
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Criando o projeto},
+  label={lst:adonis_new_project_basic}
+]{snippets/primeiros-passos/adonis_new_project_basic.sh}
 
 E rodar:
 
-\begin{lstlisting}[language=bash, caption={Iniciando o servidor}]
-node ace serve --hmr
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Iniciando o servidor},
+  label={lst:server_start}
+]{snippets/primeiros-passos/server_start.sh}
 
 Você verá sua aplicação rodando em:
 
-\begin{lstlisting}[language=bash]
-http://localhost:3333
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={URL local da aplicação},
+  label={lst:open_localhost}
+]{snippets/primeiros-passos/open_localhost.txt}
 
 Por padrão, o projeto já vem com:
 
@@ -467,19 +485,11 @@ Por padrão, o projeto já vem com:
 
 A seguir, uma visão geral da estrutura padrão:
 
-\begin{lstlisting}[language=bash, caption={Estrutura de Diretórios}]
-app/              # Código principal (controllers, models, services...)
-config/           # Configurações da aplicação
-contracts/        # Interfaces de tipos compartilhadas
-database/         # Migrations e seeders
-public/           # Arquivos estáticos (CSS, JS, imagens)
-resources/        # Templates Edge e arquivos do frontend
-start/            # Arquivos de boot (rotas, eventos, env, etc.)
-tests/            # Testes unitários e funcionais
-tmp/              # Arquivos temporários (logs, uploads em dev)
-providers/        # Service Providers personalizados
-types/            # Tipagens e contratos auxiliares
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Estrutura de Diretórios},
+  label={lst:project_structure}
+]{snippets/primeiros-passos/project_structure.txt}
 
 \subsection*{Principais Diretórios}
 
@@ -513,19 +523,19 @@ A configuração no AdonisJS é simples, escalável e baseada em dois pilares fu
 
 Todos os arquivos da pasta \texttt{config/} são módulos TypeScript e podem ser importados diretamente:
 
-\begin{lstlisting}[language=typescript, caption={Importando diretamente}]
-import { appKey } from '#config/app'
-import database from '#config/database'
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Importando diretamente},
+  label={lst:config_import_direct}
+]{snippets/primeiros-passos/import_config_direct.ts}
 
 Ou, de forma dinâmica, utilizando o \texttt{config service}:
 
-\begin{lstlisting}[language=typescript, caption={Acessando via Config Service}]
-import config from '@adonisjs/core/services/config'
-
-const key = config.get('app.appKey')
-const dbConnection = config.get('database.connection')
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Acessando via Config Service},
+  label={lst:config_service_access}
+]{snippets/primeiros-passos/config_service_access.ts}
 
 \begin{tipbox}
   Usar o \texttt{config service} permite acessar as configurações dentro de Providers, Edge Templates e ambientes onde importações diretas não funcionam.
@@ -535,25 +545,19 @@ const dbConnection = config.get('database.connection')
 
 O arquivo \texttt{start/env.ts} controla as variáveis de ambiente, valida suas existências e tipos:
 
-\begin{lstlisting}[language=typescript, caption={Exemplo básico de env.ts}]
-import Env from '@adonisjs/core/env'
-
-export default await Env.create(new URL('../', import.meta.url), {
-  HOST: Env.schema.string({ format: 'host' }),
-  PORT: Env.schema.number(),
-  APP_KEY: Env.schema.string(),
-  NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo básico de env.ts},
+  label={lst:env_ts_example}
+]{snippets/primeiros-passos/env_ts_example.ts}
 
 O \texttt{env.get()} é utilizado para acessar os valores:
 
-\begin{lstlisting}[language=typescript, caption={Lendo valores do .env}]
-import env from '#start/env'
-
-const port = env.get('PORT')
-const nodeEnv = env.get('NODE_ENV')
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lendo valores do .env},
+  label={lst:env_read_values}
+]{snippets/primeiros-passos/env_read_values.ts}
 
 \begin{warningbox}
   Se uma variável não estiver declarada no arquivo \texttt{start/env.ts}, o AdonisJS acusará erro de boot — isso garante segurança e previsibilidade.
@@ -561,25 +565,19 @@ const nodeEnv = env.get('NODE_ENV')
 
 \subsection{Estrutura do .env}
 
-\begin{lstlisting}[language=bash, caption={Exemplo de .env}]
-HOST=0.0.0.0
-PORT=3333
-APP_KEY=sua-chave-secreta
-NODE_ENV=development
-DB_CONNECTION=pg
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=senha
-DB_DATABASE=adonis
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Exemplo de .env},
+  label={lst:dotenv_example}
+]{snippets/primeiros-passos/dotenv_example.env}
 
 \subsection{Configurações no Edge Templates}
 
-\begin{lstlisting}[caption={Utilizando config e env nas views}]
-<a href="{{ config('app.appUrl') }}">Home</a>
-<span>{{ env.get('NODE_ENV') }}</span>
-\end{lstlisting}
+\lstinputlisting[
+  language=html,
+  caption={Utilizando config e env nas views},
+  label={lst:edge_config_env}
+]{snippets/primeiros-passos/edge_config_env.edge}
 
 \begin{infobox}
   O acesso a variáveis no Edge é restrito ao server-side. Nenhuma informação sensível vaza para o cliente.
@@ -589,11 +587,11 @@ DB_DATABASE=adonis
 
 Você pode alterar valores durante a execução:
 
-\begin{lstlisting}[language=typescript]
-import config from '@adonisjs/core/services/config'
-
-config.set('app.appUrl', 'https://meusite.com')
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Alterando valor de configuração em tempo de execução},
+  label={lst:config_runtime_set}
+]{snippets/primeiros-passos/config_runtime_set.ts}
 
 \begin{warningbox}
   Essa alteração é feita apenas em memória, válida para toda a instância da aplicação até ser reiniciada. Isso não altera os arquivos no disco.
@@ -709,26 +707,21 @@ A aplicação responde a sinais POSIX como:
 
 É possível escutar esses sinais:
 
-\begin{lstlisting}[language=typescript]
-import app from '@adonisjs/core/services/app'
-
-app.listen('SIGTERM', () => {
-  console.log('Encerrando aplicação...')
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Escutando SIGTERM para encerramento gracioso},
+  label={lst:app_sigterm}
+]{snippets/conceitos-fundamentais/app_signal_sigterm.ts}
 
 \subsection{Estados da Aplicação}
 
 Os estados da aplicação podem ser consultados em tempo de execução:
 
-\begin{lstlisting}[language=typescript]
-import app from '@adonisjs/core/services/app'
-
-console.log(app.isBooted)     // true se estiver bootado
-console.log(app.isReady)      // true se estiver pronto
-console.log(app.isTerminating)// true se estiver encerrando
-console.log(app.isTerminated) // true se já encerrou
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Consultando estados da aplicação},
+  label={lst:app_states}
+]{snippets/conceitos-fundamentais/app_states.ts}
 
 \subsection{Estrutura do Arquivo \texttt{adonisrc.ts}}
 
@@ -744,23 +737,11 @@ O arquivo \texttt{adonisrc.ts} define a configuração global da aplicação, in
 
 Exemplo simplificado:
 
-\begin{lstlisting}[language=typescript]
-export default defineConfig({
-  providers: [
-    () => import('./providers/app_provider'),
-    () => import('@adonisjs/core/providers/http_provider')
-  ],
-  preloads: [
-    () => import('./start/view')
-  ],
-  metaFiles: [
-    {
-      pattern: 'resources/views/**/*.edge',
-      reloadServer: false
-    }
-  ]
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo simplificado de \texttt{adonisrc.ts}},
+  label={lst:adonisrc_example}
+]{snippets/conceitos-fundamentais/adonisrc_example.ts}
 
 O ciclo de vida da aplicação no AdonisJS permite um controle refinado de como e quando os componentes da aplicação são carregados, inicializados, disponibilizados e encerrados. Entender esse fluxo é essencial para implementar corretamente Service Providers, middlewares, jobs, tasks e garantir que sua aplicação seja robusta, escalável e mantenha a integridade dos recursos utilizados.
 
@@ -787,45 +768,29 @@ Eles são fundamentais tanto no desenvolvimento da sua própria aplicação quan
 
 Os providers são registrados no arquivo \texttt{adonisrc.ts}, dentro da propriedade \texttt{providers}:
 
-\begin{lstlisting}[language=typescript]
-export default defineConfig({
-  providers: [
-    () => import('./providers/app_provider'),
-    () => import('@adonisjs/core/providers/http_provider')
-  ]
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Registrando providers no \texttt{adonisrc.ts}},
+  label={lst:adonisrc_providers_basic}
+]{snippets/conceitos-fundamentais/adonisrc_providers_basic.ts}
 
 Também é possível restringir o provider para rodar apenas em determinados ambientes:
 
-\begin{lstlisting}[language=typescript]
-{
-  providers: [
-    {
-      file: () => import('./providers/app_provider'),
-      environment: ['web', 'console']
-    }
-  ]
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Provider limitado por ambientes},
+  label={lst:adonisrc_providers_env}
+]{snippets/conceitos-fundamentais/adonisrc_providers_env.ts}
 
 \subsection{Estrutura de um Service Provider}
 
 Um provider é uma classe TypeScript (ou JavaScript) exportada como \texttt{default} e que implementa métodos específicos.
 
-\begin{lstlisting}[language=typescript]
-import { ApplicationService } from '@adonisjs/core/types'
-
-export default class AppProvider {
-  constructor(protected app: ApplicationService) {}
-
-  register() {}
-  async boot() {}
-  async start() {}
-  async ready() {}
-  async shutdown() {}
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Estrutura mínima de um Service Provider},
+  label={lst:provider_skeleton}
+]{snippets/conceitos-fundamentais/provider_skeleton.ts}
 
 \subsection{Ciclo de Vida dos Providers}
 
@@ -847,48 +812,35 @@ Cada método do provider é executado em uma fase específica do ciclo da aplica
 
 \subsubsection{Registrando uma dependência no container}
 
-\begin{lstlisting}[language=typescript]
-register() {
-  this.app.container.bind('db', () => {
-    return new Database()
-  })
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Registrando binding \texttt{db} no container},
+  label={lst:provider_db_bind}
+]{snippets/conceitos-fundamentais/provider_db_bind.ts}
 
 \subsubsection{Estendendo o Validator com uma regra personalizada}
 
-\begin{lstlisting}[language=typescript]
-async boot() {
-  const validator = await this.app.container.make('validator')
-
-  validator.rule('cpf', (value) => {
-    // validação de CPF
-    return isValidCPF(value)
-  })
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Adicionando regra \texttt{cpf} ao Validator no \texttt{boot()}},
+  label={lst:provider_validator_rule_cpf}
+]{snippets/conceitos-fundamentais/provider_validator_rule_cpf.ts}
 
 \subsubsection{Respondendo ao ambiente no start()}
 
-\begin{lstlisting}[language=typescript]
-async start() {
-  if (this.app.getEnvironment() === 'web') {
-    console.log('Rodando no servidor HTTP')
-  }
-
-  if (this.app.getEnvironment() === 'console') {
-    console.log('Rodando um comando CLI')
-  }
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Logs condicionais por ambiente no \texttt{start()}},
+  label={lst:provider_start_env_log}
+]{snippets/conceitos-fundamentais/provider_start_env_log.ts}
 
 \subsubsection{Encerrando conexões no shutdown()}
 
-\begin{lstlisting}[language=typescript]
-async shutdown() {
-  await this.app.container.make('db').close()
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Fechando conexão com banco no \texttt{shutdown()}},
+  label={lst:provider_shutdown_close_db}
+]{snippets/conceitos-fundamentais/provider_shutdown_close_db.ts}
 
 \subsection{Extensão do Framework}
 
@@ -901,38 +853,35 @@ Além de registrar e inicializar serviços, providers são usados para \textbf{e
 
 \subsubsection{Exemplo de Macro}
 
-\begin{lstlisting}[language=typescript]
-import { Request } from '@adonisjs/core/http'
-
-Request.macro('wantsJSON', function (this: Request) {
-  const firstType = this.types()[0]
-  return firstType?.includes('/json') || false
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Macro \texttt{wantsJSON} em \texttt{Request}},
+  label={lst:request_macro_wants_json}
+]{snippets/conceitos-fundamentais/request_macro_wants_json.ts}
 
 \textbf{Uso no código:}
 
-\begin{lstlisting}[language=typescript]
-if (request.wantsJSON()) {
-  // retorna JSON
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Uso de \texttt{request.wantsJSON()}},
+  label={lst:use_request_wants_json}
+]{snippets/conceitos-fundamentais/use_request_wants_json.ts}
 
 \subsubsection{Exemplo de Getter}
 
-\begin{lstlisting}[language=typescript]
-Request.getter('hasRequestId', function (this: Request) {
-  return this.header('x-request-id')
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Getter \texttt{hasRequestId} em \texttt{Request}},
+  label={lst:request_getter_has_request_id}
+]{snippets/conceitos-fundamentais/request_getter_has_request_id.ts}
 
 \textbf{Uso:}
 
-\begin{lstlisting}[language=typescript]
-if (request.hasRequestId) {
-  console.log('Requisição tem um ID')
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Uso de \texttt{request.hasRequestId}},
+  label={lst:use_request_has_request_id}
+]{snippets/conceitos-fundamentais/use_request_has_request_id.ts}
 
 \subsection{Classes que Suportam Macros e Getters}
 
@@ -959,77 +908,65 @@ if (request.hasRequestId) {
 
 O \textit{IoC Container} do AdonisJS é o núcleo de composição da aplicação. Ele centraliza a criação/configuração de objetos, evitando \textit{boilerplate} e promovendo baixo acoplamento. Nesta seção, vamos entender como o container funciona, como usar \textit{Dependency Injection} (DI), quando preferir \textit{Container Services} e como o \textit{Async Local Storage} (ALS) fornece um escopo de requisição para isolar contexto.
 
-\subsection*{Por que um IoC Container?}
+\subsection{Por que um IoC Container?}
 
 Sem um container, cada uso de uma classe exigiria inicialização manual e passagem de dependências (config, logger, conexões, etc.). Isso polui o código e torna difícil padronizar a criação de objetos.
 
 \begin{examplebox}
   \textbf{Sem container} (inicialização manual):
-  \begin{lstlisting}[language=typescript]
-import { Database } from '@adonisjs/lucid'
-
-export const db = new Database(
-// injetar config e outras dependências manualmente
-)
-\end{lstlisting}
+  \lstinputlisting[
+    language=TypeScript,
+    caption={Inicialização manual de \texttt{Database} sem container},
+    label={lst:db_manual_init}
+  ]{snippets/conceitos-fundamentais/db_manual_init.ts}
 
   \textbf{Com container} (instância pré-configurada):
-  \begin{lstlisting}[language=typescript]
-import app from '@adonisjs/core/services/app'
-
-const db = await app.container.make('lucid.db')
-\end{lstlisting}
+  \lstinputlisting[
+    language=TypeScript,
+    caption={Resolvendo \texttt{lucid.db} via container},
+    label={lst:db_container_make}
+  ]{snippets/conceitos-fundamentais/db_container_make.ts}
 \end{examplebox}
 
 \begin{infobox}
   Ao delegar ao container a construção das instâncias, você mantém a base coesa e consistente, sem código repetitivo de inicialização.
 \end{infobox}
 
-\subsection*{Container Services: um atalho idiomático}
+\subsection{Container Services: um atalho idiomático}
 
 Chamar \texttt{app.container.make(...)} funciona, mas tem inconvenientes editoriais e de legibilidade. Para resolver, os pacotes expõem \textit{Container Services}: módulos que encapsulam a resolução via container e permitem \texttt{import} direto.
 
 \begin{examplebox}
   \textbf{Sem service} (chamada explícita ao container):
-  \begin{lstlisting}[language=typescript]
-import app from '@adonisjs/core/services/app'
-
-const db = await app.container.make('lucid.db')
-\end{lstlisting}
+  \lstinputlisting[
+    language=TypeScript,
+    caption={Resolvendo \texttt{lucid.db} via container},
+    label={lst:db_container_make_again}
+  ]{snippets/conceitos-fundamentais/db_container_make.ts}
 
   \textbf{Com service} (import direto):
-  \begin{lstlisting}[language=typescript]
-import db from '@adonisjs/lucid/services/db'
-// internamente: const db = await app.container.make('lucid.db')
-\end{lstlisting}
+  \lstinputlisting[
+    language=TypeScript,
+    caption={Importando \texttt{db} via Container Service},
+    label={lst:db_service_import}
+  ]{snippets/conceitos-fundamentais/db_service_import.ts}
 \end{examplebox}
 
 \begin{warningbox}
   \texttt{container.make} não se beneficia de auto-imports do editor; já os \textit{services} funcionam como qualquer módulo, melhorando a DX.
 \end{warningbox}
 
-\subsection*{Dependency Injection (DI) no AdonisJS}
+\subsection{Dependency Injection (DI) no AdonisJS}
 
 A DI cria um acoplamento frouxo: em vez de buscar uma dependência, o objeto a recebe no construtor. No AdonisJS, você pode usar o decorador \texttt{@inject()} para pedir que o container resolva as dependências.
 
-\begin{lstlisting}[language=TypeScript, caption={Injetando \texttt{Disk} com \texttt{@inject()}}, label={lst:inject_disk}]
-import { Disk } from '@adonisjs/drive'
-import { inject } from '@adonisjs/core'
+\lstinputlisting[
+  language=TypeScript,
+  caption={Injetando \texttt{Disk} com \texttt{@inject()}},
+  label={lst:inject_disk}
+]{snippets/conceitos-fundamentais/post_service_di.ts}
 
-@inject()
-export class PostService {
-  constructor(protected disk: Disk) {}
-
-  async save(post: Post, coverImage: File) {
-    const name = 'cover.jpg'
-    await this.disk.put(name, coverImage)
-    post.coverImage = name
-    await post.save()
-  }
-}
-\end{lstlisting}
-
-\subsection*{Container Services \textit{vs.} Dependency Injection}
+\subsection{Container Services \textit{vs.} Dependency Injection}
 
 \begin{description}
   \item[\textbf{Container Services}] Código mais conciso: você importa um service (ex.: \texttt{drive}) e obtém a instância que precisa (ex.: \texttt{drive.use('s3')}).
@@ -1038,51 +975,32 @@ export class PostService {
 
 \begin{examplebox}
   \textbf{Usando service} (conciso e direto):
-  \begin{lstlisting}[language=TypeScript, caption={Obtendo instância via \texttt{Container Service}}, label={lst:service_use}]
-import drive from '@adonisjs/drive/services/main'
-
-export class PostService {
-  async save(post: Post, coverImage: File) {
-    const name = 'cover.jpg'
-    const disk = drive.use('s3')
-    await disk.put(name, coverImage)
-    post.coverImage = name
-    await post.save()
-  }
-}
-  \end{lstlisting}
+  \lstinputlisting[
+    language=TypeScript,
+    caption={Obtendo instância via \texttt{Container Service}},
+    label={lst:service_use}
+  ]{snippets/conceitos-fundamentais/post_service_service.ts}
 \end{examplebox}
 
 \begin{tipbox}
   Escolher um ou outro é questão de estilo arquitetural. Em domínios complexos (vários mocks/stubs), DI brilha; em casos simples, \textit{services} agilizam.
 \end{tipbox}
 
-\subsection*{Testes com Container Services}
+\subsection{Testes com Container Services}
 
 DI facilita trocar dependências nos testes. Para experiências similares com \textit{services}, o AdonisJS fornece APIs de \textit{fake}.
 
-\begin{lstlisting}[language=TypeScript, caption={Trocando \texttt{disk} por \textit{fake} em testes}, label={lst:drive_fake}]
-import drive from '@adonisjs/drive/services/main'
-import { PostService } from '#services/post_service'
-
-test('save post', async ({ assert }) => {
-  drive.fake('s3') // substitui por driver em memória
-
-  const postService = new PostService()
-  await postService.save(post, coverImage)
-
-  assert.isTrue(await drive.use('s3').exists('cover.jpg'))
-
-  drive.restore('s3') // restaura implementação real
-})
-\end{lstlisting}
-
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trocando \texttt{disk} por \textit{fake} em testes},
+  label={lst:drive_fake}
+]{snippets/conceitos-fundamentais/drive_fake_test.ts}
 
 \begin{infobox}
   Fakes permitem validar comportamento sem I/O real (ex.: sem subir S3), mantendo testes rápidos e determinísticos.
 \end{infobox}
 
-\subsection*{Bindings e services mais comuns}
+\subsection{Bindings e services mais comuns}
 
 A seguir, alguns bindings do container e seus \textit{services} correspondentes:
 
@@ -1099,50 +1017,29 @@ A seguir, alguns bindings do container e seus \textit{services} correspondentes:
   \item \textbf{testUtils}: \verb|@adonisjs/core/services/test_utils|
 \end{itemize}
 
-\subsection*{Service Providers (registrando no container)}
+\subsection{Service Providers (registrando no container)}
 
 \textit{Service Providers} são classes com métodos de ciclo de vida para registrar/estender bindings, executar ações de \textit{boot/start/ready} e reagir ao encerramento. Eles são referenciados em \texttt{adonisrc.ts} no array \texttt{providers} e podem ser escopados por ambiente.
 
-\begin{lstlisting}[language=TypeScript, caption={Ex.: provider mínimo com \texttt{register}/\texttt{boot}}, label={lst:provider_minimo}]
-import { ApplicationService } from '@adonisjs/core/types'
-// import { Database } from '#/path/to/database' // exemplo de import, ajuste conforme seu projeto
-
-export default class AppProvider {
-  constructor(protected app: ApplicationService) {}
-
-  register() {
-    this.app.container.bind('db', () => new Database())
-  }
-
-  async boot() {
-    this.app.container.resolving('validator', (validator) => {
-      validator.rule('foo', () => {})
-    })
-  }
-
-  async start() {}
-  async ready() {}
-  async shutdown() {}
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Ex.: provider mínimo com \texttt{register}/\texttt{boot}},
+  label={lst:provider_minimo}
+]{snippets/conceitos-fundamentais/provider_minimo.ts}
 
 \begin{tipbox}
   Use providers para “plug-ins de aplicação”: registrar bindings, estender validação, ligar observabilidade, etc. Para injeção pontual em uma classe, prefira DI.
 \end{tipbox}
 
-\subsection*{Async Local Storage (ALS) e escopo de requisição}
+\subsection{Async Local Storage (ALS) e escopo de requisição}
 
 O AdonisJS usa \textbf{Async Local Storage} para isolar dados por requisição. Isso permite recuperar o \textit{contexto} (\texttt{HttpContext}) em qualquer parte do fluxo assíncrono, sem repassar variáveis manualmente.
 
-\begin{lstlisting}[language=TypeScript, caption={Acessando o contexto atual via ALS}, label={lst:als_request_id}]
-import { HttpContext } from '@adonisjs/core/http'
-
-export function useRequestId(): string | undefined {
-  // Contexto "da vez" (escopo da requisição) via AsyncLocalStorage do AdonisJS
-  const ctx = HttpContext.get()
-  return ctx?.request.header('x-request-id')
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Acessando o contexto atual via ALS},
+  label={lst:als_request_id}
+]{snippets/conceitos-fundamentais/als_request_id.ts}
 
 \begin{infobox}
   Com ALS, cada requisição tem seu próprio “universo” assíncrono. Logs, métricas e \textit{tracing} podem incluir \texttt{requestId} sem poluir assinaturas de funções.
@@ -1152,32 +1049,26 @@ export function useRequestId(): string | undefined {
   O acesso ao container/serviços depende do estado da aplicação. Antes do \textbf{boot}, bindings não estão disponíveis. Utilize \texttt{app.isBooted}, \texttt{app.isReady} e os hooks de lifecycle para sincronizar ações.
 \end{warningbox}
 
-\subsection*{Ambientes, estados e utilitários da \texttt{Application}}
+\subsection{Ambientes, estados e utilitários da \texttt{Application}}
 
 A classe \texttt{Application} expõe o \textbf{ambiente} (web/console/test/repl), o \textbf{estado} (created/initiated/booted/ready/terminated), utilitários de caminho (ex.: \texttt{configPath()}, \texttt{migrationsPath()}, \texttt{viewsPath()}) e sinais de processo.
 
-\begin{lstlisting}[language=typescript, caption={Consultando ambiente/estado e usando paths}]
-import app from '@adonisjs/core/services/app'
-
-console.log(app.getEnvironment()) // 'web' | 'console' | 'test' | 'repl'
-console.log(app.isReady) // true quando pronto
-
-const migration = app.migrationsPath('users.ts')
-// /project_root/database/migrations/users.ts
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Consultando ambiente/estado e usando paths},
+  label={lst:app_env_paths}
+]{snippets/conceitos-fundamentais/app_env_paths.ts}
 
 \begin{examplebox}
   \textbf{Sinais de processo} (graceful shutdown):
-  \begin{lstlisting}[language=typescript]
-import app from '@adonisjs/core/services/app'
-
-app.listen('SIGTERM', () => {
-// encerrar conexões, drenar filas, etc.
-})
-\end{lstlisting}
+  \lstinputlisting[
+    language=TypeScript,
+    caption={Escutando \texttt{SIGTERM} para encerramento gracioso},
+    label={lst:app_sigterm_box}
+  ]{snippets/conceitos-fundamentais/app_signal_sigterm.ts}
 \end{examplebox}
 
-\subsection*{Resumo prático}
+\subsection{Resumo prático}
 
 \begin{itemize}
   \item Use \textbf{Container Services} para código conciso e melhor DX (\texttt{import db from ...}).
@@ -1187,11 +1078,13 @@ app.listen('SIGTERM', () => {
   \item \textbf{Providers} registram/estendem bindings e se integram ao lifecycle.
 \end{itemize}
 
+
+
 \section{Configuração e Arquivos de Ambiente}
 
 O sistema de configuração do AdonisJS é baseado em módulos dentro de \texttt{config/} e no uso de variáveis de ambiente declaradas/validadas em \texttt{start/env.ts}. Além disso, o arquivo \texttt{.adonisrc.ts} (ou \texttt{.adonisrc.json} em projetos legados) define metadados do workspace, \textit{providers}, \textit{preloads}, \textit{metaFiles} e ajustes de diretórios.
 
-\subsection*{Configuração em \texttt{config/} e variáveis \texttt{.env}}
+\subsection{Configuração em \texttt{config/} e variáveis \texttt{.env}}
 
 Cada arquivo em \texttt{config/} exporta a configuração de um subsistema (banco, hash, cache, etc.). Esses módulos podem ser importados diretamente ou acessados via \texttt{config service}. Os valores vêm do \texttt{.env}, validados por \texttt{start/env.ts}. Isso garante previsibilidade: se uma variável exigida não existir ou não passar na validação, a aplicação nem \textit{boota}.
 
@@ -1199,28 +1092,18 @@ Cada arquivo em \texttt{config/} exporta a configuração de um subsistema (banc
   Boas práticas: manter \texttt{.env} fora do versionamento; usar chaves fortes; separar \texttt{.env} por ambiente (ex.: \texttt{.env.development.local}, \texttt{.env.production}); centralizar validações em \texttt{start/env.ts}.
 \end{tipbox}
 
-\subsection*{Config Providers}
+\subsection{Config Providers}
 
 Alguns arquivos em \texttt{config/} (como \texttt{config/hash.ts}) não exportam um objeto simples; eles usam \textbf{config providers} para adiar a computação da configuração até depois que a aplicação foi \textit{bootada}, quando o container já está disponível.
 
-\paragraph{Sem config provider (conceito ilustrativo).}
+\subsubsection{Sem config provider (conceito ilustrativo).}
 Se não houvesse \textit{provider}, você teria que instanciar \texttt{Scrypt} diretamente (e possivelmente suas dependências):
 
-\begin{lstlisting}[language=typescript, caption={Hash sem provider (ilustrativo)}]
-import { Scrypt } from '@adonisjs/core/hash/drivers/scrypt'
-
-export default {
-default: 'scrypt',
-list: {
-scrypt: () => new Scrypt({
-cost: 16384,
-blockSize: 8,
-parallelization: 1,
-maxMemory: 33554432,
-})
-}
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Hash sem provider (ilustrativo)},
+  label={lst:hash_without_provider}
+]{snippets/conceitos-fundamentais/hash_without_provider.ts}
 
 Se o driver precisasse do \texttt{Emitter} (para emitir eventos), tentar resolvê-lo via service antes do \textit{boot} falharia, pois os services do container não estão prontos quando os arquivos de \texttt{config/} são importados.
 
@@ -1230,49 +1113,29 @@ Se o driver precisasse do \texttt{Emitter} (para emitir eventos), tentar resolv�
 
 Uma saída seria instanciar manualmente o \texttt{Emitter} e reaproveitá-lo, mas isso adiciona \textit{boilerplate} e “quebra” a centralização de dependências no container.
 
-\paragraph{Com config provider (recomendado).}
+\subsubsection{Com config provider (recomendado).}
 O \textbf{config provider} é uma função que recebe a \texttt{Application} e resolve dependências pelo container no momento certo. Assim, você só constrói o driver quando alguém usa o serviço (ex.: \texttt{hash}):
 
-\begin{lstlisting}[language=TypeScript, caption={Hash com \texttt{configProvider}}, label={lst:hash_config_provider}]
-import { configProvider } from '@adonisjs/core'
-
-export default {
-  default: 'scrypt',
-  list: {
-    scrypt: configProvider.create(async (app) => {
-      const emitter = await app.container.make('emitter')
-
-      return () => {
-        const { Scrypt } = await import('@adonisjs/core/hash/drivers/scrypt')
-        return new Scrypt(
-          {
-            cost: 16_384,
-            blockSize: 8,
-            parallelization: 1,
-            maxMemory: 33_554_432,
-          },
-          emitter
-        )
-      }
-    }),
-  },
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Hash com \texttt{configProvider}},
+  label={lst:hash_config_provider}
+]{snippets/conceitos-fundamentais/hash_config_provider.ts}
 
 \begin{infobox}
   Com \textit{config providers}, dependências são resolvidas somente quando o serviço é utilizado, evitando acesso prematuro ao container e reduzindo \textit{boilerplate}.
 \end{infobox}
 
-\paragraph{Como acesso a configuração resolvida?}
+\subsubsection{Como acesso a configuração resolvida?}
 Os serviços expõem a configuração efetiva. Exemplo com \texttt{hash}:
 
-\begin{lstlisting}[language=typescript, caption={Lendo config resolvida do serviço}]
-import hash from '@adonisjs/core/services/hash'
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lendo config resolvida do serviço},
+  label={lst:hash_read_config}
+]{snippets/conceitos-fundamentais/hash_read_config.ts}
 
-console.log(hash.config)
-\end{lstlisting}
-
-\subsection*{Arquivos \texttt{.env} e \texttt{start/env.ts}}
+\subsection{Arquivos \texttt{.env} e \texttt{start/env.ts}}
 
 O arquivo \texttt{start/env.ts} valida e tipa as variáveis de ambiente. Em runtime, você as lê por \texttt{env.get('CHAVE')}. Variáveis ausentes/invalidas fazem o \textit{boot} falhar — intencional para segurança e previsibilidade.
 
@@ -1280,157 +1143,93 @@ O arquivo \texttt{start/env.ts} valida e tipa as variáveis de ambiente. Em runt
   Se uma variável necessária não estiver declarada/validada em \texttt{start/env.ts}, a aplicação falha no \textit{boot}. Corrija \texttt{.env} e/ou o schema no \texttt{env.ts}.
 \end{warningbox}
 
-\subsection*{\texttt{.adonisrc.ts} (ou \texttt{.adonisrc.json} legado)}
+\subsection{\texttt{.adonisrc.ts} (ou \texttt{.adonisrc.json} legado)}
 
 O \texttt{.adonisrc.ts} define as configurações de workspace: \textit{providers}, \textit{preloads}, \textit{metaFiles}, \textit{commands}, \textit{directories}, \textit{tests} e mais. Ele é importado por ferramentas fora do ciclo normal da aplicação; portanto, não inclua nele código específico de \textit{runtime} ou condicionais de ambiente.
 
-\begin{lstlisting}[language=bash, caption={Inspecionando o RC file}]
-node ace inspect:rcfile
-\end{lstlisting}
+\lstinputlisting[
+  language=bash,
+  caption={Inspecionando o RC file},
+  label={lst:inspect_rcfile}
+]{snippets/conceitos-fundamentais/inspect_rcfile.sh}
 
 Você pode ler o RC já parseado via \texttt{app.rcFile}:
 
-\begin{lstlisting}[language=typescript, caption={Acessando RC com o \texttt{app} service}]
-import app from '@adonisjs/core/services/app'
+\lstinputlisting[
+  language=TypeScript,
+  caption={Acessando RC com o \texttt{app} service},
+  label={lst:app_rcfile_access}
+]{snippets/conceitos-fundamentais/app_rcfile_access.ts}
 
-console.log(app.rcFile)
-\end{lstlisting}
-
-\paragraph{Diretórios.}
+\subsubsection{Diretórios.}
 Mapeia as pastas usadas por \textit{scaffolding} e comandos:
 
-\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - diretórios}]
-export default defineConfig({
-directories: {
-config: 'config',
-commands: 'commands',
-contracts: 'contracts',
-public: 'public',
-providers: 'providers',
-languageFiles: 'resources/lang',
-migrations: 'database/migrations',
-seeders: 'database/seeders',
-factories: 'database/factories',
-views: 'resources/views',
-start: 'start',
-tmp: 'tmp',
-tests: 'tests',
-httpControllers: 'app/controllers',
-models: 'app/models',
-services: 'app/services',
-exceptions: 'app/exceptions',
-mails: 'app/mails',
-middleware: 'app/middleware',
-policies: 'app/policies',
-validators: 'app/validators',
-events: 'app/events',
-listeners: 'app/listeners',
-stubs: 'stubs',
-}
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trecho de \texttt{.adonisrc.ts} - diretórios},
+  label={lst:adonisrc_directories}
+]{snippets/conceitos-fundamentais/adonisrc_directories.ts}
 
-\paragraph{Preloads.}
+\subsubsection{Preloads.}
 Arquivos importados logo após o \textit{boot} dos providers, com opção de restringir por ambiente:
 
-\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - preloads}]
-export default defineConfig({
-preloads: [
-() => import('./start/view.js'),
-{
-file: () => import('./start/view.js'),
-environment: ['web', 'console', 'test']
-}
-]
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trecho de \texttt{.adonisrc.ts} - preloads},
+  label={lst:adonisrc_preloads}
+]{snippets/conceitos-fundamentais/adonisrc_preloads.ts}
 
-\paragraph{MetaFiles.}
+\subsubsection{MetaFiles.}
 Arquivos não TS/JS que devem ir para o \textit{build} (Edge, i18n, \texttt{public/**}):
 
-\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - metaFiles}]
-export default defineConfig({
-metaFiles: [
-{ pattern: 'public/**', reloadServer: false },
-{ pattern: 'resources/views/**/*.edge', reloadServer: false },
-]
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trecho de \texttt{.adonisrc.ts} - metaFiles},
+  label={lst:adonisrc_metafiles}
+]{snippets/conceitos-fundamentais/adonisrc_metafiles.ts}
 
-\paragraph{Commands e aliases.}
+\subsubsection{Commands e aliases.}
 Registro \textit{lazy} de comandos e aliases memoráveis:
 
-\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - commands/aliases}]
-export default defineConfig({
-commands: [
-() => import('@adonisjs/core/commands'),
-() => import('@adonisjs/lucid/commands')
-],
-commandsAliases: {
-migrate: 'migration:run',
-up: 'migration:run'
-}
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trecho de \texttt{.adonisrc.ts} - commands/aliases},
+  label={lst:adonisrc_commands_aliases}
+]{snippets/conceitos-fundamentais/adonisrc_commands_aliases.ts}
 
-\paragraph{Tests.}
+\subsubsection{Tests.}
 Configura suites e \textit{timeouts} do test runner:
 
-\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - tests}]
-export default defineConfig({
-tests: {
-timeout: 2000,
-forceExit: false,
-suites: [
-{
-name: 'functional',
-files: ['tests/functional/**/*.spec.ts'],
-timeout: 30000
-}
-]
-}
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trecho de \texttt{.adonisrc.ts} - tests},
+  label={lst:adonisrc_tests}
+]{snippets/conceitos-fundamentais/adonisrc_tests.ts}
 
-\paragraph{Providers.}
+\subsubsection{Providers.}
 Lista e ordena os \textit{service providers}, com possibilidade de limitar por ambiente:
 
-\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - providers}]
-export default defineConfig({
-providers: [
-() => import('@adonisjs/core/providers/app_provider'),
-() => import('@adonisjs/core/providers/http_provider'),
-() => import('@adonisjs/core/providers/hash_provider'),
-() => import('./providers/app_provider.js'),
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trecho de \texttt{.adonisrc.ts} - providers},
+  label={lst:adonisrc_providers_full}
+]{snippets/conceitos-fundamentais/adonisrc_providers_full.ts}
 
-```
-{ file: () => import('@adonisjs/core/providers/http_provider'), environment: ['web'] },
-{ file: () => import('./providers/app_provider.js'), environment: ['web', 'console', 'test'] },
-```
-
-]
-})
-\end{lstlisting}
-
-\paragraph{Assets bundler.}
+\subsubsection{Assets bundler.}
 Se o \textit{auto-detect} do bundler não atender, defina como rodar \texttt{dev} e \texttt{build}:
 
-\begin{lstlisting}[language=typescript, caption={Trecho de \texttt{.adonisrc.ts} - assetsBundler}]
-export default defineConfig({
-assetsBundler: {
-name: 'vite',
-devServer: { command: 'vite', args: [] },
-build: { command: 'vite', args: ['build'] },
-}
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Trecho de \texttt{.adonisrc.ts} - assetsBundler},
+  label={lst:adonisrc_assets_bundler}
+]{snippets/conceitos-fundamentais/adonisrc_assets_bundler.ts}
 
 \begin{examplebox}
   \textbf{Fluxo recomendado}:
   \begin{enumerate}
     \item Declare e valide variáveis em \texttt{start/env.ts}.
     \item Leia-as em \texttt{config/*}, preferindo \textit{config providers} quando houver dependências do container.
-    \item Organizze \texttt{.adonisrc.ts} para refletir sua arquitetura: \textit{providers} na ordem correta, \textit{preloads} por ambiente, \textit{metaFiles} adequados e diretórios coerentes.
+    \item Organize \texttt{.adonisrc.ts} para refletir sua arquitetura: \textit{providers} na ordem correta, \textit{preloads} por ambiente, \textit{metaFiles} adequados e diretórios coerentes.
   \end{enumerate}
 \end{examplebox}
 
@@ -1438,11 +1237,13 @@ build: { command: 'vite', args: ['build'] },
   \textbf{Resumo}: \texttt{config/} centraliza opções dos subsistemas; \texttt{.env}+\texttt{start/env.ts} garantem segurança e tipos; \textit{config providers} evitam acesso prematuro ao container; \texttt{.adonisrc.ts} descreve o workspace (providers, preloads, metaFiles, diretórios, testes e comandos).
 \end{infobox}
 
+
+
 \section{Ciclo HTTP e HttpContext}
 
 O AdonisJS é, primariamente, um \textit{web framework}: ele inicializa um servidor HTTP, roteia requisições, aplica \textit{middlewares}, executa \textit{controllers}, trata exceções e serializa respostas. Nesta seção, detalhamos esse fluxo e o papel do \texttt{HttpContext} (ctx) como “porta-objetos” da requisição.
 
-\subsection*{Camada HTTP — visão geral}
+\subsection{Camada HTTP — visão geral}
 
 A camada HTTP é composta por módulos construídos do zero (não há microframework oculto):
 
@@ -1460,7 +1261,7 @@ A camada HTTP é composta por módulos construídos do zero (não há microframe
   Ele viaja por todo o ciclo: \textit{middlewares} (\(\rightarrow\)) rota/controller (\(\rightarrow\)) exception handler.
 \end{infobox}
 
-\subsection*{Como o servidor HTTP inicia}
+\subsection{Como o servidor HTTP inicia}
 
 O servidor é preparado quando o \texttt{Server} executa \texttt{boot()} (disparado via Ignitor em \texttt{bin/server.ts}). Nessa fase, o framework:
 
@@ -1472,7 +1273,7 @@ O servidor é preparado quando o \texttt{Server} executa \texttt{boot()} (dispar
 
 Rotas, \texttt{kernel} e handler global devem estar definidos antes do \textit{boot}; isso é feito via \texttt{start/routes.ts} e \texttt{start/kernel.ts} (preloads).
 
-\subsection*{Ciclo de uma requisição HTTP}
+\subsection{Ciclo de uma requisição HTTP}
 
 \begin{enumerate}
   \item \textbf{Criação do HttpContext}: ao chegar uma requisição, o servidor cria uma instância de \texttt{HttpContext} e a passa por referência a \textit{middlewares}, \textit{handlers} e exception handler. Se o \textit{AsyncLocalStorage} estiver habilitado, a mesma instância fica disponível no armazenamento local assíncrono.
@@ -1487,122 +1288,75 @@ Rotas, \texttt{kernel} e handler global devem estar definidos antes do \textit{b
   O \texttt{HttpContext} existe apenas durante o processamento da requisição. Não armazene referências dele em \textit{singletons} ou variáveis estáticas.
 \end{warningbox}
 
-\subsection*{Acessando o HttpContext}
+\subsection{Acessando o HttpContext}
 
 O \texttt{HttpContext} é o primeiro parâmetro de \textit{handlers}, métodos de \textit{controllers}, \textit{middlewares} e do exception handler global.
 
-\paragraph{Route handler (closure).}
-\begin{lstlisting}[language=typescript, caption={Handler recebendo \texttt{ctx}}]
-import router from '@adonisjs/core/services/router'
+\subsubsection{Route handler (closure).}
 
-router.get('/', (ctx) => {
-console.log(ctx.inspect())
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Handler recebendo \texttt{ctx}},
+  label={lst:handler_with_ctx}
+]{snippets/conceitos-fundamentais/handler_with_ctx.ts}
 
-\paragraph{Desestruturando propriedades.}
-\begin{lstlisting}[language=typescript]
-import router from '@adonisjs/core/services/router'
+\subsubsection{Desestruturando propriedades.}
 
-router.get('/', ({ request, response }) => {
-console.log(request.url())
-console.log(request.headers())
-console.log(request.qs())
-console.log(request.body())
+\lstinputlisting[
+  language=TypeScript,
+  caption={Desestruturando \texttt{request} e \texttt{response}},
+  label={lst:handler_destructure}
+]{snippets/conceitos-fundamentais/handler_destructure.ts}
 
-response.send({ hello: 'world' })
-})
-\end{lstlisting}
+\subsubsection{Controller.}
 
-\paragraph{Controller.}
-\begin{lstlisting}[language=typescript]
-import { HttpContext } from '@adonisjs/core/http'
+\lstinputlisting[
+  language=TypeScript,
+  caption={Controller recebendo \texttt{HttpContext}},
+  label={lst:controller_httpcontext}
+]{snippets/conceitos-fundamentais/controller_httpcontext.ts}
 
-export default class HomeController {
-async index({ request, response }: HttpContext) {
-// ...
-}
-}
-\end{lstlisting}
+\subsubsection{Middleware.}
 
-\paragraph{Middleware.}
-\begin{lstlisting}[language=typescript]
-import { HttpContext } from '@adonisjs/core/http'
+\lstinputlisting[
+  language=TypeScript,
+  caption={Middleware com \texttt{next()}},
+  label={lst:middleware_basic}
+]{snippets/conceitos-fundamentais/middleware_basic.ts}
 
-export default class AuthMiddleware {
-async handle({ request, response }: HttpContext, next: () => Promise<void>) {
-// ...
-await next()
-}
-}
-\end{lstlisting}
+\subsubsection{Exception handler global.}
 
-\paragraph{Exception handler global.}
-\begin{lstlisting}[language=typescript]
-import { HttpContext, HttpExceptionHandler } from '@adonisjs/core/http'
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exception handler global},
+  label={lst:exception_handler}
+]{snippets/conceitos-fundamentais/exception_handler.ts}
 
-export default class ExceptionHandler extends HttpExceptionHandler {
-async handle(error: unknown, ctx: HttpContext) {
-return super.handle(error, ctx)
-}
-
-async report(error: unknown, ctx: HttpContext) {
-return super.report(error, ctx)
-}
-}
-\end{lstlisting}
-
-\subsection*{Injetando HttpContext via Dependency Injection}
+\subsection{Injetando HttpContext via Dependency Injection}
 
 Se você usa \textit{DI}, pode declarar \texttt{HttpContext} como dependência (construtor ou método), e o container injeta o contexto da requisição em andamento. Garanta que o middleware \verb|#middleware/container_bindings_middleware| esteja registrado em \texttt{start/kernel.ts} para permitir \texttt{bindings} por requisição.
 
-\begin{lstlisting}[language=typescript, caption={Injeção do \texttt{HttpContext} em service e controller}]
-import { inject } from '@adonisjs/core'
-import { HttpContext } from '@adonisjs/core/http'
+\lstinputlisting[
+  language=TypeScript,
+  caption={Injeção do \texttt{HttpContext} em service e controller},
+  label={lst:di_inject_httpcontext}
+]{snippets/conceitos-fundamentais/di_inject_httpcontext.ts}
 
-@inject()
-export default class UserService {
-constructor(protected ctx: HttpContext) {}
-all() {
-// usar this.ctx conforme necessário
-return []
-}
-}
-
-// Controller
-import { inject } from '@adonisjs/core'
-import { HttpContext } from '@adonisjs/core/http'
-import UserService from '#services/user_service'
-
-export default class UsersController {
-@inject()
-index(ctx: HttpContext, userService: UserService) {
-return userService.all()
-}
-}
-\end{lstlisting}
-
-\subsection*{Acessando o contexto via Async Local Storage}
+\subsection{Acessando o contexto via Async Local Storage}
 
 Você também pode recuperar o contexto em qualquer parte do código usando \texttt{AsyncLocalStorage} (exposto pelo framework):
 
-\begin{lstlisting}[language=typescript, caption={Acessando \texttt{HttpContext} globalmente (ALS)}]
-import { HttpContext } from '@adonisjs/core/http'
-
-export default class UserService {
-all() {
-const ctx = HttpContext.getOrFail()
-console.log(ctx.request.url())
-return []
-}
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Acessando \texttt{HttpContext} globalmente (ALS)},
+  label={lst:als_get_context}
+]{snippets/conceitos-fundamentais/als_get_context.ts}
 
 \begin{tipbox}
   ALS evita “encadear” \texttt{ctx} manualmente por múltiplas camadas. Ainda assim, prefira DI quando quiser explicitar dependências e facilitar \textit{test doubles}.
 \end{tipbox}
 
-\subsection*{Propriedades comuns do \texttt{ctx}}
+\subsection{Propriedades comuns do \texttt{ctx}}
 
 Conforme você instala pacotes, novas propriedades podem ser adicionadas ao contexto. Algumas padrão:
 
@@ -1621,64 +1375,45 @@ Conforme você instala pacotes, novas propriedades podem ser adicionadas ao cont
   \item \texttt{ctx.i18n}: internacionalização.
 \end{itemize}
 
-\subsection*{Estendendo o HttpContext}
+\subsection{Estendendo o HttpContext}
 
 Você pode adicionar \textit{macros} e \textit{getters} ao contexto em runtime e, em seguida, declarar as tipagens via \textit{module augmentation}.
 
-\begin{lstlisting}[language=typescript, caption={Macros e getters no \texttt{HttpContext}}]
-import { HttpContext } from '@adonisjs/core/http'
-
-// implementação
-HttpContext.macro('aMethod', function (this: HttpContext) {
-return 'value'
-})
-HttpContext.getter('aProperty', function (this: HttpContext) {
-return 'value'
-})
-
-// tipagem
-declare module '@adonisjs/core/http' {
-export interface HttpContext {
-aMethod: () => string
-aProperty: string
-}
-}
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Macros e getters no \texttt{HttpContext}},
+  label={lst:httpcontext_macros_getters}
+]{snippets/conceitos-fundamentais/httpcontext_macros_getters.ts}
 
 \begin{warningbox}
   Declare as tipagens (augmentation) para o TypeScript reconhecer os novos membros; sem isso, o projeto compila mas perde ajuda de tipos/autocompletar.
 \end{warningbox}
 
-\subsection*{Criando \textit{dummy context} em testes}
+\subsection{Criando \textit{dummy context} em testes}
 
 Dentro de aplicações AdonisJS, use o service \verb|@adonisjs/core/services/test_utils| para criar um \texttt{HttpContext} falso:
 
-\begin{lstlisting}[language=typescript, caption={\texttt{testUtils.createHttpContext}}]
-import testUtils from '@adonisjs/core/services/test_utils'
-
-const ctx = testUtils.createHttpContext()
-// ctx.route e ctx.params são undefined por padrão (sem rota real).
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{testUtils.createHttpContext}},
+  label={lst:testutils_create_httpcontext}
+]{snippets/conceitos-fundamentais/testutils_create_httpcontext.ts}
 
 Também é possível fornecer \texttt{req}/\texttt{res} personalizados:
 
-\begin{lstlisting}[language=typescript]
-import { createServer } from 'node:http'
-import testUtils from '@adonisjs/core/services/test_utils'
-
-createServer((req, res) => {
-const ctx = testUtils.createHttpContext({ req, res })
-// ...
-})
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Criando contexto com \texttt{req}/\texttt{res} personalizados},
+  label={lst:testutils_custom_req_res}
+]{snippets/conceitos-fundamentais/testutils_custom_req_res.ts}
 
 Para pacotes externos (fora de apps AdonisJS), use a \texttt{HttpContextFactory}:
 
-\begin{lstlisting}[language=typescript, caption={\texttt{HttpContextFactory} para pacotes}]
-import { HttpContextFactory } from '@adonisjs/core/factories/http'
-
-const ctx = new HttpContextFactory().create()
-\end{lstlisting}
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{HttpContextFactory} para pacotes},
+  label={lst:httpcontext_factory}
+]{snippets/conceitos-fundamentais/httpcontext_factory.ts}
 
 \begin{examplebox}
   \textbf{Resumo do ciclo}:
@@ -1691,36 +1426,200 @@ const ctx = new HttpContextFactory().create()
   \end{enumerate}
 \end{examplebox}
 
-\section{Middlewares}
+\section{Ferramentas e Build do Ecossistema}
+
+Esta seção reúne tópicos práticos do ecossistema: \textbf{HMR (Hot Module Replacement)} para ciclos de feedback rápidos no desenvolvimento; \textbf{processo de build TypeScript} para produção; \textbf{Scaffolding e Codemods} (geração e modificação de código); \textbf{Assembler Hooks} (pontos de extensão do processo de build/dev); e \textbf{aliases/paths} para importações limpas.
+
+\subsection{Hot Module Replacement (HMR)}
+
+O HMR recarrega módulos JavaScript alterados sem reiniciar todo o processo. No AdonisJS, o HMR é \emph{backend-only} e funciona sobre \emph{dynamic imports}, priorizando velocidade de recarga — não há reconciliação de estado no browser como Vite/Webpack fazem.
+
+\subsubsection*{Conceitos-chave}
 \begin{itemize}
-  \item Funcionamento no ciclo HTTP.
-  \item Criação de Middlewares globais e locais.
-  \item Utilização do HttpContext dentro dos Middlewares.
+\item \textbf{Sem propagação ao browser}: o backend não sincroniza estado de SPA/SSR.
+\item \textbf{Funciona com imports dinâmicos}: controllers, middlewares, listeners já usam \emph{dynamic import} por padrão.
+\item \textbf{Limites (boundaries)}: defina quais arquivos podem sofrer HMR; o restante gera \emph{full reload}.
 \end{itemize}
 
-\section{Eventos e Listeners}
+\begin{warningbox}
+Não registre \texttt{config/}, \texttt{start/}, \texttt{.adonisrc.ts} ou \textit{service providers} como \emph{boundaries}. Esses módulos produzem efeitos colaterais e devem disparar \emph{full reload} para manter a aplicação íntegra.
+\end{warningbox}
+
+\subsubsection*{Uso}
+
+\begin{enumerate}
+\item Instale o pacote do hook de HMR.
+\item Configure as \textit{boundaries} no \texttt{package.json}.
+\item Rode o servidor com a flag \texttt{--hmr}.
+\end{enumerate}
+
+\lstinputlisting[
+language=bash,
+caption={Instalação do HMR hook},
+label={lst:hmr_install}
+]{snippets/conceitos-fundamentais/hmr_install.sh}
+
+\lstinputlisting[
+language=json,
+caption={\texttt{package.json}: configuração do \texttt{hotHook} e script \texttt{dev}},
+label={lst:hmr_pkgjson}
+]{snippets/conceitos-fundamentais/hmr_package.json}
+
+\lstinputlisting[
+language=bash,
+caption={Rodando o dev server com HMR},
+label={lst:hmr_serve}
+]{snippets/conceitos-fundamentais/hmr_serve.sh}
+
+\begin{infobox}
+Em HMR, o AdonisJS constrói uma \emph{árvore de dependências} a partir de \texttt{bin/server.ts}. Somente arquivos importados entram na vigilância. Arquivos não referenciados não disparam recarga.
+\end{infobox}
+
+\subsection{Processo de Build com TypeScript}
+
+No desenvolvimento, executamos TS \emph{on-the-fly}; para produção, geramos um \emph{standalone build} JavaScript.
+
+\subsubsection*{Ferramentas}
 \begin{itemize}
-  \item Sistema de eventos interno.
-  \item Criação de eventos, listeners e práticas recomendadas.
-  \item Diferença entre eventos síncronos e assíncronos.
+\item \textbf{TSC}: type-checking e build de produção.
+\item \textbf{ts-node-maintained}: JIT para executar TS sem compilar (dev).
+\item \textbf{SWC}: acelera o JIT no dev junto ao ts-node.
 \end{itemize}
 
-\section{Jobs e Filas}
-\begin{itemize}
-  \item Conceito de processamento assíncrono.
-  \item Definição de Jobs e enfileiramento de tarefas.
-  \item Workers — funcionamento e boas práticas.
-\end{itemize}
+\lstinputlisting[
+language=bash,
+caption={Executando TS sem compilar (server, testes, Ace)},
+label={lst:tsnode_commands}
+]{snippets/conceitos-fundamentais/tsnode_commands.sh}
 
-\section{Task Scheduler}
-\begin{itemize}
-  \item Sistema de agendamento de tarefas recorrentes.
-  \item Criação de tasks programadas.
-  \item Integração com Jobs e Eventos.
-\end{itemize}
+\lstinputlisting[
+language=bash,
+caption={Servidor de desenvolvimento com watcher e integração de assets},
+label={lst:serve_watch}
+]{snippets/conceitos-fundamentais/serve_watch.sh}
+
+\lstinputlisting[
+language=bash,
+caption={Build de produção e execução do \texttt{standalone build}},
+label={lst:build_and_run}
+]{snippets/conceitos-fundamentais/build_and_run.sh}
+
+\begin{tipbox}
+Em projetos \texttt{"type": "module"}, versões do TypeScript anteriores à 5.7 exigem sufixo \texttt{.js} nos imports mesmo com arquivo \texttt{.ts} no disco. A partir da 5.7, o \texttt{.ts} pode ser aceito via \emph{path rewriting} para caminhos relativos.
+\end{tipbox}
+
+\subsection{Scaffolding e Codemods}
+
+\textbf{Scaffolding} gera arquivos a partir de \textit{stubs}. \textbf{Codemods} modificam o código via AST (ts-morph) para registrar providers, middlewares, env, etc.
+
+\subsubsection*{Stubs e Generators}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Ace command mínimo que gera arquivo a partir de stub},
+label={lst:make_using_stub}
+]{snippets/conceitos-fundamentais/make_using_stub.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Stub com Tempura/handlebars e \texttt{exports()} definindo destino},
+  label={lst:resource_stub}
+]{snippets/conceitos-fundamentais/api_resource.stub}
+
+\subsubsection*{Passando argumentos e variáveis}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Ace command aceitando argumento e repassando ao stub},
+label={lst:make_using_stub_args}
+]{snippets/conceitos-fundamentais/make_using_stub_args.ts}
+
+\subsubsection*{Codemods comuns}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Registrar middleware (stack do router/named/server)},
+label={lst:codemods_register_mw}
+]{snippets/conceitos-fundamentais/register_middleware.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Atualizar \texttt{.adonisrc.ts} (providers, commands, aliases)},
+label={lst:codemods_update_rc}
+]{snippets/conceitos-fundamentais/update_rc.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Definir validações de \texttt{Env} e inserir variáveis em \texttt{.env} / \texttt{.env.example}},
+label={lst:codemods_env}
+]{snippets/conceitos-fundamentais/env.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Registrar plugin do Japa e políticas do Bouncer},
+label={lst:codemods_japa_policies}
+]{snippets/conceitos-fundamentais/japa_policies.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Adicionar plugin do Vite e instalar pacotes},
+label={lst:codemods_vite_install}
+]{snippets/conceitos-fundamentais/vite_install.ts}
+
+\begin{warningbox}
+Os codemods assumem convenções padrão de nomes/paths. Alterações drásticas na estrutura podem impedir a aplicação automática das mudanças.
+\end{warningbox}
+
+\subsection{Assembler Hooks}
+
+Hooks permitem encaixar lógica em fases do assembler (dev/build/test).
+
+\lstinputlisting[
+language=TypeScript,
+caption={Declarando hooks no \texttt{.adonisrc.ts}},
+label={lst:hooks_rc}
+]{snippets/conceitos-fundamentais/hooks_in_adonisrc.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Hook \texttt{onBuildStarting} com lógica customizada},
+label={lst:hook_on_build_starting}
+]{snippets/conceitos-fundamentais/on_build_starting.ts}
+
+\begin{infobox}
+Hooks disponíveis: \texttt{onBuildStarting}, \texttt{onBuildCompleted}, \texttt{onDevServerStarted}, \texttt{onSourceFileChanged}.
+\end{infobox}
+
+\subsection{Aliases e Tooling Config}
+
+Padronize imports com aliases (ex.: \texttt{\#models/user}) integrando Node ESM e TypeScript.
+
+\lstinputlisting[
+language=json,
+caption={\texttt{package.json}: \texttt{imports} ESM para aliases},
+label={lst:pkg_imports}
+]{snippets/conceitos-fundamentais/package_imports.json}
+
+\lstinputlisting[
+language=json,
+caption={\texttt{tsconfig.json}: \texttt{compilerOptions.paths} para o editor/TS},
+label={lst:tsconfig_paths}
+]{snippets/conceitos-fundamentais/tsconfig_paths.json}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Uso de alias em código},
+label={lst:alias_usage}
+]{snippets/conceitos-fundamentais/alias_usage.ts}
+
+\begin{tipbox}
+Ao usar ESM, garanta \texttt{"type": "module"} no \texttt{package.json}. Se seu editor ainda sugere caminhos relativos, recarregue o TS Server e confirme que o \texttt{tsconfig.json} carregou a base correta.
+\end{tipbox}
 
 \chapter{Fundamentos}
+
 \section{Rotas}
+
 \section{Controllers}
 \section{Request e Response}
 \section{Validations}

@@ -1,0 +1,11 @@
+app/              # Código principal (controllers, models, services...)
+config/           # Configurações da aplicação
+contracts/        # Interfaces de tipos compartilhadas
+database/         # Migrations e seeders
+public/           # Arquivos estáticos (CSS, JS, imagens)
+resources/        # Templates Edge e arquivos do frontend
+start/            # Arquivos de boot (rotas, eventos, env, etc.)
+tests/            # Testes unitários e funcionais
+tmp/              # Arquivos temporários (logs, uploads em dev)
+providers/        # Service Providers personalizados
+types/            # Tipagens e contratos auxiliares

@@ -1,0 +1,8 @@
+defaultIndent: '  '
+removeTrailingWhitespace:
+  beforeProcessing: 1
+noIndentBlock:
+  verbatim: 1
+  Verbatim: 1
+  lstlisting: 1
+  minted: 1

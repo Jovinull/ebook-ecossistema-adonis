@@ -1,0 +1,12 @@
+{
+  "hotHook": {
+    "boundaries": [
+      "./app/controllers/**/*.ts",
+      "./app/middleware/*.ts",
+      "./app/listeners/**/*.ts"
+    ]
+  },
+  "scripts": {
+    "dev": "node ace serve --hmr"
+  }
+}

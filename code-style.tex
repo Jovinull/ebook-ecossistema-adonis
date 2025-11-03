@@ -73,6 +73,20 @@
 }
 
 % ==============================
+% Linguagem: Handlebars/Tempura (mínima)
+% ==============================
+\lstdefinelanguage{handlebars}{
+  basicstyle=\ttfamily\footnotesize,
+  sensitive=true,
+  morecomment=[l]{{!}},        % {{! comment }}
+  commentstyle=\color{gray}\itshape,
+  morestring=[b]',             % ' strings
+  morestring=[b]",             % " strings
+  morestring=[b]`              % ` template strings
+}
+
+
+% ==============================
 % Linguagem: SQL (Lucid ORM)
 % ==============================
 \lstdefinelanguage{SQL}{

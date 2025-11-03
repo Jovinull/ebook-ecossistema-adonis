@@ -1,0 +1,11 @@
+{
+  "name": "ebook-ecossistema-adonis",
+  "private": true,
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  },
+  "scripts": {
+    "fmt": "prettier --write \"snippets/**/*.{ts,js,json}\"",
+    "fmt:check": "prettier --check \"snippets/**/*.{ts,js,json}\""
+  }
+}
