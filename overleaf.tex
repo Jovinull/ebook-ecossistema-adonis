@@ -1436,43 +1436,43 @@ O HMR recarrega módulos JavaScript alterados sem reiniciar todo o processo. No 
 
 \subsubsection*{Conceitos-chave}
 \begin{itemize}
-\item \textbf{Sem propagação ao browser}: o backend não sincroniza estado de SPA/SSR.
-\item \textbf{Funciona com imports dinâmicos}: controllers, middlewares, listeners já usam \emph{dynamic import} por padrão.
-\item \textbf{Limites (boundaries)}: defina quais arquivos podem sofrer HMR; o restante gera \emph{full reload}.
+  \item \textbf{Sem propagação ao browser}: o backend não sincroniza estado de SPA/SSR.
+  \item \textbf{Funciona com imports dinâmicos}: controllers, middlewares, listeners já usam \emph{dynamic import} por padrão.
+  \item \textbf{Limites (boundaries)}: defina quais arquivos podem sofrer HMR; o restante gera \emph{full reload}.
 \end{itemize}
 
 \begin{warningbox}
-Não registre \texttt{config/}, \texttt{start/}, \texttt{.adonisrc.ts} ou \textit{service providers} como \emph{boundaries}. Esses módulos produzem efeitos colaterais e devem disparar \emph{full reload} para manter a aplicação íntegra.
+  Não registre \texttt{config/}, \texttt{start/}, \texttt{.adonisrc.ts} ou \textit{service providers} como \emph{boundaries}. Esses módulos produzem efeitos colaterais e devem disparar \emph{full reload} para manter a aplicação íntegra.
 \end{warningbox}
 
 \subsubsection*{Uso}
 
 \begin{enumerate}
-\item Instale o pacote do hook de HMR.
-\item Configure as \textit{boundaries} no \texttt{package.json}.
-\item Rode o servidor com a flag \texttt{--hmr}.
+  \item Instale o pacote do hook de HMR.
+  \item Configure as \textit{boundaries} no \texttt{package.json}.
+  \item Rode o servidor com a flag \texttt{--hmr}.
 \end{enumerate}
 
 \lstinputlisting[
-language=bash,
-caption={Instalação do HMR hook},
-label={lst:hmr_install}
+  language=bash,
+  caption={Instalação do HMR hook},
+  label={lst:hmr_install}
 ]{snippets/conceitos-fundamentais/hmr_install.sh}
 
 \lstinputlisting[
-language=json,
-caption={\texttt{package.json}: configuração do \texttt{hotHook} e script \texttt{dev}},
-label={lst:hmr_pkgjson}
+  language=json,
+  caption={\texttt{package.json}: configuração do \texttt{hotHook} e script \texttt{dev}},
+  label={lst:hmr_pkgjson}
 ]{snippets/conceitos-fundamentais/hmr_package.json}
 
 \lstinputlisting[
-language=bash,
-caption={Rodando o dev server com HMR},
-label={lst:hmr_serve}
+  language=bash,
+  caption={Rodando o dev server com HMR},
+  label={lst:hmr_serve}
 ]{snippets/conceitos-fundamentais/hmr_serve.sh}
 
 \begin{infobox}
-Em HMR, o AdonisJS constrói uma \emph{árvore de dependências} a partir de \texttt{bin/server.ts}. Somente arquivos importados entram na vigilância. Arquivos não referenciados não disparam recarga.
+  Em HMR, o AdonisJS constrói uma \emph{árvore de dependências} a partir de \texttt{bin/server.ts}. Somente arquivos importados entram na vigilância. Arquivos não referenciados não disparam recarga.
 \end{infobox}
 
 \subsection{Processo de Build com TypeScript}
@@ -1481,31 +1481,31 @@ No desenvolvimento, executamos TS \emph{on-the-fly}; para produção, geramos um
 
 \subsubsection*{Ferramentas}
 \begin{itemize}
-\item \textbf{TSC}: type-checking e build de produção.
-\item \textbf{ts-node-maintained}: JIT para executar TS sem compilar (dev).
-\item \textbf{SWC}: acelera o JIT no dev junto ao ts-node.
+  \item \textbf{TSC}: type-checking e build de produção.
+  \item \textbf{ts-node-maintained}: JIT para executar TS sem compilar (dev).
+  \item \textbf{SWC}: acelera o JIT no dev junto ao ts-node.
 \end{itemize}
 
 \lstinputlisting[
-language=bash,
-caption={Executando TS sem compilar (server, testes, Ace)},
-label={lst:tsnode_commands}
+  language=bash,
+  caption={Executando TS sem compilar (server, testes, Ace)},
+  label={lst:tsnode_commands}
 ]{snippets/conceitos-fundamentais/tsnode_commands.sh}
 
 \lstinputlisting[
-language=bash,
-caption={Servidor de desenvolvimento com watcher e integração de assets},
-label={lst:serve_watch}
+  language=bash,
+  caption={Servidor de desenvolvimento com watcher e integração de assets},
+  label={lst:serve_watch}
 ]{snippets/conceitos-fundamentais/serve_watch.sh}
 
 \lstinputlisting[
-language=bash,
-caption={Build de produção e execução do \texttt{standalone build}},
-label={lst:build_and_run}
+  language=bash,
+  caption={Build de produção e execução do \texttt{standalone build}},
+  label={lst:build_and_run}
 ]{snippets/conceitos-fundamentais/build_and_run.sh}
 
 \begin{tipbox}
-Em projetos \texttt{"type": "module"}, versões do TypeScript anteriores à 5.7 exigem sufixo \texttt{.js} nos imports mesmo com arquivo \texttt{.ts} no disco. A partir da 5.7, o \texttt{.ts} pode ser aceito via \emph{path rewriting} para caminhos relativos.
+  Em projetos \texttt{"type": "module"}, versões do TypeScript anteriores à 5.7 exigem sufixo \texttt{.js} nos imports mesmo com arquivo \texttt{.ts} no disco. A partir da 5.7, o \texttt{.ts} pode ser aceito via \emph{path rewriting} para caminhos relativos.
 \end{tipbox}
 
 \subsection{Scaffolding e Codemods}
@@ -1515,9 +1515,9 @@ Em projetos \texttt{"type": "module"}, versões do TypeScript anteriores à 5.7 
 \subsubsection*{Stubs e Generators}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Ace command mínimo que gera arquivo a partir de stub},
-label={lst:make_using_stub}
+  language=TypeScript,
+  caption={Ace command mínimo que gera arquivo a partir de stub},
+  label={lst:make_using_stub}
 ]{snippets/conceitos-fundamentais/make_using_stub.ts}
 
 \lstinputlisting[
@@ -1529,45 +1529,45 @@ label={lst:make_using_stub}
 \subsubsection*{Passando argumentos e variáveis}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Ace command aceitando argumento e repassando ao stub},
-label={lst:make_using_stub_args}
+  language=TypeScript,
+  caption={Ace command aceitando argumento e repassando ao stub},
+  label={lst:make_using_stub_args}
 ]{snippets/conceitos-fundamentais/make_using_stub_args.ts}
 
 \subsubsection*{Codemods comuns}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Registrar middleware (stack do router/named/server)},
-label={lst:codemods_register_mw}
+  language=TypeScript,
+  caption={Registrar middleware (stack do router/named/server)},
+  label={lst:codemods_register_mw}
 ]{snippets/conceitos-fundamentais/register_middleware.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Atualizar \texttt{.adonisrc.ts} (providers, commands, aliases)},
-label={lst:codemods_update_rc}
+  language=TypeScript,
+  caption={Atualizar \texttt{.adonisrc.ts} (providers, commands, aliases)},
+  label={lst:codemods_update_rc}
 ]{snippets/conceitos-fundamentais/update_rc.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Definir validações de \texttt{Env} e inserir variáveis em \texttt{.env} / \texttt{.env.example}},
-label={lst:codemods_env}
+  language=TypeScript,
+  caption={Definir validações de \texttt{Env} e inserir variáveis em \texttt{.env} / \texttt{.env.example}},
+  label={lst:codemods_env}
 ]{snippets/conceitos-fundamentais/env.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Registrar plugin do Japa e políticas do Bouncer},
-label={lst:codemods_japa_policies}
+  language=TypeScript,
+  caption={Registrar plugin do Japa e políticas do Bouncer},
+  label={lst:codemods_japa_policies}
 ]{snippets/conceitos-fundamentais/japa_policies.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Adicionar plugin do Vite e instalar pacotes},
-label={lst:codemods_vite_install}
+  language=TypeScript,
+  caption={Adicionar plugin do Vite e instalar pacotes},
+  label={lst:codemods_vite_install}
 ]{snippets/conceitos-fundamentais/vite_install.ts}
 
 \begin{warningbox}
-Os codemods assumem convenções padrão de nomes/paths. Alterações drásticas na estrutura podem impedir a aplicação automática das mudanças.
+  Os codemods assumem convenções padrão de nomes/paths. Alterações drásticas na estrutura podem impedir a aplicação automática das mudanças.
 \end{warningbox}
 
 \subsection{Assembler Hooks}
@@ -1575,19 +1575,19 @@ Os codemods assumem convenções padrão de nomes/paths. Alterações drásticas
 Hooks permitem encaixar lógica em fases do assembler (dev/build/test).
 
 \lstinputlisting[
-language=TypeScript,
-caption={Declarando hooks no \texttt{.adonisrc.ts}},
-label={lst:hooks_rc}
+  language=TypeScript,
+  caption={Declarando hooks no \texttt{.adonisrc.ts}},
+  label={lst:hooks_rc}
 ]{snippets/conceitos-fundamentais/hooks_in_adonisrc.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Hook \texttt{onBuildStarting} com lógica customizada},
-label={lst:hook_on_build_starting}
+  language=TypeScript,
+  caption={Hook \texttt{onBuildStarting} com lógica customizada},
+  label={lst:hook_on_build_starting}
 ]{snippets/conceitos-fundamentais/on_build_starting.ts}
 
 \begin{infobox}
-Hooks disponíveis: \texttt{onBuildStarting}, \texttt{onBuildCompleted}, \texttt{onDevServerStarted}, \texttt{onSourceFileChanged}.
+  Hooks disponíveis: \texttt{onBuildStarting}, \texttt{onBuildCompleted}, \texttt{onDevServerStarted}, \texttt{onSourceFileChanged}.
 \end{infobox}
 
 \subsection{Aliases e Tooling Config}
@@ -1595,25 +1595,25 @@ Hooks disponíveis: \texttt{onBuildStarting}, \texttt{onBuildCompleted}, \texttt
 Padronize imports com aliases (ex.: \texttt{\#models/user}) integrando Node ESM e TypeScript.
 
 \lstinputlisting[
-language=json,
-caption={\texttt{package.json}: \texttt{imports} ESM para aliases},
-label={lst:pkg_imports}
+  language=json,
+  caption={\texttt{package.json}: \texttt{imports} ESM para aliases},
+  label={lst:pkg_imports}
 ]{snippets/conceitos-fundamentais/package_imports.json}
 
 \lstinputlisting[
-language=json,
-caption={\texttt{tsconfig.json}: \texttt{compilerOptions.paths} para o editor/TS},
-label={lst:tsconfig_paths}
+  language=json,
+  caption={\texttt{tsconfig.json}: \texttt{compilerOptions.paths} para o editor/TS},
+  label={lst:tsconfig_paths}
 ]{snippets/conceitos-fundamentais/tsconfig_paths.json}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Uso de alias em código},
-label={lst:alias_usage}
+  language=TypeScript,
+  caption={Uso de alias em código},
+  label={lst:alias_usage}
 ]{snippets/conceitos-fundamentais/alias_usage.ts}
 
 \begin{tipbox}
-Ao usar ESM, garanta \texttt{"type": "module"} no \texttt{package.json}. Se seu editor ainda sugere caminhos relativos, recarregue o TS Server e confirme que o \texttt{tsconfig.json} carregou a base correta.
+  Ao usar ESM, garanta \texttt{"type": "module"} no \texttt{package.json}. Se seu editor ainda sugere caminhos relativos, recarregue o TS Server e confirme que o \texttt{tsconfig.json} carregou a base correta.
 \end{tipbox}
 
 \chapter{Fundamentos}
@@ -1623,27 +1623,27 @@ Ao usar ESM, garanta \texttt{"type": "module"} no \texttt{package.json}. Se seu 
 As rotas conectam URLs a handlers. No AdonisJS v6, elas moram em start/routes.ts e são definidas com o serviço router.
 
 \begin{infobox}
-Penso nas rotas como uma “interface pública” da aplicação. Uma organização clara (nomes, grupos, prefixos) simplifica navegação, testes e manutenção ao longo do tempo.
+  Penso nas rotas como uma “interface pública” da aplicação. Uma organização clara (nomes, grupos, prefixos) simplifica navegação, testes e manutenção ao longo do tempo.
 \end{infobox}
 
 \subsection{Primeiros exemplos}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Rotas básicas e parâmetro dinâmico},
-label={lst:rotas_basicas}
+  language=TypeScript,
+  caption={Rotas básicas e parâmetro dinâmico},
+  label={lst:rotas_basicas}
 ]{snippets/fundamentos/rotas/start_routes_basic.ts}
 
 O segmento :id captura valores dinâmicos (route params). Você acessa via \texttt{params} no handler.
 
 \begin{tipbox}
-Durante o desenvolvimento, liste as rotas com \texttt{node ace list:routes}. Ajuda muito quando a base cresce.
+  Durante o desenvolvimento, liste as rotas com \texttt{node ace list:routes}. Ajuda muito quando a base cresce.
 \end{tipbox}
 
 \lstinputlisting[
-language=bash,
-caption={Listando rotas registradas},
-label={lst:list_routes}
+  language=bash,
+  caption={Listando rotas registradas},
+  label={lst:list_routes}
 ]{snippets/fundamentos/rotas/list_routes.sh}
 
 \subsection{Parâmetros de rota}
@@ -1651,25 +1651,25 @@ label={lst:list_routes}
 \paragraph{Múltiplos parâmetros.} Você pode ter mais de um, cada qual com nome único.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Múltiplos parâmetros na URI},
-label={lst:multi_params}
+  language=TypeScript,
+  caption={Múltiplos parâmetros na URI},
+  label={lst:multi_params}
 ]{snippets/fundamentos/rotas/route_multiple_params.ts}
 
 \paragraph{Parâmetros opcionais.} Sufixe com \texttt{?}. Sempre coloque opcionais \textit{depois} dos obrigatórios.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Parâmetro opcional},
-label={lst:optional_param}
+  language=TypeScript,
+  caption={Parâmetro opcional},
+  label={lst:optional_param}
 ]{snippets/fundamentos/rotas/route_optional_param.ts}
 
 \paragraph{Wildcard.} Use \texttt{*} no \textit{final} da rota para capturar todos os segmentos remanescentes.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Parâmetro coringa (wildcard)},
-label={lst:wildcard}
+  language=TypeScript,
+  caption={Parâmetro coringa (wildcard)},
+  label={lst:wildcard}
 ]{snippets/fundamentos/rotas/route_wildcard.ts}
 
 \subsection{Matchers (validação e casting de params)}
@@ -1677,21 +1677,21 @@ label={lst:wildcard}
 Por padrão, \texttt{/posts/1} e \texttt{/posts/foo} casam a mesma rota \texttt{/posts/:id}. Use \textit{matchers} para validar (regex) e, se quiser, fazer cast do valor.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Regex + cast para número},
-label={lst:matcher_cast}
+  language=TypeScript,
+  caption={Regex + cast para número},
+  label={lst:matcher_cast}
 ]{snippets/fundamentos/rotas/route_matcher_regex_cast.ts}
 
 O roteador oferece \textit{helpers} prontos: \texttt{number()}, \texttt{uuid()}, \texttt{slug()}. Também dá para aplicar globalmente.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Matchers integrados e matcher global},
-label={lst:matchers_inbuilt_global}
+  language=TypeScript,
+  caption={Matchers integrados e matcher global},
+  label={lst:matchers_inbuilt_global}
 ]{snippets/fundamentos/rotas/route_matchers_inbuilt_global.ts}
 
 \begin{tipbox}
-Minha prática é impor \texttt{number()} para IDs em \texttt{/resource/:id}. Evita colisões contra endpoints “verbais” (\texttt{/posts/archived}) e melhora a qualidade dos logs.
+  Minha prática é impor \texttt{number()} para IDs em \texttt{/resource/:id}. Evita colisões contra endpoints “verbais” (\texttt{/posts/archived}) e melhora a qualidade dos logs.
 \end{tipbox}
 
 \subsection{Métodos HTTP e handlers}
@@ -1699,17 +1699,17 @@ Minha prática é impor \texttt{number()} para IDs em \texttt{/resource/:id}. Ev
 Cada método tem seu atalho: \texttt{get}, \texttt{post}, \texttt{put}, \texttt{patch}, \texttt{delete}. Use \texttt{any} com parcimônia (pode mascarar bugs de método).
 
 \lstinputlisting[
-language=TypeScript,
-caption={Rotas por método HTTP},
-label={lst:http_methods}
+  language=TypeScript,
+  caption={Rotas por método HTTP},
+  label={lst:http_methods}
 ]{snippets/fundamentos/rotas/http_methods.ts}
 
 Handlers podem ser \textit{inline} (sync/async) ou apontar para controller (criado via IoC automaticamente).
 
 \lstinputlisting[
-language=TypeScript,
-caption={Vinculando rota a um controller},
-label={lst:controller_binding}
+  language=TypeScript,
+  caption={Vinculando rota a um controller},
+  label={lst:controller_binding}
 ]{snippets/fundamentos/rotas/handler_controller_binding.ts}
 
 \subsection{Middleware em rotas}
@@ -1717,9 +1717,9 @@ label={lst:controller_binding}
 Aplique com \texttt{.use()}. A ordem importa (grupo antes, rota depois).
 
 \lstinputlisting[
-language=TypeScript,
-caption={Middleware inline em rota},
-label={lst:route_middleware}
+  language=TypeScript,
+  caption={Middleware inline em rota},
+  label={lst:route_middleware}
 ]{snippets/fundamentos/rotas/route_middleware_inline.ts}
 
 \subsection{Nomeando rotas e gerando URLs}
@@ -1727,13 +1727,13 @@ label={lst:route_middleware}
 Nomeie com \texttt{.as()}; depois gere URLs com o \texttt{router.builder()}.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Nome e URL Builder},
-label={lst:route_name_builder}
+  language=TypeScript,
+  caption={Nome e URL Builder},
+  label={lst:route_name_builder}
 ]{snippets/fundamentos/rotas/route_named_and_url_builder.ts}
 
 \begin{tipbox}
-Padrão sugerido: \texttt{resource.action} (\texttt{users.index}, \texttt{users.store}). Fica previsível para templates, redirects e testes.
+  Padrão sugerido: \texttt{resource.action} (\texttt{users.index}, \texttt{users.store}). Fica previsível para templates, redirects e testes.
 \end{tipbox}
 
 \subsection{Agrupando rotas}
@@ -1741,21 +1741,21 @@ Padrão sugerido: \texttt{resource.action} (\texttt{users.index}, \texttt{users.
 Grupos facilitam aplicar \texttt{prefix}, \texttt{as} e \texttt{use} em lote; também podem ser aninhados.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Grupo com prefixo e nome},
-label={lst:group_prefix_as}
+  language=TypeScript,
+  caption={Grupo com prefixo e nome},
+  label={lst:group_prefix_as}
 ]{snippets/fundamentos/rotas/group_prefix_as.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Grupos aninhados},
-label={lst:nested_groups}
+  language=TypeScript,
+  caption={Grupos aninhados},
+  label={lst:nested_groups}
 ]{snippets/fundamentos/rotas/nested_groups.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Middleware aplicado ao grupo},
-label={lst:group_middleware}
+  language=TypeScript,
+  caption={Middleware aplicado ao grupo},
+  label={lst:group_middleware}
 ]{snippets/fundamentos/rotas/group_middleware.ts}
 
 \subsection{Rotas por domínio e subdomínios dinâmicos}
@@ -1763,19 +1763,19 @@ label={lst:group_middleware}
 Mapeie domínios específicos (útil em multi-tenant ou blog separado) e use segmentos dinâmicos (ex.: \texttt{:tenant}).
 
 \lstinputlisting[
-language=TypeScript,
-caption={Rotas em domínio específico},
-label={lst:domain_routes}
+  language=TypeScript,
+  caption={Rotas em domínio específico},
+  label={lst:domain_routes}
 ]{snippets/fundamentos/rotas/domain_routes.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Subdomínio dinâmico},
-label={lst:dynamic_subdomain}
+  language=TypeScript,
+  caption={Subdomínio dinâmico},
+  label={lst:dynamic_subdomain}
 ]{snippets/fundamentos/rotas/dynamic_subdomain.ts}
 
 \begin{warningbox}
-Em dev, você precisa apontar o host (DNS/hosts/reverso) para que o nome do domínio chegue correto à aplicação; caso contrário, o match do grupo por domínio não dispara.
+  Em dev, você precisa apontar o host (DNS/hosts/reverso) para que o nome do domínio chegue correto à aplicação; caso contrário, o match do grupo por domínio não dispara.
 \end{warningbox}
 
 \subsection{Atalhos \texttt{router.on()} (Edge/Inertia/Redirect)}
@@ -1783,21 +1783,21 @@ Em dev, você precisa apontar o host (DNS/hosts/reverso) para que o nome do dom�
 Se só deseja renderizar uma view ou redirecionar, \texttt{router.on()} fornece atalhos convenientes.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Render Edge diretamente da rota},
-label={lst:render_edge}
+  language=TypeScript,
+  caption={Render Edge diretamente da rota},
+  label={lst:render_edge}
 ]{snippets/fundamentos/rotas/render_edge.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Render Inertia (se configurado)},
-label={lst:render_inertia}
+  language=TypeScript,
+  caption={Render Inertia (se configurado)},
+  label={lst:render_inertia}
 ]{snippets/fundamentos/rotas/render_inertia.ts}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Redirecionamentos com \texttt{on()}},
-label={lst:redirects}
+  language=TypeScript,
+  caption={Redirecionamentos com \texttt{on()}},
+  label={lst:redirects}
 ]{snippets/fundamentos/rotas/redirect_examples.ts}
 
 \subsection{Rota atual e ordem de matching}
@@ -1805,19 +1805,19 @@ label={lst:redirects}
 Acesse metadados da rota atual via \texttt{ctx.route} e confira se a requisição “bate” numa rota com \texttt{request.matchesRoute}.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Rota atual e matchesRoute},
-label={lst:current_route}
+  language=TypeScript,
+  caption={Rota atual e matchesRoute},
+  label={lst:current_route}
 ]{snippets/fundamentos/rotas/current_request_route.ts}
 
 \begin{warningbox}
-A ordem de registro define o \textit{matching}. Ponha rotas \textbf{mais específicas} acima das genéricas com params.
+  A ordem de registro define o \textit{matching}. Ponha rotas \textbf{mais específicas} acima das genéricas com params.
 \end{warningbox}
 
 \lstinputlisting[
-language=TypeScript,
-caption={Específica antes da dinâmica},
-label={lst:ordering}
+  language=TypeScript,
+  caption={Específica antes da dinâmica},
+  label={lst:ordering}
 ]{snippets/fundamentos/rotas/ordering_specific_before_dynamic.ts}
 
 \subsection{404 (quando rota não existe)}
@@ -1825,9 +1825,9 @@ label={lst:ordering}
 Intercepte \texttt{E\_ROUTE\_NOT\_FOUND} no handler global e renderize a página 404.
 
 \lstinputlisting[
-language=TypeScript,
-caption={Tratando 404 no exception handler},
-label={lst:handler_404}
+  language=TypeScript,
+  caption={Tratando 404 no exception handler},
+  label={lst:handler_404}
 ]{snippets/fundamentos/rotas/handler_404_example.ts}
 
 \subsection{URL Builder — extras úteis}
@@ -1835,13 +1835,13 @@ label={lst:handler_404}
 Params posicionais ou por objeto, query string, \texttt{prefixUrl}, \texttt{makeSigned} (com expiração), \texttt{disableRouteLookup} e URLs para domínios específicos.
 
 \lstinputlisting[
-language=TypeScript,
-caption={URL Builder avançado},
-label={lst:url_builder_variants}
+  language=TypeScript,
+  caption={URL Builder avançado},
+  label={lst:url_builder_variants}
 ]{snippets/fundamentos/rotas/url_builder_variants.ts}
 
 \begin{tipbox}
-Para \textit{signed URLs}, garanta que o \texttt{APP\_KEY} esteja setado adequadamente no ambiente e seja estável entre instâncias. Em produção, adote expiração (\texttt{expiresIn}) por segurança.
+  Para \textit{signed URLs}, garanta que o \texttt{APP\_KEY} esteja setado adequadamente no ambiente e seja estável entre instâncias. Em produção, adote expiração (\texttt{expiresIn}) por segurança.
 \end{tipbox}
 
 \subsection{Estendendo o roteador (macros)}
@@ -1849,13 +1849,13 @@ Para \textit{signed URLs}, garanta que o \texttt{APP\_KEY} esteja setado adequad
 Quando a equipe precisa de convenções repetíveis (auditoria, tagging, políticas), macros ajudam. Exemplo simples:
 
 \lstinputlisting[
-language=TypeScript,
-caption={Macro no Router com type augmentation},
-label={lst:router_macros}
+  language=TypeScript,
+  caption={Macro no Router com type augmentation},
+  label={lst:router_macros}
 ]{snippets/fundamentos/rotas/router_macros.ts}
 
 \begin{infobox}
-Macros são uma forma elegante de padronizar comportamentos sem “espalhar” código. Úteis em plataformas multi-produto.
+  Macros são uma forma elegante de padronizar comportamentos sem “espalhar” código. Úteis em plataformas multi-produto.
 \end{infobox}
 
 \section{Controllers}

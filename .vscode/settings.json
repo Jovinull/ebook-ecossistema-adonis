@@ -1,19 +1,9 @@
 {
-  // -------- LaTeX --------
   "[latex]": {
     "editor.defaultFormatter": "James-Yu.latex-workshop"
   },
   "editor.formatOnSave": true,
-  // Usa latexindent (precisa de Perl no Windows)
-  "latex-workshop.formatting.latex": "latexindent",
-  "latex-workshop.formatting.latexindent.path": "latexindent",
-  "latex-workshop.formatting.latexindent.args": [
-    "-m",
-    "-l=./.latexindent.yaml"
-  ],
-  // Pasta de saída
   "latex-workshop.latex.outDir": "./build",
-  // Recipes: prefira LuaLaTeX; deixe PDFLaTeX como alternativa
   "latex-workshop.latex.recipes": [
     {
       "name": "latexmk (lualatex)",
@@ -65,11 +55,7 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  // Opção B (alternativa se não quiser instalar Prettier):
-  // "[typescript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
-  // "[javascript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
-  // "[json]": { "editor.defaultFormatter": "vscode.json-language-features" },
-  // -------- Code Actions on Save (novo formato) --------
+  // -------- Code Actions on Save --------
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit"
