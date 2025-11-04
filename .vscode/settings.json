@@ -1,0 +1,77 @@
+{
+  // -------- LaTeX --------
+  "[latex]": {
+    "editor.defaultFormatter": "James-Yu.latex-workshop"
+  },
+  "editor.formatOnSave": true,
+  // Usa latexindent (precisa de Perl no Windows)
+  "latex-workshop.formatting.latex": "latexindent",
+  "latex-workshop.formatting.latexindent.path": "latexindent",
+  "latex-workshop.formatting.latexindent.args": [
+    "-m",
+    "-l=./.latexindent.yaml"
+  ],
+  // Pasta de saída
+  "latex-workshop.latex.outDir": "./build",
+  // Recipes: prefira LuaLaTeX; deixe PDFLaTeX como alternativa
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk (lualatex)",
+      "tools": [
+        "latexmk-lua"
+      ]
+    },
+    {
+      "name": "latexmk (pdflatex)",
+      "tools": [
+        "latexmk-pdf"
+      ]
+    }
+  ],
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk-lua",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-lualatex",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ]
+    },
+    {
+      "name": "latexmk-pdf",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ]
+    }
+  ],
+  // -------- Formatadores p/ TS/JS/JSON --------
+  // Opção A: se você usar Prettier, instale a extensão "esbenp.prettier-vscode"
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // Opção B (alternativa se não quiser instalar Prettier):
+  // "[typescript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
+  // "[javascript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
+  // "[json]": { "editor.defaultFormatter": "vscode.json-language-features" },
+  // -------- Code Actions on Save (novo formato) --------
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  }
+}
