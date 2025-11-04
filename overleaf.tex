@@ -1620,6 +1620,244 @@ Ao usar ESM, garanta \texttt{"type": "module"} no \texttt{package.json}. Se seu 
 
 \section{Rotas}
 
+As rotas conectam URLs a handlers. No AdonisJS v6, elas moram em start/routes.ts e são definidas com o serviço router.
+
+\begin{infobox}
+Penso nas rotas como uma “interface pública” da aplicação. Uma organização clara (nomes, grupos, prefixos) simplifica navegação, testes e manutenção ao longo do tempo.
+\end{infobox}
+
+\subsection{Primeiros exemplos}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Rotas básicas e parâmetro dinâmico},
+label={lst:rotas_basicas}
+]{snippets/fundamentos/rotas/start_routes_basic.ts}
+
+O segmento :id captura valores dinâmicos (route params). Você acessa via \texttt{params} no handler.
+
+\begin{tipbox}
+Durante o desenvolvimento, liste as rotas com \texttt{node ace list:routes}. Ajuda muito quando a base cresce.
+\end{tipbox}
+
+\lstinputlisting[
+language=bash,
+caption={Listando rotas registradas},
+label={lst:list_routes}
+]{snippets/fundamentos/rotas/list_routes.sh}
+
+\subsection{Parâmetros de rota}
+
+\paragraph{Múltiplos parâmetros.} Você pode ter mais de um, cada qual com nome único.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Múltiplos parâmetros na URI},
+label={lst:multi_params}
+]{snippets/fundamentos/rotas/route_multiple_params.ts}
+
+\paragraph{Parâmetros opcionais.} Sufixe com \texttt{?}. Sempre coloque opcionais \textit{depois} dos obrigatórios.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Parâmetro opcional},
+label={lst:optional_param}
+]{snippets/fundamentos/rotas/route_optional_param.ts}
+
+\paragraph{Wildcard.} Use \texttt{*} no \textit{final} da rota para capturar todos os segmentos remanescentes.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Parâmetro coringa (wildcard)},
+label={lst:wildcard}
+]{snippets/fundamentos/rotas/route_wildcard.ts}
+
+\subsection{Matchers (validação e casting de params)}
+
+Por padrão, \texttt{/posts/1} e \texttt{/posts/foo} casam a mesma rota \texttt{/posts/:id}. Use \textit{matchers} para validar (regex) e, se quiser, fazer cast do valor.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Regex + cast para número},
+label={lst:matcher_cast}
+]{snippets/fundamentos/rotas/route_matcher_regex_cast.ts}
+
+O roteador oferece \textit{helpers} prontos: \texttt{number()}, \texttt{uuid()}, \texttt{slug()}. Também dá para aplicar globalmente.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Matchers integrados e matcher global},
+label={lst:matchers_inbuilt_global}
+]{snippets/fundamentos/rotas/route_matchers_inbuilt_global.ts}
+
+\begin{tipbox}
+Minha prática é impor \texttt{number()} para IDs em \texttt{/resource/:id}. Evita colisões contra endpoints “verbais” (\texttt{/posts/archived}) e melhora a qualidade dos logs.
+\end{tipbox}
+
+\subsection{Métodos HTTP e handlers}
+
+Cada método tem seu atalho: \texttt{get}, \texttt{post}, \texttt{put}, \texttt{patch}, \texttt{delete}. Use \texttt{any} com parcimônia (pode mascarar bugs de método).
+
+\lstinputlisting[
+language=TypeScript,
+caption={Rotas por método HTTP},
+label={lst:http_methods}
+]{snippets/fundamentos/rotas/http_methods.ts}
+
+Handlers podem ser \textit{inline} (sync/async) ou apontar para controller (criado via IoC automaticamente).
+
+\lstinputlisting[
+language=TypeScript,
+caption={Vinculando rota a um controller},
+label={lst:controller_binding}
+]{snippets/fundamentos/rotas/handler_controller_binding.ts}
+
+\subsection{Middleware em rotas}
+
+Aplique com \texttt{.use()}. A ordem importa (grupo antes, rota depois).
+
+\lstinputlisting[
+language=TypeScript,
+caption={Middleware inline em rota},
+label={lst:route_middleware}
+]{snippets/fundamentos/rotas/route_middleware_inline.ts}
+
+\subsection{Nomeando rotas e gerando URLs}
+
+Nomeie com \texttt{.as()}; depois gere URLs com o \texttt{router.builder()}.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Nome e URL Builder},
+label={lst:route_name_builder}
+]{snippets/fundamentos/rotas/route_named_and_url_builder.ts}
+
+\begin{tipbox}
+Padrão sugerido: \texttt{resource.action} (\texttt{users.index}, \texttt{users.store}). Fica previsível para templates, redirects e testes.
+\end{tipbox}
+
+\subsection{Agrupando rotas}
+
+Grupos facilitam aplicar \texttt{prefix}, \texttt{as} e \texttt{use} em lote; também podem ser aninhados.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Grupo com prefixo e nome},
+label={lst:group_prefix_as}
+]{snippets/fundamentos/rotas/group_prefix_as.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Grupos aninhados},
+label={lst:nested_groups}
+]{snippets/fundamentos/rotas/nested_groups.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Middleware aplicado ao grupo},
+label={lst:group_middleware}
+]{snippets/fundamentos/rotas/group_middleware.ts}
+
+\subsection{Rotas por domínio e subdomínios dinâmicos}
+
+Mapeie domínios específicos (útil em multi-tenant ou blog separado) e use segmentos dinâmicos (ex.: \texttt{:tenant}).
+
+\lstinputlisting[
+language=TypeScript,
+caption={Rotas em domínio específico},
+label={lst:domain_routes}
+]{snippets/fundamentos/rotas/domain_routes.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Subdomínio dinâmico},
+label={lst:dynamic_subdomain}
+]{snippets/fundamentos/rotas/dynamic_subdomain.ts}
+
+\begin{warningbox}
+Em dev, você precisa apontar o host (DNS/hosts/reverso) para que o nome do domínio chegue correto à aplicação; caso contrário, o match do grupo por domínio não dispara.
+\end{warningbox}
+
+\subsection{Atalhos \texttt{router.on()} (Edge/Inertia/Redirect)}
+
+Se só deseja renderizar uma view ou redirecionar, \texttt{router.on()} fornece atalhos convenientes.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Render Edge diretamente da rota},
+label={lst:render_edge}
+]{snippets/fundamentos/rotas/render_edge.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Render Inertia (se configurado)},
+label={lst:render_inertia}
+]{snippets/fundamentos/rotas/render_inertia.ts}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Redirecionamentos com \texttt{on()}},
+label={lst:redirects}
+]{snippets/fundamentos/rotas/redirect_examples.ts}
+
+\subsection{Rota atual e ordem de matching}
+
+Acesse metadados da rota atual via \texttt{ctx.route} e confira se a requisição “bate” numa rota com \texttt{request.matchesRoute}.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Rota atual e matchesRoute},
+label={lst:current_route}
+]{snippets/fundamentos/rotas/current_request_route.ts}
+
+\begin{warningbox}
+A ordem de registro define o \textit{matching}. Ponha rotas \textbf{mais específicas} acima das genéricas com params.
+\end{warningbox}
+
+\lstinputlisting[
+language=TypeScript,
+caption={Específica antes da dinâmica},
+label={lst:ordering}
+]{snippets/fundamentos/rotas/ordering_specific_before_dynamic.ts}
+
+\subsection{404 (quando rota não existe)}
+
+Intercepte \texttt{E\_ROUTE\_NOT\_FOUND} no handler global e renderize a página 404.
+
+\lstinputlisting[
+language=TypeScript,
+caption={Tratando 404 no exception handler},
+label={lst:handler_404}
+]{snippets/fundamentos/rotas/handler_404_example.ts}
+
+\subsection{URL Builder — extras úteis}
+
+Params posicionais ou por objeto, query string, \texttt{prefixUrl}, \texttt{makeSigned} (com expiração), \texttt{disableRouteLookup} e URLs para domínios específicos.
+
+\lstinputlisting[
+language=TypeScript,
+caption={URL Builder avançado},
+label={lst:url_builder_variants}
+]{snippets/fundamentos/rotas/url_builder_variants.ts}
+
+\begin{tipbox}
+Para \textit{signed URLs}, garanta que o \texttt{APP\_KEY} esteja setado adequadamente no ambiente e seja estável entre instâncias. Em produção, adote expiração (\texttt{expiresIn}) por segurança.
+\end{tipbox}
+
+\subsection{Estendendo o roteador (macros)}
+
+Quando a equipe precisa de convenções repetíveis (auditoria, tagging, políticas), macros ajudam. Exemplo simples:
+
+\lstinputlisting[
+language=TypeScript,
+caption={Macro no Router com type augmentation},
+label={lst:router_macros}
+]{snippets/fundamentos/rotas/router_macros.ts}
+
+\begin{infobox}
+Macros são uma forma elegante de padronizar comportamentos sem “espalhar” código. Úteis em plataformas multi-produto.
+\end{infobox}
+
 \section{Controllers}
 \section{Request e Response}
 \section{Validations}
