@@ -1,0 +1,18 @@
+@flashMessage('notification')
+  <div class="notification {{ $message.type }}">
+    {{ $message.message }}
+  </div>
+@end
+
+<form method="POST" action="/contact">
+  <!-- campos -->
+  <div>
+    <label for="title">Title</label>
+    <input id="title" name="title" value="{{ old('title') || '' }}" />
+    @inputError('title')
+      @each(message in $messages)
+        <p>{{ message }}</p>
+      @end
+    @end
+  </div>
+</form>

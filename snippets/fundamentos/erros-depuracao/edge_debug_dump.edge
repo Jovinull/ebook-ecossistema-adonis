@@ -1,0 +1,15 @@
+@debugger
+{{-- Dump template state e continuar --}}
+@dump(state)
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  @stack('dumper')
+</head>
+<body>
+  {{-- Dump e interromper --}}
+  @dd(state)
+</body>
+</html>
