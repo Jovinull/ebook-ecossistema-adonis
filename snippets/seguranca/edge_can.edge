@@ -1,0 +1,14 @@
+@can('editPost', post)
+  <a href="/posts/{{ post.id }}/edit">Editar</a>
+@end
+
+@cannot('editPost', post)
+  <span class="text-gray-500">Edição não permitida</span>
+@end
+
+@can('PostPolicy.delete', post)
+  <form method="POST" action="/posts/{{ post.id }}/delete">
+    {{ csrfField() }}
+    <button class="text-red-600">Excluir</button>
+  </form>
+@end

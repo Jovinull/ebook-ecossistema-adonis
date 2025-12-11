@@ -1,0 +1,162 @@
+\section{CORS e Headers de Segurança}
+
+Além de autenticação, autorização e validação, a segurança HTTP passa por \textbf{políticas de origem} (CORS) e por um conjunto de \textbf{headers defensivos}. Nesta seção, mostramos como o AdonisJS facilita essa configuração, combinando o pacote \texttt{@adonisjs/cors} com o \texttt{@adonisjs/shield}.
+
+\section{Entendendo o papel do CORS}
+
+CORS (\textit{Cross-Origin Resource Sharing}) é um mecanismo do \textbf{navegador}. Ele impede que uma página em \texttt{https://siteA.com} faça requisições livremente para \texttt{https://api.siteB.com} sem que a API tenha declarado explicitamente que isso é permitido.
+
+No backend (Adonis), sua responsabilidade é:
+
+\begin{itemize}
+  \item Retornar os headers corretos (\texttt{Access-Control-Allow-*}) quando a requisição vier de uma origem confiável.
+  \item Rejeitar (ou simplesmente não autorizar) origens que não devem consumir a API.
+\end{itemize}
+
+\section{Configurando CORS no AdonisJS}
+
+Após instalar:
+
+\lstinputlisting[
+  language=bash,
+  caption={Instalando o CORS},
+  label={lst:cors_install}
+]{snippets/seguranca/cors_install.sh}
+
+o arquivo \texttt{config/cors.ts} controla a política:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configuração padrão de CORS},
+  label={lst:cors_config}
+]{snippets/seguranca/cors_config.ts}
+
+\subsection{Estratégias de \texttt{origin}}
+
+\begin{description}
+  \item[\texttt{true}] Permite a origem atual (dinâmico).
+  \item[\texttt{false}] Bloqueia todas.
+  \item[\texttt{'*'}] Permite qualquer origem (cuidado, principalmente com \texttt{credentials: true}).
+  \item[\texttt{['app.com', 'admin.app.com']}] Lista de domínios permitidos.
+  \item[\texttt{(requestOrigin, ctx) => \{ ... \}}] Função dinâmica baseada na requisição.
+\end{description}
+
+\begin{warningbox}
+  \textbf{Importante}: CORS não é autenticação. É uma camada extra de proteção no navegador. APIs públicas podem, sim, ter CORS mais permissivo, desde que a autenticação/autorização esteja correta.
+\end{warningbox}
+
+\subsection{Headers, métodos e credenciais}
+
+\begin{itemize}
+  \item \textbf{\texttt{methods}}: quais métodos serão aceitos em \textit{preflight}.
+  \item \textbf{\texttt{headers}}: quais headers de requisição o browser pode enviar.
+  \item \textbf{\texttt{credentials}}: se \texttt{true}, permite envio de cookies e \texttt{Authorization} em cross-origin.
+\end{itemize}
+
+Exemplo mais restritivo:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={CORS restrito a um frontend específico},
+  label={lst:cors_restricted}
+]{snippets/seguranca/cors_restricted.ts}
+
+\section{Debugando CORS na prática}
+
+\begin{itemize}
+  \item Sempre inspecione a aba \textbf{Network} do navegador e veja quais headers a API está devolvendo.
+  \item Atenção especial ao \texttt{Access-Control-Allow-Origin} e \texttt{Access-Control-Allow-Credentials}.
+  \item Muitos erros ``CORS'' na verdade são falhas de autenticação (401/403) mascaradas pelo browser.
+\end{itemize}
+
+\section{Headers de segurança com Shield}
+
+O \texttt{@adonisjs/shield} também cuida de vários headers importantes:
+
+\begin{itemize}
+  \item \textbf{HSTS}: \texttt{Strict-Transport-Security}.
+  \item \textbf{X-Frame-Options}: controle de \texttt{iframe}.
+  \item \textbf{X-Content-Type-Options}: evita \textit{content sniffing}.
+  \item \textbf{CSP}: \texttt{Content-Security-Policy}.
+\end{itemize}
+
+\subsection{HSTS — forçando HTTPS}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configurando HSTS},
+  label={lst:shield_hsts}
+]{snippets/seguranca/shield_hsts.ts}
+
+\begin{infobox}
+  HSTS faz o navegador \textbf{lembrar} que o seu domínio só deve ser acessado via HTTPS. Isso impede \textit{downgrade attacks} para HTTP.
+\end{infobox}
+
+\subsection{X-Frame-Options — proteção contra clickjacking}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configurando X-Frame},
+  label={lst:shield_xframe}
+]{snippets/seguranca/shield_xframe.ts}
+
+\subsection{X-Content-Type-Options — desabilitando MIME sniffing}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Desabilitando content sniffing},
+  label={lst:shield_nosniff}
+]{snippets/seguranca/shield_nosniff.ts}
+
+\subsection{CSP — Content Security Policy}
+
+CSP é uma camada forte contra XSS: você define de onde scripts, estilos e imagens podem ser carregados.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configurando CSP},
+  label={lst:shield_csp}
+]{snippets/seguranca/shield_csp.ts}
+
+\begin{tipbox}
+  Em desenvolvimento, o modo \texttt{reportOnly} é excelente para testar a política sem quebrar a aplicação. Você coleta relatórios e depois endurece as regras.
+\end{tipbox}
+
+\subsection{Uso de \texttt{nonce} em scripts e estilos inline}
+
+Quando você precisa de script/estilo inline, o Shield oferece suporte a \texttt{nonce}:
+
+\lstinputlisting[
+  language=html,
+  caption={Usando nonce no Edge},
+  label={lst:csp_nonce}
+]{snippets/seguranca/csp_nonce.edge}
+
+Na diretiva da CSP:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Permitindo nonce na CSP},
+  label={lst:csp_nonce_config}
+]{snippets/seguranca/csp_nonce_config.ts}
+
+\section{Integração com Vite e assets}
+
+Se você usa Vite, o Shield traz palavras-chave prontas para lidar com o dev server e HMR:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={CSP com Vite},
+  label={lst:csp_vite}
+]{snippets/seguranca/csp_vite.ts}
+
+Em produção, substitua por \texttt{@viteUrl} se os assets forem servidos de um CDN.
+
+\section{Resumo de estratégia para CORS e headers}
+
+\begin{itemize}
+  \item CORS: comece aberto em desenvolvimento (\texttt{origin: true}) e feche em produção para domínios conhecidos.
+  \item Shield: habilite ao menos HSTS, \texttt{nosniff} e \texttt{xFrame} em ambientes públicos.
+  \item CSP: introduza gradualmente com \texttt{reportOnly}. Monitore relatórios antes de endurecer.
+  \item Não confie apenas em CORS/headers: eles complementam, mas não substituem autenticação, autorização e validação robustas.
+\end{itemize}

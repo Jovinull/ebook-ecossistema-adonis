@@ -1,0 +1,140 @@
+\section{Validação de Dados}
+
+Validação é a primeira linha de defesa da aplicação. Antes de \textit{qualquer} regra de negócio, persistência no banco ou chamada externa, é a validação que impede entrada malformada, campos obrigatórios vazios e \textit{payloads} maliciosos.
+
+No AdonisJS, a validação gira em torno do \textbf{VineJS} (\texttt{@vinejs/vine}), que fornece um DSL declarativo para esquemas, regras, mensagens e sanitização.
+
+\section{Por que tratar validação como parte da segurança}
+
+Do ponto de vista de segurança, a validação protege contra:
+
+\begin{itemize}
+  \item Campos ausentes ou tipos errados que poderiam quebrar a aplicação.
+  \item \textit{Payloads} gigantes usados em ataques de negação de serviço.
+  \item Campos extras que tentam explorar falhas de \textit{mass assignment}.
+  \item Valores malformados que podem vazar mensagens de erro sensíveis.
+\end{itemize}
+
+\begin{infobox}
+  Na prática, cada rota de entrada de dados é um possível vetor de ataque. Tratar validação como ``apenas UX'' é subestimar o papel dela na superfície de segurança.
+\end{infobox}
+
+\section{Fluxo básico de validação com VineJS}
+
+O fluxo típico em uma aplicação Adonis moderna é:
+
+\begin{enumerate}
+  \item Criar um \textbf{validator} com o esquema Vine.
+  \item Compilar o esquema (\texttt{vine.compile}).
+  \item Usar \texttt{request.validateUsing} dentro dos controllers.
+\end{enumerate}
+
+\subsection{Definindo um validator}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validator básico de cadastro de usuário},
+  label={lst:validator_user_create}
+]{snippets/seguranca/validator_user_create.ts}
+
+\subsection{Usando o validator no controller}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando \texttt{request.validateUsing}},
+  label={lst:controller_use_validator}
+]{snippets/seguranca/controller_use_validator.ts}
+
+\begin{tipbox}
+  Eu gosto de manter os validators em \texttt{app/validators/} nomeados por contexto (\texttt{auth}, \texttt{users}, \texttt{alvaras\_sanitarios}, etc). Ajuda a localizar rapidamente regras de entrada para cada caso de uso.
+\end{tipbox}
+
+\section{Regras de validação com foco em segurança}
+
+Além das regras básicas (\texttt{required}, \texttt{minLength}, \texttt{email}, etc.), algumas regras são chave para segurança:
+
+\subsection{Senhas fortes}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Regra de senha mais rígida},
+  label={lst:validator_password}
+]{snippets/seguranca/validator_password.ts}
+
+\subsection{Validação de enums}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Limitando o valor de um campo a um conjunto seguro},
+  label={lst:validator_enum}
+]{snippets/seguranca/validator_enum.ts}
+
+\subsection{Uso do \texttt{bail()} para evitar erros em cascata}
+
+\texttt{bail()} interrompe a validação de um campo no primeiro erro, evitando mensagens confusas e reduzindo processamento:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{bail()} em cadeia de validação},
+  label={lst:validator_bail}
+]{snippets/seguranca/validator_bail.ts}
+
+\section{Sanitização e normalização}
+
+VineJS também permite \textbf{sanitizar} valores. Isso ajuda a:
+
+\begin{itemize}
+  \item Remover espaços extras.
+  \item Normalizar \texttt{lowercase}/\texttt{uppercase}.
+  \item Converter \texttt{string} em \texttt{number}, \texttt{boolean} etc.
+\end{itemize}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Normalizando e sanitizando entrada},
+  label={lst:validator_sanitize}
+]{snippets/seguranca/validator_sanitize.ts}
+
+\begin{infobox}
+  Sanitização reduz o risco de comparar valores de forma equivocada, por exemplo, e-mails duplicados com diferença apenas de maiúsculas/minúsculas.
+\end{infobox}
+
+\section{Mensagens de erro e UX segura}
+
+Em APIs, é comum centralizar o formato de erro. O AdonisJS já converte erros de validação em respostas estruturadas, mas você pode personalizar mensagens no próprio schema:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Mensagens customizadas},
+  label={lst:validator_messages}
+]{snippets/seguranca/validator_messages.ts}
+
+\begin{warningbox}
+  Evite mensagens que revelem demais sobre a aplicação. Ex.: em login, não diferencie mensagem para ``usuário inexistente'' e ``senha incorreta'', para não facilitar coleta de e-mails válidos.
+\end{warningbox}
+
+\section{Validação em camadas: controller, service e domínio}
+
+Na prática, eu costumo seguir um padrão:
+
+\begin{itemize}
+  \item \textbf{Controller}: apenas chama \texttt{request.validateUsing(...)} e repassa o payload limpo para o serviço.
+  \item \textbf{Service}: aplica regras de negócio (ex.: checar se o usuário já existe, se o CNPJ é válido no contexto da empresa).
+  \item \textbf{Domínio}: validações mais elaboradas que envolvem múltiplas entidades podem ficar em serviços específicos ou \textit{domain services}.
+\end{itemize}
+
+Isso deixa claro que \textbf{Vine cuida de estrutura e formato}, enquanto \textbf{o domínio cuida do significado}.
+
+\section{Testando validação}
+
+Testes automatizados de validação trazem confiança para refatorações. Um padrão comum:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Teste de validator},
+  label={lst:test_validator}
+]{snippets/seguranca/test_validator.ts}
+
+\begin{tipbox}
+  Em projetos maiores, vale a pena testar validators críticos (login, cadastro, reset de senha, fluxo financeiro) de forma isolada. Isso evita regressões silenciosas.
+\end{tipbox}

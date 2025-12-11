@@ -1,0 +1,136 @@
+\chapter{Segurança}
+
+\section{Proteção CSRF}
+
+CSRF (\textit{Cross-Site Request Forgery}) é um ataque clássico, mas que continua extremamente relevante em aplicações \textit{server-rendered}. A ideia é simples: um site malicioso tenta fazer o navegador do usuário enviar uma requisição legítima para a sua aplicação, usando a sessão/autenticação já ativa.
+
+No AdonisJS, a proteção contra CSRF é responsabilidade do pacote \texttt{@adonisjs/shield}. Nesta seção, vamos ver como essa proteção funciona, como habilitar corretamente e como integrá-la tanto com Edge quanto com requisições AJAX.
+
+\section{Visão geral da defesa CSRF no AdonisJS}
+
+Quando o \texttt{@adonisjs/shield} está configurado, o fluxo é:
+
+\begin{enumerate}
+  \item Para cada requisição com método sensível (\texttt{POST}, \texttt{PUT}, \texttt{PATCH}, \texttt{DELETE}), o \textit{middleware} de CSRF verifica se foi enviado um token válido.
+  \item Esse token é gerado pela própria aplicação (no Edge, via \texttt{csrfField()}) e atrelado à sessão do usuário.
+  \item Se o token estiver ausente ou inválido, é disparada a exceção \texttt{E\_BAD\_CSRF\_TOKEN}.
+\end{enumerate}
+
+\begin{infobox}
+  A ideia central: \textbf{só} o seu site legítimo consegue gerar um token CSRF válido. Um site malicioso até consegue disparar o \texttt{POST}, mas não consegue acertar o token.
+\end{infobox}
+
+\section{Configurando o Shield e o CSRF}
+
+Depois de instalar o pacote:
+
+\lstinputlisting[
+  language=bash,
+  caption={Instalando o Shield},
+  label={lst:shield_install}
+]{snippets/seguranca/shield_install.sh}
+
+o AdonisJS gera o arquivo \texttt{config/shield.ts}. A seção de CSRF normalmente vem assim:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configuração básica de CSRF},
+  label={lst:shield_csrf_config}
+]{snippets/seguranca/shield_csrf_config.ts}
+
+\begin{description}
+  \item[\textbf{enabled}] Habilita ou não a proteção CSRF. Em produção, \textbf{deve} estar \texttt{true}.
+  \item[\textbf{methods}] Quais métodos HTTP exigem token.
+  \item[\textbf{exceptRoutes}] Lista de rotas que ficarão de fora da verificação.
+  \item[\textbf{enableXsrfCookie}] Gera o cookie \texttt{XSRF-TOKEN} para frontends que consomem a API via AJAX.
+\end{description}
+
+\begin{warningbox}
+  Não desabilite CSRF globalmente ``só para funcionar''. Se tiver rotas de API que não usam sessão nem formulários, use \texttt{exceptRoutes} com critério.
+\end{warningbox}
+
+\subsection{Excluindo rotas específicas}
+
+Se você tem rotas estritamente de API (sem sessão), pode dispensar o CSRF nelas:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Excluindo rotas de API da verificação CSRF},
+  label={lst:csrf_except_routes}
+]{snippets/seguranca/csrf_except_routes.ts}
+
+\section{Protegendo formulários Edge}
+
+Em aplicações SSR (kit \texttt{web}), o fluxo é bem direto: todo formulário que faz \texttt{POST}, \texttt{PUT}, \texttt{PATCH}, \texttt{DELETE} deve conter o campo oculto com o token CSRF.
+
+O helper \texttt{csrfField()} cuida disso:
+
+\lstinputlisting[
+  language=html,
+  caption={Formulário protegido com CSRF},
+  label={lst:csrf_form_edge}
+]{snippets/seguranca/csrf_form_edge.edge}
+
+Saída HTML (simplificada):
+
+\lstinputlisting[
+  language=html,
+  caption={HTML gerado com token CSRF},
+  label={lst:csrf_form_output}
+]{snippets/seguranca/csrf_form_output.html}
+
+\begin{tipbox}
+  Eu costumo criar um \textit{partial} Edge (ex.: \texttt{components/form\_start.edge}) que já inclui \texttt{csrfField()} e o \texttt{methodField()} (quando preciso simular \texttt{PUT}/\texttt{DELETE}). Isso evita esquecer o token em algum formulário.
+\end{tipbox}
+
+\section{CSRF em SPAs e requisições AJAX}
+
+Quando você trabalha com um frontend em React/Vue/React Native se comunicando com o AdonisJS, ainda pode aproveitar o CSRF:
+
+\begin{enumerate}
+  \item Habilite o \texttt{enableXsrfCookie}.
+  \item O Shield passa a enviar um cookie \texttt{XSRF-TOKEN} criptografado.
+  \item Bibliotecas como Axios conseguem ler esse cookie e enviar o header \texttt{X-XSRF-TOKEN} automaticamente.
+\end{enumerate}
+
+Configuração típica no \texttt{Axios}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Integrando Axios com CSRF},
+  label={lst:axios_csrf}
+]{snippets/seguranca/axios_csrf.ts}
+
+\begin{infobox}
+  Esse padrão é excelente para painéis administrativos: você controla sessão + CSRF sem reinventar o fluxo de autenticação só por ser uma SPA.
+\end{infobox}
+
+\section{Tratando a exceção \texttt{E\_BAD\_CSRF\_TOKEN}}
+
+Quando o token está ausente ou inválido, o Shield lança \texttt{E\_BAD\_CSRF\_TOKEN}. Por padrão, o Adonis redireciona de volta e adiciona uma mensagem \textit{flash}.
+
+No Edge, você pode exibi-la:
+
+\lstinputlisting[
+  language=html,
+  caption={Exibindo erro de CSRF no Edge},
+  label={lst:csrf_error_flash}
+]{snippets/seguranca/csrf_error_flash.edge}
+
+Se quiser personalizar globalmente a resposta, use o \texttt{HttpExceptionHandler}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Personalizando resposta de CSRF},
+  label={lst:csrf_exception_handler}
+]{snippets/seguranca/csrf_exception_handler.ts}
+
+\section{Boas práticas que adoto em projetos reais}
+
+\begin{itemize}
+  \item \textbf{Sempre} deixo CSRF habilitado em aplicações com sessão e formulários.
+  \item APIs puras (apenas \texttt{JSON}, sem sessão) ficam em um prefixo separado (\texttt{/api}) e são excluídas via \texttt{exceptRoutes}.
+  \item Para painéis internos em React, uso \texttt{enableXsrfCookie} + Axios com \texttt{withCredentials}.
+  \item Centralizo formulários em componentes Edge reutilizáveis que já incluem o token, para reduzir risco de esquecimento.
+  \item Logar tentativas recorrentes de CSRF inválido ajuda a detectar automações estranhas ou scanners.
+\end{itemize}

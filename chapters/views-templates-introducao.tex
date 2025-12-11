@@ -1,0 +1,56 @@
+\chapter{Views e Templates com EdgeJS e Inertia}
+
+\section{Visão geral: aplicações server-rendered e híbridas}
+
+AdonisJS foi pensado desde o início para entregar uma experiência completa de \textbf{aplicações server-rendered} em Node.js. Em vez de começar pelo frontend e “pendurar” uma API depois, a ideia é o contrário: o backend é o ponto central, e a camada de visualização é encaixada de forma natural via mecanismo de templates.
+
+O fluxo típico de uma aplicação tradicional em AdonisJS segue três passos:
+
+\begin{enumerate}
+  \item Escolher um \textbf{template engine} para gerar HTML dinâmico.
+  \item Usar o Vite para empacotar CSS e JavaScript de frontend.
+  \item Opcionalmente, adicionar bibliotecas como \textit{HTMX} ou \textit{Unpoly} para navegação incremental, se você quiser uma experiência “quase SPA” sem mudar de stack.
+\end{enumerate}
+
+O framework oferece um template engine oficial, o \textbf{EdgeJS}, mas não impõe essa escolha. Você pode usar Pug, Nunjucks ou qualquer outro engine compatível com Node.js.
+
+\subsection{Opções populares de template engine}
+
+Entre as engines mais usadas com AdonisJS, temos:
+
+\begin{itemize}
+  \item \textbf{EdgeJS} -- engine oficial, moderna, com sintaxe muito próxima de JavaScript.
+  \item \textbf{Pug} -- fortemente influenciada por Haml, com sintaxe baseada em indentação.
+  \item \textbf{Nunjucks} -- engine inspirada em Jinja2, com muitos recursos avançados.
+\end{itemize}
+
+\begin{infobox}
+  Um ponto importante: na documentação e neste livro eu assumo \textbf{EdgeJS} como engine padrão, porque é mantida pela própria equipe do AdonisJS e se integra muito bem com os demais pacotes oficiais.
+\end{infobox}
+
+\subsection{Aplicações híbridas com InertiaJS}
+
+Além do modelo “clássico” de renderização no servidor, AdonisJS também abraça um estilo \textbf{híbrido}: HTML inicial vem do servidor, mas a interface é montada como uma \textit{single-page application} (SPA) usando frameworks como Vue, React, Svelte ou Solid.
+
+Nesse cenário entra o \textbf{InertiaJS}:
+
+\begin{itemize}
+  \item O backend continua sendo AdonisJS (rotas, controllers, autenticação, etc.).
+  \item O frontend é uma SPA escrita com o framework de sua escolha.
+  \item \textbf{Não} existe uma API REST separada: o Inertia faz a ponte entre controllers e componentes.
+\end{itemize}
+
+Essa abordagem é útil quando você:
+
+\begin{itemize}
+  \item Quer a experiência de SPA (navegação suave, estados no cliente).
+  \item Não quer duplicar a lógica entre “controllers API” e “controllers HTTP + templates”.
+  \item Prefere manter o backend e o frontend no mesmo projeto e no mesmo ciclo de deploy.
+\end{itemize}
+
+Ao longo deste capítulo, vamos tratar de dois “modos” de trabalhar com views no AdonisJS:
+
+\begin{enumerate}
+  \item \textbf{EdgeJS}: templates server-rendered tradicionais.
+  \item \textbf{InertiaJS}: camada híbrida que conecta AdonisJS a componentes Vue/React/etc.
+\end{enumerate}

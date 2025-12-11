@@ -1,0 +1,142 @@
+\section{Env Security}
+
+Grande parte da superfície de ataque de uma aplicação moderna está nos \textbf{segredos}: chaves de criptografia, credenciais de banco, tokens de APIs externas, opções sensíveis de hash e limiter. Nesta seção, vamos tratar de como o AdonisJS organiza variáveis de ambiente, como proteger esses valores e quais decisões impactam diretamente a segurança.
+
+\section{\texttt{.env} + \texttt{start/env.ts}: o contrato de configuração}
+
+O AdonisJS separa \textbf{onde} ficam os valores sensíveis (\texttt{.env}) de \textbf{como} eles são validados (\texttt{start/env.ts}).
+
+\subsection{Exemplo básico de \texttt{start/env.ts}}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Schema de variáveis de ambiente},
+  label={lst:env_schema}
+]{snippets/seguranca/env_schema.ts}
+
+Se alguma variável obrigatória estiver ausente ou inválida, a aplicação \textbf{nem inicia}. Isso é intencional e faz parte da estratégia de segurança.
+
+\begin{warningbox}
+  Se você usa uma variável em \texttt{config/*} mas esquece de declará-la em \texttt{start/env.ts}, perde validação e tipagem. Sempre mantenha o schema sincronizado.
+\end{warningbox}
+
+\section{Protegendo a \texttt{APP\_KEY} e criptografia}
+
+A \texttt{APP\_KEY} é usada pelo serviço de \textbf{encryption} (\texttt{@adonisjs/core/services/encryption}) e outras funcionalidades internas.
+
+\begin{itemize}
+  \item Deve ser gerada com \textbf{alta entropia}, usando \texttt{node ace generate:key}.
+  \item Não deve ser reutilizada entre ambientes (dev, staging, prod).
+  \item Nunca deve ser versionada em repositórios públicos.
+\end{itemize}
+
+\subsection{Uso do serviço de encryption}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Criptografando e descriptografando valores},
+  label={lst:encryption_basic}
+]{snippets/seguranca/encryption_basic.ts}
+
+\begin{infobox}
+  Use criptografia para dados que precisam ser recuperados (ex.: tokens de reset, payloads sensíveis em cookies). Para senhas, use \textbf{hashing}, não criptografia reversível.
+\end{infobox}
+
+\section{Hashing e configuração de algoritmos}
+
+O serviço \texttt{hash} centraliza o hashing de senhas. Toda configuração fica em \texttt{config/hash.ts}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configuração de hashing},
+  label={lst:hash_config}
+]{snippets/seguranca/hash_config.ts}
+
+\subsection{Escolhendo o driver por ambiente}
+
+Em muitos projetos, eu opto por:
+
+\begin{itemize}
+  \item \textbf{Production}: \texttt{argon2} ou \texttt{scrypt} com parâmetros mais fortes.
+  \item \textbf{Test}: manter \texttt{scrypt} com parâmetros padrão ou usar \texttt{hash.fake()} para acelerar testes.
+\end{itemize}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Verificando e rehashing senhas},
+  label={lst:hash_rehash}
+]{snippets/seguranca/hash_rehash.ts}
+
+\section{Segurança de configuração do limiter}
+
+O rate limiter usa \texttt{LIMITER\_STORE} para escolher o backend: \texttt{redis}, \texttt{database} ou \texttt{memory}. Essa escolha também é parte da segurança:
+
+\begin{itemize}
+  \item \textbf{memory}: ótimo para testes e dev local, mas não escala em múltiplas instâncias.
+  \item \textbf{redis/database}: garantem consistência entre instâncias, o que é crucial para proteger login, APIs públicas, etc.
+\end{itemize}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configuração de limiter com env},
+  label={lst:limiter_config}
+]{snippets/seguranca/limiter_config.ts}
+
+No \texttt{start/env.ts}, a variável é validada:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validando LIMITER\_STORE},
+  label={lst:env_limiter}
+]{snippets/seguranca/env_limiter.ts}
+
+\section{Boas práticas para arquivos \texttt{.env}}
+
+\begin{itemize}
+  \item Nunca commitar \texttt{.env} em repositórios públicos.
+  \item Use \texttt{.env.example} como referência de quais variáveis são necessárias (sem valores reais).
+  \item Em produção, prefira \textbf{gerenciadores de segredos} (Vault, Secrets Manager, etc.) quando possível.
+  \item Use arquivos separados: \texttt{.env.development.local}, \texttt{.env.production}, \texttt{.env.test}.
+  \item Em CI/CD, injete variáveis via ambiente em vez de gravar arquivos no disco.
+\end{itemize}
+
+\begin{tipbox}
+  Em servidores Linux, é comum manter o \texttt{.env} com permissões restritas (\texttt{chmod 600}) e proprietário exclusivo do usuário que roda a aplicação (ex.: \texttt{node}).
+\end{tipbox}
+
+\section{Mapeando env \texorpdfstring{$\rightarrow$}{->} config}
+
+Um ponto crítico é garantir que \textbf{toda configuração sensível} venha de env, e não fique hardcoded:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo de uso do env em config de banco},
+  label={lst:db_config_env}
+]{snippets/seguranca/db_config_env.ts}
+
+\section{Ambientes diferentes, superfícies diferentes}
+
+Uma mesma aplicação AdonisJS pode ter necessidades diferentes por ambiente:
+
+\begin{itemize}
+  \item \textbf{Development}: logs mais verbosos, limiter mais tolerante, CORS aberto, HSTS/CSP desabilitados ou relaxados.
+  \item \textbf{Staging}: configuração o mais próxima possível da produção, mas com chaves/segredos isolados.
+  \item \textbf{Production}: hardening máximo (HSTS, CSP, limiter agressivo em endpoints sensíveis, hashing forte).
+\end{itemize}
+
+Tudo isso é orquestrado por env + configs.
+
+\section{Checklist rápido de Env Security}
+
+\begin{itemize}
+  \item \textbf{APP\_KEY} gerada via \texttt{node ace generate:key}, não reutilizada entre ambientes.
+  \item Variáveis sensíveis \textbf{somente} em env ou gerenciadores de segredo.
+  \item \texttt{start/env.ts} sempre sincronizado com \texttt{config/*}.
+  \item Drivers de hash e limiter ajustados por ambiente.
+  \item Arquivos \texttt{.env} com permissões restritas no servidor.
+  \item Sem \texttt{console.log} de env em produção (já vi isso acontecer!).
+\end{itemize}
+
+\begin{infobox}
+  Em resumo: \textbf{segurança de ambiente} é sobre disciplinar a fronteira entre código e infraestrutura. O AdonisJS oferece as ferramentas (env schema, services, config providers); cabe ao time usá-las com rigor.
+\end{infobox}

@@ -1,0 +1,92 @@
+\section{EdgeJS avançado: preload, plugins e helpers globais}
+
+Depois de ter o básico funcionando, é comum querer:
+
+\begin{itemize}
+  \item Adicionar \textbf{plugins} ao Edge.
+  \item Criar \textbf{variáveis globais} visíveis em todas as views.
+  \item Centralizar helpers de layout, ícones, URLs, etc.
+\end{itemize}
+
+O local recomendado para isso é um \textbf{arquivo de preload}.
+
+\subsection{Criando o preload de views}
+
+Use a CLI para gerar um preload relacionado a views:
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando preload para Edge},
+  label={lst:edge_make_preload}
+]{snippets/templates/edge_make_preload.sh}
+
+Esse comando cria algo como \verb|start/view.ts|. É nele que vamos estender o comportamento padrão do Edge.
+
+\subsection{Registrando plugins}
+
+Plugins são extensões que adicionam novas tags, filtros ou funcionalidades à engine. Exemplo com \texttt{edge-iconify}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Registrando plugin no Edge},
+  label={lst:edge_plugin}
+]{snippets/templates/edge_plugin.ts}
+
+A partir daí, todas as views podem usar os recursos desse plugin sem nenhuma configuração adicional.
+
+\subsection{Globais: compartilhando dados e helpers com todas as views}
+
+O método \texttt{edge.global} permite definir variáveis disponíveis em todas as templates:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Definindo globais no preload},
+  label={lst:edge_global}
+]{snippets/templates/edge_global.ts}
+
+No Edge:
+
+\lstinputlisting[
+  language=html,
+  caption={Usando globais nas views},
+  label={lst:edge_global_use}
+]{snippets/templates/edge_global_use.edge}
+
+\begin{infobox}
+  Globais são ideais para itens realmente “de aplicação”: \texttt{appUrl}, nome do sistema, dados de branding, helpers de formatação, etc. Para dados de usuário/logado, prefira compartilhar via contexto individual (por controller, middleware ou Inertia).
+\end{infobox}
+
+\subsection{Helpers do Edge e helpers do AdonisJS}
+
+Além dos globais definidos por você, o Edge e o AdonisJS expõem uma série de \textbf{helpers} padrão:
+
+\begin{itemize}
+  \item Helpers de controle de fluxo: \verb|@if|, \verb|@each|, \verb|@hasSection|, etc.
+  \item Helpers integrados ao AdonisJS (como o \texttt{csrfField()}, usado na proteção CSRF).
+\end{itemize}
+
+A documentação oficial lista todos os helpers disponíveis. Ao longo do livro, eu uso principalmente:
+
+\begin{itemize}
+  \item \verb|csrfField()| em formulários.
+  \item Helpers de sessão/flash para exibir mensagens de sucesso/erro.
+  \item Diretivas de \textbf{autorização} quando Bouncer está ligado às views.
+\end{itemize}
+
+\subsection{Edge + htmx/unpoly: enriquecendo sem virar SPA}
+
+Uma estratégia muito usada em projetos “clássicos” é combinar:
+
+\begin{itemize}
+  \item Edge como motor principal de views.
+  \item htmx ou Unpoly para navegação parcial (fetch de fragmentos HTML).
+\end{itemize}
+
+Do ponto de vista de AdonisJS:
+
+\begin{itemize}
+  \item As rotas continuam renderizando templates Edge.
+  \item htmx/unpoly controlam quais trechos são substituídos no DOM.
+\end{itemize}
+
+Isso te dá interatividade extra sem migrar para o modelo de SPA + Inertia. Em sistemas administrativos tradicionais é um meio-termo bem confortável.

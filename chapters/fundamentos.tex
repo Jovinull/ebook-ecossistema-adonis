@@ -1,0 +1,1787 @@
+\chapter{Fundamentos}
+
+\section{Rotas}
+
+As rotas conectam URLs a handlers. No AdonisJS v6, elas moram em start/routes.ts e são definidas com o serviço router.
+
+\begin{infobox}
+  Penso nas rotas como uma “interface pública” da aplicação. Uma organização clara (nomes, grupos, prefixos) simplifica navegação, testes e manutenção ao longo do tempo.
+\end{infobox}
+
+\subsection{Primeiros exemplos}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rotas básicas e parâmetro dinâmico},
+  label={lst:rotas_basicas}
+]{snippets/fundamentos/rotas/start_routes_basic.ts}
+
+O segmento :id captura valores dinâmicos (route params). Você acessa via \texttt{params} no handler.
+
+\begin{tipbox}
+  Durante o desenvolvimento, liste as rotas com \texttt{node ace list:routes}. Ajuda muito quando a base cresce.
+\end{tipbox}
+
+\lstinputlisting[
+  language=bash,
+  caption={Listando rotas registradas},
+  label={lst:list_routes}
+]{snippets/fundamentos/rotas/list_routes.sh}
+
+\subsection{Parâmetros de rota}
+
+\paragraph{Múltiplos parâmetros.} Você pode ter mais de um, cada qual com nome único.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Múltiplos parâmetros na URI},
+  label={lst:multi_params}
+]{snippets/fundamentos/rotas/route_multiple_params.ts}
+
+\paragraph{Parâmetros opcionais.} Sufixe com \texttt{?}. Sempre coloque opcionais \textit{depois} dos obrigatórios.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Parâmetro opcional},
+  label={lst:optional_param}
+]{snippets/fundamentos/rotas/route_optional_param.ts}
+
+\paragraph{Wildcard.} Use \texttt{*} no \textit{final} da rota para capturar todos os segmentos remanescentes.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Parâmetro coringa (wildcard)},
+  label={lst:wildcard}
+]{snippets/fundamentos/rotas/route_wildcard.ts}
+
+\subsection{Matchers (validação e casting de params)}
+
+Por padrão, \texttt{/posts/1} e \texttt{/posts/foo} casam a mesma rota \texttt{/posts/:id}. Use \textit{matchers} para validar (regex) e, se quiser, fazer cast do valor.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Regex + cast para número},
+  label={lst:matcher_cast}
+]{snippets/fundamentos/rotas/route_matcher_regex_cast.ts}
+
+O roteador oferece \textit{helpers} prontos: \texttt{number()}, \texttt{uuid()}, \texttt{slug()}. Também dá para aplicar globalmente.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Matchers integrados e matcher global},
+  label={lst:matchers_inbuilt_global}
+]{snippets/fundamentos/rotas/route_matchers_inbuilt_global.ts}
+
+\begin{tipbox}
+  Minha prática é impor \texttt{number()} para IDs em \texttt{/resource/:id}. Evita colisões contra endpoints “verbais” (\texttt{/posts/archived}) e melhora a qualidade dos logs.
+\end{tipbox}
+
+\subsection{Métodos HTTP e handlers}
+
+Cada método tem seu atalho: \texttt{get}, \texttt{post}, \texttt{put}, \texttt{patch}, \texttt{delete}. Use \texttt{any} com parcimônia (pode mascarar bugs de método).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rotas por método HTTP},
+  label={lst:http_methods}
+]{snippets/fundamentos/rotas/http_methods.ts}
+
+Handlers podem ser \textit{inline} (sync/async) ou apontar para controller (criado via IoC automaticamente).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Vinculando rota a um controller},
+  label={lst:controller_binding}
+]{snippets/fundamentos/rotas/handler_controller_binding.ts}
+
+\subsection{Middleware em rotas}
+
+Aplique com \texttt{.use()}. A ordem importa (grupo antes, rota depois).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Middleware inline em rota},
+  label={lst:route_middleware}
+]{snippets/fundamentos/rotas/route_middleware_inline.ts}
+
+\subsection{Nomeando rotas e gerando URLs}
+
+Nomeie com \texttt{.as()}; depois gere URLs com o \texttt{router.builder()}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Nome e URL Builder},
+  label={lst:route_name_builder}
+]{snippets/fundamentos/rotas/route_named_and_url_builder.ts}
+
+\begin{tipbox}
+  Padrão sugerido: \texttt{resource.action} (\texttt{users.index}, \texttt{users.store}). Fica previsível para templates, redirects e testes.
+\end{tipbox}
+
+\subsection{Agrupando rotas}
+
+Grupos facilitam aplicar \texttt{prefix}, \texttt{as} e \texttt{use} em lote; também podem ser aninhados.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Grupo com prefixo e nome},
+  label={lst:group_prefix_as}
+]{snippets/fundamentos/rotas/group_prefix_as.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Grupos aninhados},
+  label={lst:nested_groups}
+]{snippets/fundamentos/rotas/nested_groups.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Middleware aplicado ao grupo},
+  label={lst:group_middleware}
+]{snippets/fundamentos/rotas/group_middleware.ts}
+
+\subsection{Rotas por domínio e subdomínios dinâmicos}
+
+Mapeie domínios específicos (útil em multi-tenant ou blog separado) e use segmentos dinâmicos (ex.: \texttt{:tenant}).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rotas em domínio específico},
+  label={lst:domain_routes}
+]{snippets/fundamentos/rotas/domain_routes.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Subdomínio dinâmico},
+  label={lst:dynamic_subdomain}
+]{snippets/fundamentos/rotas/dynamic_subdomain.ts}
+
+\begin{warningbox}
+  Em dev, você precisa apontar o host (DNS/hosts/reverso) para que o nome do domínio chegue correto à aplicação; caso contrário, o match do grupo por domínio não dispara.
+\end{warningbox}
+
+\subsection{Atalhos \texttt{router.on()} (Edge/Inertia/Redirect)}
+
+Se só deseja renderizar uma view ou redirecionar, \texttt{router.on()} fornece atalhos convenientes.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Render Edge diretamente da rota},
+  label={lst:render_edge}
+]{snippets/fundamentos/rotas/render_edge.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Render Inertia (se configurado)},
+  label={lst:render_inertia}
+]{snippets/fundamentos/rotas/render_inertia.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Redirecionamentos com \texttt{on()}},
+  label={lst:redirects}
+]{snippets/fundamentos/rotas/redirect_examples.ts}
+
+\subsection{Rota atual e ordem de matching}
+
+Acesse metadados da rota atual via \texttt{ctx.route} e confira se a requisição “bate” numa rota com \texttt{request.matchesRoute}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rota atual e matchesRoute},
+  label={lst:current_route}
+]{snippets/fundamentos/rotas/current_request_route.ts}
+
+\begin{warningbox}
+  A ordem de registro define o \textit{matching}. Ponha rotas \textbf{mais específicas} acima das genéricas com params.
+\end{warningbox}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Específica antes da dinâmica},
+  label={lst:ordering}
+]{snippets/fundamentos/rotas/ordering_specific_before_dynamic.ts}
+
+\subsection{404 (quando rota não existe)}
+
+Intercepte \texttt{E\_ROUTE\_NOT\_FOUND} no handler global e renderize a página 404.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Tratando 404 no exception handler},
+  label={lst:handler_404}
+]{snippets/fundamentos/rotas/handler_404_example.ts}
+
+\subsection{URL Builder — extras úteis}
+
+Params posicionais ou por objeto, query string, \texttt{prefixUrl}, \texttt{makeSigned} (com expiração), \texttt{disableRouteLookup} e URLs para domínios específicos.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={URL Builder avançado},
+  label={lst:url_builder_variants}
+]{snippets/fundamentos/rotas/url_builder_variants.ts}
+
+\begin{tipbox}
+  Para \textit{signed URLs}, garanta que o \texttt{APP\_KEY} esteja setado adequadamente no ambiente e seja estável entre instâncias. Em produção, adote expiração (\texttt{expiresIn}) por segurança.
+\end{tipbox}
+
+\subsection{Estendendo o roteador (macros)}
+
+Quando a equipe precisa de convenções repetíveis (auditoria, tagging, políticas), macros ajudam. Exemplo simples:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Macro no Router com type augmentation},
+  label={lst:router_macros}
+]{snippets/fundamentos/rotas/router_macros.ts}
+
+\begin{infobox}
+  Macros são uma forma elegante de padronizar comportamentos sem “espalhar” código. Úteis em plataformas multi-produto.
+\end{infobox}
+
+\section{Controllers}
+
+Controllers organizam os handlers HTTP fora do arquivo de rotas. Em vez de concentrar a lógica em start/routes.ts, movemos o código para classes dentro de app/controllers, deixando as rotas mais legíveis e a aplicação mais modular.
+
+\begin{infobox}
+  Controllers não são apenas “pastas diferentes para funções”: eles permitem construir uma camada de orquestração clara, facilitando testes, injeção de dependências e evolução do domínio sem poluir o arquivo de rotas.
+\end{infobox}
+
+\subsection{Criando e usando um controller}
+
+Gere um controller pelo Ace:
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando um controller},
+  label={lst:make_controller}
+]{snippets/fundamentos/controllers/make_controller.sh}
+
+Implemente métodos (ex.: \texttt{index}) e retorne dados:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{UsersController} básico},
+  label={lst:users_controller_basic}
+]{snippets/fundamentos/controllers/users_controller_basic.ts}
+
+Faça o binding na rota usando import dinâmico (lazy):
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Vinculando controller à rota (lazy import)},
+  label={lst:routes_bind_users_controller}
+]{snippets/fundamentos/controllers/routes_bind_users_controller.ts}
+
+\begin{infobox}
+  Ao passar a referência do controller (em vez de instância), o AdonisJS cria um objeto novo a cada requisição e resolve dependências via IoC automaticamente.
+\end{infobox}
+
+\begin{tipbox}
+  Lazy-loading é importante com HMR e para reduzir o \textit{boot time} conforme o projeto cresce. O plugin ESLint oficial pode sugerir/converter imports padrão para imports dinâmicos.
+\end{tipbox}
+
+\subsection{“Magic strings”}
+
+Outra forma de lazy-loading é usar “magic strings”: caminho + método numa única string. Fica visualmente limpo, porém sem \textit{type-safety}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Magic string na rota},
+  label={lst:routes_magic_string}
+]{snippets/fundamentos/controllers/routes_magic_string.ts}
+
+\begin{warningbox}
+  Se houver typo no caminho, o editor não acusa — o erro aparece só em tempo de execução. Use com critério de equipe.
+\end{warningbox}
+
+\subsection{Single-action controllers}
+
+Para ações autoexplicativas, use controllers de ação única com método \texttt{handle()}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Single-action controller},
+  label={lst:single_action_controller}
+]{snippets/fundamentos/controllers/register_newsletter_subscription_controller.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rota apontando para single-action},
+  label={lst:routes_bind_single_action}
+]{snippets/fundamentos/controllers/routes_bind_single_action.ts}
+
+\subsection{HttpContext no controller}
+
+Métodos de controller recebem \texttt{HttpContext} como primeiro argumento:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Recebendo \texttt{HttpContext} no método},
+  label={lst:users_controller_httpcontext}
+]{snippets/fundamentos/controllers/users_controller_httpcontext.ts}
+
+\subsection{Dependency Injection (IoC)}
+
+Controllers são instanciados pelo IoC; você pode injetar serviços por construtor:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Serviço simples para \texttt{User}},
+  label={lst:services_user_service}
+]{snippets/fundamentos/controllers/services_user_service.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Injeção por construtor no controller},
+  label={lst:users_controller_di_constructor}
+]{snippets/fundamentos/controllers/users_controller_di_constructor.ts}
+
+Ou por método (\textit{method injection}): o \texttt{HttpContext} é sempre o primeiro parâmetro; a injeção vem em seguida.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Injeção por método no controller},
+  label={lst:users_controller_di_method}
+]{snippets/fundamentos/controllers/users_controller_di_method.ts}
+
+\paragraph{Árvore de dependências.} Qualquer classe injetada pode, por sua vez, receber outras dependências. Você pode, por exemplo, injetar \texttt{HttpContext} no serviço:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Serviço recebendo \texttt{HttpContext} via IoC},
+  label={lst:services_user_service_with_ctx}
+]{snippets/fundamentos/controllers/services_user_service_with_ctx.ts}
+
+\begin{tipbox}
+  Na prática, mantenho controllers “magros”: desestruturam o \texttt{ctx}, delegam validação a Validators e regras de negócio a Services. Isso preserva a clareza e permite testes unitários mais estáveis.
+\end{tipbox}
+
+\subsection{Resource-driven controllers (REST)}
+
+Para CRUDs convencionais, gere um controller \textit{resource}:
+
+\lstinputlisting[
+  language=bash,
+  caption={Scaffold de resource controller},
+  label={lst:make_posts_resource}
+]{snippets/fundamentos/controllers/make_posts_resource.sh}
+
+O scaffold inclui \texttt{index}, \texttt{create}, \texttt{store}, \texttt{show}, \texttt{edit}, \texttt{update}, \texttt{destroy}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{PostsController} (scaffold resumido)},
+  label={lst:posts_controller_resource}
+]{snippets/fundamentos/controllers/posts_controller_resource.ts}
+
+Registre as rotas com \texttt{router.resource}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rotas resource},
+  label={lst:routes_resource_posts}
+]{snippets/fundamentos/controllers/routes_resource_posts.ts}
+
+\paragraph{Nested e shallow resources.}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Nested resource},
+  label={lst:routes_resource_nested}
+]{snippets/fundamentos/controllers/routes_resource_nested.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Shallow resource (URLs mais planas)},
+  label={lst:routes_shallow_resource}
+]{snippets/fundamentos/controllers/routes_shallow_resource.ts}
+
+\paragraph{Nomes e prefixos.}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Nomeação padrão e customizada},
+  label={lst:routes_resource_naming}
+]{snippets/fundamentos/controllers/routes_resource_naming.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Desligando transformação para \texttt{snake\_case}},
+  label={lst:routes_resource_as_transform_off}
+]{snippets/fundamentos/controllers/routes_resource_as_transform_off.ts}
+
+\paragraph{API only, only/except.}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={API only},
+  label={lst:routes_resource_api_only}
+]{snippets/fundamentos/controllers/routes_resource_api_only.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Selecionando ações (\texttt{only}/\texttt{except})},
+  label={lst:routes_resource_only_except}
+]{snippets/fundamentos/controllers/routes_resource_only_except.ts}
+
+\paragraph{Renomeando params.}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Renomeando params em resources},
+  label={lst:routes_resource_params}
+]{snippets/fundamentos/controllers/routes_resource_params.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Renomeando em nested resources},
+  label={lst:routes_resource_nested_params}
+]{snippets/fundamentos/controllers/routes_resource_nested_params.ts}
+
+\paragraph{Middleware em resources.}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Aplicando middleware às ações do resource},
+  label={lst:routes_resource_middleware}
+]{snippets/fundamentos/controllers/routes_resource_middleware.ts}
+
+\begin{warningbox}
+  Ao usar \texttt{resource.use('*', ...)} lembre-se: a pilha de middleware será aplicada a todas as ações; combine com \texttt{only/except} quando precisar granularidade.
+\end{warningbox}
+
+\section{Request e Response}
+
+Toda requisição HTTP em AdonisJS possui dois protagonistas: \texttt{request} (entrada) e \texttt{response} (saída). Eles vêm do \texttt{HttpContext} e estão disponíveis no handler via desestruturação: \texttt{{ request, response }}.
+
+\begin{infobox}
+  Minha regra prática: \textbf{pegar dados no \texttt{request}, validar com Validator (VineJS), delegar a Services e devolver pelo \texttt{response}}. Controllers “magros” reduzem bugs e acoplamento.
+\end{infobox}
+
+Request
+
+\subsection{Query string e route params}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lendo query string (\texttt{request.qs()})},
+  label={lst:req_qs}
+]{snippets/fundamentos/request_response/request_qs.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lendo route params (\texttt{request.params()} / \texttt{request.param()})},
+  label={lst:req_params}
+]{snippets/fundamentos/request_response/request_params.ts}
+
+\subsection{Corpo da requisição}
+
+O body é parseado pelo \textit{body-parser} registrado no \texttt{start/kernel.ts}. Acesse com \texttt{request.body()} ou pegue tudo (body + query) com \texttt{request.all()}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Body e \texttt{all()}},
+  label={lst:req_body_all}
+]{snippets/fundamentos/request_response/request_body_all.ts}
+
+\paragraph{Cherry-picking.} Métodos \texttt{only}, \texttt{except} e \texttt{input} servem para selecionar/excluir campos específicos (mesmo se vierem da query).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{only}, \texttt{except} e \texttt{input}},
+  label={lst:req_cherry_picking}
+]{snippets/fundamentos/request_response/request_cherry_picking.ts}
+
+\begin{warningbox}
+  \textbf{Type-safety}: \texttt{request.body()}, \texttt{all()} e afins não garantem tipos. Para tipagem/parse corretos, valide com VineJS e trabalhe com o resultado validado.
+\end{warningbox}
+
+\subsection{URL e método}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={URL relativa/absoluta e com query},
+  label={lst:req_url}
+]{snippets/fundamentos/request_response/request_url.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Método efetivo vs. método original},
+  label={lst:req_method}
+]{snippets/fundamentos/request_response/request_method.ts}
+
+\subsection{Headers}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Acessando headers},
+  label={lst:req_headers}
+]{snippets/fundamentos/request_response/request_headers.ts}
+
+\subsection{IP do usuário (proxies) e \texttt{getIp} customizado}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{ip()} e \texttt{ips()}},
+  label={lst:req_ip}
+]{snippets/fundamentos/request_response/request_ip.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{getIp} customizado no \texttt{config/app.ts}},
+  label={lst:req_getip_config}
+]{snippets/fundamentos/request_response/config_app_getip.ts}
+
+\begin{tipbox}
+  Ajuste \texttt{http.trustProxy} conforme sua infra (Nginx, Caddy, load balancer). Sem isso, o IP pode vir incorreto.
+\end{tipbox}
+
+\subsection{Negociação de conteúdo (\texttt{Accept})}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{types()}, \texttt{accepts()} e variações},
+  label={lst:req_content_negotiation}
+]{snippets/fundamentos/request_response/request_content_negotiation.ts}
+
+\subsection{Request IDs}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Habilitando e usando Request ID},
+  label={lst:req_id}
+]{snippets/fundamentos/request_response/request_id.ts}
+
+\subsection{Trusted proxies}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configurações de \texttt{trustProxy}},
+  label={lst:req_trust_proxy}
+]{snippets/fundamentos/request_response/config_app_trust_proxy.ts}
+
+\subsection{Parser de query string}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Ajustando parser de query string},
+  label={lst:req_qs_parser}
+]{snippets/fundamentos/request_response/config_app_qs.ts}
+
+\subsection{Method spoofing (HTML forms)}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Habilitando method spoofing},
+  label={lst:req_method_spoofing_cfg}
+]{snippets/fundamentos/request_response/config_app_method_spoofing.ts}
+
+\lstinputlisting[
+  language=html,
+  caption={Exemplo de form com \protect\texttt{\_method}},
+  label={lst:req_method_spoofing_form}
+]{snippets/fundamentos/request_response/form_method_spoofing.html}
+
+\subsection{Estendendo a classe Request}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Macro + augmentation em \texttt{Request}},
+  label={lst:req_extend}
+]{snippets/fundamentos/request_response/request_extend.ts}
+
+Response
+
+\subsection{Enviando respostas}
+
+Você pode \textit{return} no handler ou usar \texttt{response.send()}. Em \texttt{send()}, o último valor vence.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Retornando valores vs. \texttt{response.send()}},
+  label={lst:res_send}
+]{snippets/fundamentos/request_response/response_send.ts}
+
+\paragraph{Status e headers.} Prefira \texttt{safeStatus} / \texttt{safeHeader} quando não quer sobrescrever valores já definidos.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Status e headers (seguros e diretos)},
+  label={lst:res_status_headers}
+]{snippets/fundamentos/request_response/response_status_headers.ts}
+
+\subsection{Streaming e download}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{response.stream()} com tratamento de erro},
+  label={lst:res_stream}
+]{snippets/fundamentos/request_response/response_stream.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{response.download()} com Etag e callback de erro},
+  label={lst:res_download}
+]{snippets/fundamentos/request_response/response_download.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{response.attachment()} (forçar salvar)},
+  label={lst:res_attachment}
+]{snippets/fundamentos/request_response/response_attachment.ts}
+
+\begin{tipbox}
+  Para arquivos locais, use \texttt{download()} em vez de \texttt{stream()}: ele já define \texttt{Content-Type} e \texttt{Content-Length}.
+\end{tipbox}
+
+\subsection{Redirects (fluente)}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{toPath}, \texttt{toRoute}, \texttt{back}, \texttt{withQs}, \texttt{status}},
+  label={lst:res_redirects}
+]{snippets/fundamentos/request_response/response_redirects.ts}
+
+\subsection{Abortando requisições}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{response.abort()}},
+  label={lst:res_abort}
+]{snippets/fundamentos/request_response/response_abort.ts}
+
+\subsection{Hooks pós-resposta e acesso ao \texttt{res} nativo}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{onFinish} e acesso ao objeto \texttt{res}},
+  label={lst:res_onfinish_native}
+]{snippets/fundamentos/request_response/response_onfinish_native.ts}
+
+\subsection{Serialização e \textit{content-type} automático}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Regras de serialização e inferência de \texttt{content-type}},
+  label={lst:res_serialization}
+]{snippets/fundamentos/request_response/response_serialization_notes.ts}
+
+\subsection{Estendendo a classe Response}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Macro + augmentation em \texttt{Response}},
+  label={lst:res_extend}
+]{snippets/fundamentos/request_response/response_extend.ts}
+
+\section{Validations}
+
+A validação de dados em AdonisJS normalmente acontece no controller — o mais cedo possível no ciclo da requisição. Depois de validar, trabalhamos apenas com \textit{payload confiável} para acessar DB, enviar e-mails, enfileirar jobs etc.
+
+\begin{infobox}
+  Use validadores pensados por \textbf{ação} (ex.: \texttt{CreatePost}, \texttt{UpdatePost}). Evite “um validador para tudo”: a clareza compensa qualquer duplicação leve de schema.
+\end{infobox}
+
+\subsection{Por que VineJS?}
+
+O AdonisJS recomenda o \textbf{VineJS} (rápido, seguro em tempo de execução e com \textit{type-safety} estática). Vem pré-configurado nos kits \texttt{web} e \texttt{api}. Nada impede usar outra lib — basta remover \texttt{@vinejs/vine} —, mas você perderá integrações oficiais (ex.: \texttt{unique}/\texttt{exists} do Lucid).
+
+\lstinputlisting[
+  language=bash,
+  caption={Instalar e configurar o VineJS},
+  label={lst:vine_add}
+]{snippets/fundamentos/validations/vine_add.sh}
+
+\subsection{Definindo rotas e controller}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rotas \texttt{/posts} para \texttt{store} e \texttt{update}},
+  label={lst:routes_posts}
+]{snippets/fundamentos/validations/routes_posts.ts}
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando controller com métodos \texttt{store} e \texttt{update}},
+  label={lst:make_controller_post}
+]{snippets/fundamentos/validations/make_controller_post.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Scaffold do \texttt{PostsController}},
+  label={lst:posts_controller_scaffold}
+]{snippets/fundamentos/validations/posts_controller_scaffold.ts}
+
+\subsection{Criando validators}
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando arquivo de validators},
+  label={lst:make_validator_post}
+]{snippets/fundamentos/validations/make_validator_post.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{createPostValidator} e \texttt{updatePostValidator}},
+  label={lst:post_validator}
+]{snippets/fundamentos/validations/post_validator.ts}
+
+\subsection{Usando validators no controller}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validando com \texttt{request.validateUsing()} (recomendado)},
+  label={lst:posts_controller_with_validateUsing}
+]{snippets/fundamentos/validations/posts_controller_with_validateUsing.ts}
+
+\begin{tipbox}
+  \textbf{Sem try/catch}: erros de validação viram resposta HTTP automaticamente no \textit{Exception Handler}, respeitando \texttt{Accept} (JSON, JSON:API, HTML com flash, texto).
+\end{tipbox}
+
+\subsection{Validando cookies, headers e route params}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Schema que inclui \texttt{cookies}, \texttt{headers} e \texttt{params}},
+  label={lst:validator_cookies_headers_params}
+]{snippets/fundamentos/validations/validator_cookies_headers_params.ts}
+
+\subsection{Passando metadados para o validator}
+
+Quando a validação depende de informação de runtime (ex.: \texttt{userId} logado), passe \texttt{meta} e tipifique com \texttt{withMetaData}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validator com meta tipado e regra \texttt{unique}},
+  label={lst:update_user_validator_meta}
+]{snippets/fundamentos/validations/update_user_validator_with_meta.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Passando \texttt{meta} pelo \texttt{request.validateUsing()}},
+  label={lst:controller_meta_pass}
+]{snippets/fundamentos/validations/controller_pass_meta.ts}
+
+\begin{warningbox}
+  O \texttt{withMetaData} define \textit{tipos} — o VineJS \textbf{não} valida \texttt{meta} em runtime. Se precisar, valide manualmente no callback de \texttt{withMetaData(...)}.
+\end{warningbox}
+
+\subsection{Mensagens e Error Reporter}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Mensagens personalizadas (preload \texttt{start/validator.ts})},
+  label={lst:start_validator_messages}
+]{snippets/fundamentos/validations/start_validator_messages.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Registrando um \textit{error reporter} customizado},
+  label={lst:start_validator_reporter}
+]{snippets/fundamentos/validations/start_validator_reporter.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo mínimo de \textit{JSONAPIErrorReporter}},
+  label={lst:jsonapi_reporter}
+]{snippets/fundamentos/validations/jsonapi_reporter.ts}
+
+\subsection{Arquivos (rule contribuída pelo AdonisJS)}
+
+O tipo \texttt{vine.file()} é disponibilizado pelo núcleo do AdonisJS. Útil para upload (com tamanho/extensões).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo de validação de arquivo},
+  label={lst:file_validator}
+]{snippets/fundamentos/validations/file_validator.ts}
+
+\subsection*{Notas práticas}
+
+\begin{itemize}
+  \item Prefira \texttt{request.validateUsing(validator)} ao invés de manipular \texttt{request.all()} manualmente — ele já mescla body, query e files corretamente.
+  \item Evite “mega-schemas” dinâmicos; mantenha um por ação. A duplicação mínima favorece leitura e manutenção.
+  \item Se a sua equipe usa JSON:API, padronize o \textit{error reporter} pra respostas consistentes.
+\end{itemize}
+
+\begin{warningbox}
+  Erros comuns: tentar usar APIs antigas (ex.: \texttt{vine.rules}) ou esquecer de exportar o \textit{const} do \texttt{vine.compile(...)}. No VineJS moderno, o fluxo é \texttt{vine.compile(schema)} → \texttt{request.validateUsing(...)}.
+\end{warningbox}
+
+\section{Uploads de Arquivos}
+
+O AdonisJS tem suporte nativo a uploads via multipart/form-data. Os arquivos são processados automaticamente pelo BodyParser e gravados no diretório tmp do SO. A partir do controller, você pode acessar, validar e mover para um local persistente (ou para um storage externo).
+
+\begin{infobox}
+  Regra de ouro que sigo em apps reais: \textbf{validar cedo, nomear de forma única, limitar extensões/tamanho, e nunca servir caminhos “crus”}. Quando vi isso quebrar, quase sempre era por nome de arquivo previsível ou path traversal.
+\end{infobox}
+
+\subsection{Acessando arquivos enviados}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Um único arquivo com \texttt{request.file}},
+  label={lst:single_file}
+]{snippets/fundamentos/uploads/user_avatars_controller_update.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Vários arquivos com \texttt{request.files}},
+  label={lst:multiple_files}
+]{snippets/fundamentos/uploads/invoices_controller_update.ts}
+
+\subsection{Validação manual (inline)}
+
+Você pode definir regras no próprio request.file(s) e checar isValid/errors.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validação inline de avatar},
+  label={lst:manual_validate_avatar}
+]{snippets/fundamentos/uploads/manual_validate_avatar.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validação inline de múltiplos documentos},
+  label={lst:manual_validate_documents}
+]{snippets/fundamentos/uploads/manual_validate_documents.ts}
+
+\begin{tipbox}
+  Para respostas de erro consistentes, eu padronizo a estrutura { name, errors } por arquivo. Isso facilita exibir erro “ao lado” do input no frontend.
+\end{tipbox}
+
+\subsection{Validando arquivos com VineJS}
+
+Recomendo concentrar a validação no VineJS — o pipeline já converte em resposta HTTP quando falha.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validator de avatar (\texttt{vine.file}) e uso no controller},
+  label={lst:vine_single}
+]{snippets/fundamentos/uploads/user_validator_and_controller.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Array de arquivos com \texttt{vine.array(vine.file(...))}},
+  label={lst:vine_array}
+]{snippets/fundamentos/uploads/create_invoice_validator.ts}
+
+\subsection{Movendo para local persistente}
+
+Após validar, mova o arquivo com file.move(...). Gere nomes únicos com cuid().
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Movendo para \texttt{storage/uploads}},
+  label={lst:move_basic}
+]{snippets/fundamentos/uploads/move_avatar_storage.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Nome único com \texttt{cuid()} + extensão detectada},
+  label={lst:move_with_cuid}
+]{snippets/fundamentos/uploads/move_avatar_with_cuid.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Salvando o nome do arquivo no banco},
+  label={lst:save_filename_db}
+]{snippets/fundamentos/uploads/save_avatar_db.ts}
+
+\subsection*{Propriedades úteis (\textit{MultipartFile})}
+
+\texttt{fieldName}, \texttt{clientName}, \texttt{size}, \texttt{extname}, \texttt{type}/\texttt{subtype}, \texttt{tmpPath}, \texttt{fileName}/\texttt{filePath} (após \texttt{move}), \texttt{errors}, \texttt{validated}, \texttt{isValid}, \texttt{hasErrors}, \texttt{meta}.
+
+\subsection{Servindo arquivos com segurança}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Servindo uploads com proteção a path traversal},
+  label={lst:serve_download}
+]{snippets/fundamentos/uploads/routes_serve_uploads.ts}
+
+\begin{warningbox}
+  Nunca aceite caminhos vindos do usuário sem normalizar e checar \textbf{path traversal}. Evite concatenar strings de caminho — centralize tudo em um diretório “raiz”.
+\end{warningbox}
+
+\subsection*{Drive (recomendado)}
+
+O Drive oferece uma abstração segura para local/S3/GCS com API unificada e proteções (inclui checagens de path). Para produção, prefira Drive ao “fazer na mão”. (Você configura o provider e usa operações de put/get/exists, etc.)
+
+\subsection{Avançado: processando o stream manualmente}
+
+Se quiser processar o multipart por conta própria, desative o auto-processamento no BodyParser e use request.multipart.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Desligando auto-processamento e processando stream},
+  label={lst:stream_manual}
+]{snippets/fundamentos/uploads/assets_controller_stream.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validando partes do stream (tamanho/extensões)},
+  label={lst:stream_validation}
+]{snippets/fundamentos/uploads/assets_controller_stream_validate.ts}
+
+\begin{tipbox}
+  No modo manual, chame \texttt{part.pause()} e \texttt{part.on('data', reporter)} — sem isso, a validação \textit{não} acontece. Trate \texttt{error} no stream.
+\end{tipbox}
+
+\subsection{BodyParser: configuração essencial}
+
+Você pode ajustar métodos permitidos, limites, \textit{encodings}, conversão de strings vazias para \texttt{null}, e o parser multipart.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{config/bodyparser.ts} com opções principais},
+  label={lst:bodyparser_config}
+]{snippets/fundamentos/uploads/config_bodyparser.ts}
+
+\begin{infobox}
+  Em formulários HTML, habilite \texttt{convertEmptyStringsToNull} para não gravar strings vazias no DB quando o campo deveria ser \texttt{NULL}.
+\end{infobox}
+
+\section{Middleware}
+
+\subsection{Visão geral}
+
+Middleware são funções encadeadas que rodam antes do handler de rota. Cada uma pode: (a) abortar a requisição lançando exceção, (b) encerrar a resposta, ou (c) chamar next() para seguir o pipeline. No AdonisJS, usamos middleware para: BodyParser, sessões, autenticação, assets estáticos, etc. Você também cria os seus, como “GeoIP do usuário”, “Tenant header”, “Rate limiting”, e por aí vai.
+
+\begin{tipbox}
+  Padrão que sigo: \textbf{tudo que cruza várias rotas} (ex.: auditoria, correlação, tenant) entra como middleware; regras de negócio ficam fora.
+\end{tipbox}
+
+\subsection{Stacks de middleware}
+
+O AdonisJS separa a execução em três frentes: server, router (globais) e nomeados.
+
+\subsection{Server middleware stack}
+
+Roda em \textbf{todas} as requisições, mesmo sem rota correspondente. Útil p/ estáticos, observabilidade, hardening.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Registrando server middleware em \texttt{start/kernel.ts}},
+  label={lst:start_kernel_server}
+]{snippets/fundamentos/middleware/start_kernel_server.ts}
+
+\subsection{Router (globais) middleware stack}
+
+Roda em toda requisição que \textbf{bate em uma rota}. Ex.: BodyParser, session, auth global.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Registrando router middleware global em \texttt{start/kernel.ts}},
+  label={lst:start_kernel_router}
+]{snippets/fundamentos/middleware/start_kernel_router.ts}
+
+\subsection{Coleção de middleware nomeados}
+
+São middleware que só executam quando atribuídos à rota/grupo. Exporte a coleção para usar em start/routes.ts.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Coleção nomeada e exportada em \texttt{start/kernel.ts}},
+  label={lst:start_kernel_named}
+]{snippets/fundamentos/middleware/start_kernel_named.ts}
+
+\subsection{Criando middleware}
+
+Geramos com Ace; a classe implementa handle(ctx, next).
+
+\lstinputlisting[
+  language=bash,
+  caption={Criando um middleware},
+  label={lst:make_middleware}
+]{snippets/fundamentos/middleware/make_middleware.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Esqueleto de \protect\texttt{app/middleware/user\_location\_middleware.ts}},
+  label={lst:user_location_base}
+]{snippets/fundamentos/middleware/user_location_middleware.ts}
+
+\subsection{Abortar, continuar ou encerrar sem \texttt{next()}}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Abortando a requisição com exceção},
+  label={lst:user_location_abort}
+]{snippets/fundamentos/middleware/user_location_abort.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Continuando o pipeline com \texttt{await next()}},
+  label={lst:user_location_continue}
+]{snippets/fundamentos/middleware/user_location_continue.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Encerrando a resposta sem chamar \texttt{next()}},
+  label={lst:user_location_end}
+]{snippets/fundamentos/middleware/user_location_end.ts}
+
+\subsection{Atribuindo a rotas e grupos}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Aplicando middleware em rota e múltiplos middleware},
+  label={lst:routes_apply_mw}
+]{snippets/fundamentos/middleware/routes_apply_middleware.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Aplicando middleware a um grupo de rotas},
+  label={lst:routes_group_mw}
+]{snippets/fundamentos/middleware/routes_group_middleware.ts}
+
+\subsection{Parâmetros em middleware}
+
+Middleware nomeados podem receber opções (ex.: \texttt{auth} com guard).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Middleware com parâmetro (guard)},
+  label={lst:auth_mw_param}
+]{snippets/fundamentos/middleware/auth_middleware_param.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando o guard na rota},
+  label={lst:routes_auth_guard}
+]{snippets/fundamentos/middleware/routes_auth_guard.ts}
+
+\subsection{Dependency Injection}
+
+Middleware são instanciados via IoC — você pode injetar serviços.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Serviço \texttt{GeoIpService}},
+  label={lst:geoip_service}
+]{snippets/fundamentos/middleware/geoip_service.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Injetando serviço no middleware com \texttt{@inject()}},
+  label={lst:user_location_injected}
+]{snippets/fundamentos/middleware/user_location_injected.ts}
+
+\subsection{Fluxo de execução (downstream/upstream)}
+
+Código antes do next() trata a \textit{request} (downstream). Depois do next(), você pode inspecionar/mutar a \textit{response} (upstream).
+
+\subsection{Exceções e upstream garantido}
+
+Exceções viram respostas HTTP pelo Exception Handler global. Não precisa try/catch para garantir upstream — o framework garante a execução após next().
+
+\subsection{Mutando a \textit{response}: standard/stream/download}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lendo/mutando \textit{standard response}},
+  label={lst:mutate_standard}
+]{snippets/fundamentos/middleware/mutate_standard_response.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Inspecionando \textit{stream} de resposta},
+  label={lst:inspect_stream}
+]{snippets/fundamentos/middleware/inspect_stream.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Inspecionando \textit{file download}},
+  label={lst:inspect_download}
+]{snippets/fundamentos/middleware/inspect_file_download.ts}
+
+\subsection{Testando middleware (unit e pipeline)}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Teste unitário com \texttt{testUtils.createHttpContext()}},
+  label={lst:test_unit}
+]{snippets/fundamentos/middleware/test_user_location_unit.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Compondo pipeline de middleware com \texttt{server.pipeline()}},
+  label={lst:test_pipeline}
+]{snippets/fundamentos/middleware/test_server_pipeline.ts}
+
+\section{Erros e Depuração}
+
+Depurar bem encurta ciclos de feedback e evita “console.log sprawl”. No AdonisJS, costumo combinar três camadas: (1) debugger do VSCode para parar o fluxo e inspecionar variáveis, (2) Dump and Die (dd) para visualização rica e imediata, e (3) logs e exception handler bem configurados para entender o que acontece em produção.
+
+\begin{tipbox}
+  Se o breakpoint não “para”: verifique se o VSCode está usando a configuração certa, se o projeto está rodando com \texttt{ace.js} e se o TypeScript está gerando \textit{source maps}. Em projetos grandes, \textit{lazy imports} em controllers ajudam a reduzir o tempo de boot e a manter o \textit{attach} responsivo.
+\end{tipbox}
+
+\subsection{Depurando com o VSCode}
+
+Crie o arquivo .vscode/launch.json e rode o servidor com o debugger.
+
+\lstinputlisting[
+  language=json,
+  caption={VSCode: iniciar servidor em modo debug},
+  label={lst:vscode_launch_dev}
+]{snippets/fundamentos/erros-depuracao/vscode_launch_dev.json}
+
+\textbf{Como usar}: abra a \textit{Command Palette}
+→
+→ \textit{Debug: Select and Start Debugging}
+→
+→ escolha “Dev server”.
+
+\subsection{Depurando testes}
+
+Adicione outra configuração para rodar testes no modo debug (útil para travar em asserts).
+
+\lstinputlisting[
+  language=json,
+  caption={VSCode: rodar testes com debug},
+  label={lst:vscode_launch_tests}
+]{snippets/fundamentos/erros-depuracao/vscode_launch_tests.json}
+
+\subsection{Depurando outros comandos Ace (Attach)}
+
+Para qualquer comando Ace, use o modo \textit{attach} e inicie o processo com --inspect.
+
+\lstinputlisting[
+  language=json,
+  caption={VSCode: attach em processo Node com \texttt{--inspect}},
+  label={lst:vscode_launch_attach}
+]{snippets/fundamentos/erros-depuracao/vscode_launch_attach.json}
+
+\lstinputlisting[
+  language=bash,
+  caption={Anexando o debugger a um comando Ace},
+  label={lst:node_inspect_ace}
+]{snippets/fundamentos/erros-depuracao/node_inspect_ace.sh}
+
+\begin{warningbox}
+  Sempre rode o processo alvo pelo \textbf{terminal integrado} do VSCode — assim o attach encontra a porta 9229 automaticamente.
+\end{warningbox}
+
+\subsection{Depurando templates Edge}
+
+Não há breakpoints do VSCode dentro do Edge. Use o \verb|@debugger| como \textit{breakpoint} em template.
+
+\lstinputlisting[
+  language=html,
+  caption={\texttt{@debugger}, \texttt{@dd} e \texttt{@dump} em Edge},
+  label={lst:edge_debug_dump}
+]{snippets/fundamentos/erros-depuracao/edge_debug_dump.edge}
+
+\subsection{Dump and Die (\texttt{dd})}
+
+dd() imprime com contexto (fonte, profundidade, estáticos/protótipos) e interrompe o fluxo — perfeito para “fotografar” o estado durante uma requisição.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando \texttt{dd} em rota para inspecionar dados},
+  label={lst:dd_in_route}
+]{snippets/fundamentos/erros-depuracao/dd_in_route.ts}
+
+\textbf{Temas HTML}: \texttt{nightOwl}, \texttt{catppuccin}, \texttt{minLight}.
+
+\subsection{Configurando o Dumper}
+
+Ajuste profundidade, colapso de tipos, inspeção de estáticos/protótipos.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{config/app.ts}: configuração do Dumper},
+  label={lst:dumper_config}
+]{snippets/fundamentos/erros-depuracao/dumper_config.ts}
+
+\subsection{Logs de debug do framework}
+
+Use NODE\_DEBUG para ver logs internos do AdonisJS (e até módulos nativos do Node).
+
+\lstinputlisting[
+  language=bash,
+  caption={Ativando logs de debug do AdonisJS e módulos do Node},
+  label={lst:node_debug_env}
+]{snippets/fundamentos/erros-depuracao/node_debug_env.sh}
+
+\begin{tipbox}
+  Combine com um \texttt{logger} estruturado e \texttt{requestId} habilitado para correlacionar eventos de uma mesma requisição.
+\end{tipbox}
+
+\subsection{Tratamento de exceções (HttpExceptionHandler)}
+
+O \textbf{ExceptionHandler} centraliza \textit{rendering} e \textit{reporting}, com \textit{content negotiation} e \textit{debug mode} (Youch) em dev.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Handler base com \textit{debug mode} e \textit{status pages} em produção},
+  label={lst:http_exception_handler_base}
+]{snippets/fundamentos/erros-depuracao/http_exception_handler_base.ts}
+
+\subsection{Registrando o handler no servidor}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{start/kernel.ts}: registrando o error handler},
+  label={lst:server_error_handler_register}
+]{snippets/fundamentos/erros-depuracao/server_error_handler_register.ts}
+
+\subsection{Customizando \textit{handle}}
+
+Exemplo tratando \texttt{E\_VALIDATION\_ERROR} com 422.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Tratando validação como 422},
+  label={lst:validation_422}
+]{snippets/fundamentos/erros-depuracao/validation_422.ts}
+
+\subsection{Status pages}
+
+Páginas para \texttt{404} e \texttt{500..599}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{statusPages} por faixa de status},
+  label={lst:status_pages}
+]{snippets/fundamentos/erros-depuracao/status_pages.ts}
+
+\subsection{Reporting, logging e filtros}
+
+Ignorando \textit{status} ou \textit{codes} específicos; adicionando contexto aos logs.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Ignorando status/códigos e enriquecendo logs},
+  label={lst:report_filters}
+]{snippets/fundamentos/erros-depuracao/report_filters.ts}
+
+\subsection{Exceções personalizadas}
+
+Crie classes de exceção, defina \texttt{status}/\texttt{code}, implemente \texttt{handle}/\texttt{report}.
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando exceção via Ace},
+  label={lst:make_exception}
+]{snippets/fundamentos/erros-depuracao/make_exception.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exceção personalizada com \texttt{status} e \texttt{code} estáticos},
+  label={lst:unauthorized_exception}
+]{snippets/fundamentos/erros-depuracao/unauthorized_exception.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lançando exceção com payload customizado},
+  label={lst:throw_unauthorized}
+]{snippets/fundamentos/erros-depuracao/throw_unauthorized.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{handle} e \texttt{report} na própria exceção},
+  label={lst:exception_handle_report}
+]{snippets/fundamentos/erros-depuracao/exception_handle_report.ts}
+
+\subsection{Narrowing de tipos de erro}
+
+Exemplo com erro exportado pelo core.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{instanceof} para tratar erro específico},
+  label={lst:instanceof_core_error}
+]{snippets/fundamentos/erros-depuracao/instanceof_core_error.ts}
+
+\begin{examplebox}
+  Regra prática que adoto: \textbf{erro esperado} (ex.: rota inexistente, validação)
+  →
+  → trate e logue em \texttt{warn/info}. \textbf{erro inesperado} (ex.: crash de dependência, I/O)
+  →
+  → \texttt{error} + correlação por \texttt{requestId} + alerta no observability.
+\end{examplebox}
+
+\section{Estado de sessão e cookies}
+
+Sessão guarda estado entre requisições (ex.: usuário logado, preferências), enquanto cookies são pequenos valores enviados pelo navegador em cada requisição. No AdonisJS, a sessão vem do pacote @adonisjs/session (com várias “stores”), e cookies são lidos pelo request e escritos pelo response.
+
+\begin{tipbox}
+  Para apps escaláveis, prefira \textbf{Redis} ou \textbf{DynamoDB} como store de sessão. Em projetos pequenos ou sem servidor compartilhado, \textbf{cookie} ou \textbf{file} podem bastar.
+\end{tipbox}
+
+\subsection{Instalação}
+
+Instale e configure a sessão:
+
+\lstinputlisting[
+  language=bash,
+  caption={Instalação do pacote de sessão},
+  label={lst:add-session}
+]{snippets/fundamentos/sessao-cookies/add_session.sh}
+
+\subsection{Configuração da Sessão}
+
+O arquivo config/session.ts centraliza idade, cookie e qual store usar. Abaixo um exemplo com \textit{cookie}, \textit{file}, \textit{redis} e \textit{dynamodb} já prontos.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configuração de sessão (múltiplas stores disponíveis)},
+  label={lst:session-config}
+]{snippets/fundamentos/sessao-cookies/config_session.ts}
+
+E não esqueça de validar o SESSION\_DRIVER em start/env.ts:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Validação do \protect\texttt{SESSION\_DRIVER} nas variáveis de ambiente},
+  label={lst:env-validate-session}
+]{snippets/fundamentos/sessao-cookies/start_env.ts}
+
+\begin{warningbox}
+  Para usar \textbf{Redis}, configure antes \texttt{@adonisjs/redis}. Para \textbf{DynamoDB}, passe \textit{clientConfig} ou uma instância do \texttt{DynamoDBClient}.
+\end{warningbox}
+
+\subsection{Lojas (stores)}
+
+O AdonisJS traz stores: \texttt{cookie}, \texttt{file}, \texttt{redis}, \texttt{dynamodb} e \texttt{memory} (testes). Você pode habilitar várias e alternar por ambiente.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo completo de stores configuradas},
+  label={lst:stores}
+]{snippets/fundamentos/sessao-cookies/stores.ts}
+
+\subsection{Exemplo básico de uso}
+
+Gravando preferência de tema em sessão e lendo depois:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rotas usando \texttt{session.put} e \texttt{session.get}},
+  label={lst:session-basic-example}
+]{snippets/fundamentos/sessao-cookies/session_basic_example.ts}
+
+\subsection{Tipos e API da Sessão}
+
+A sessão serializa valores com \texttt{JSON.stringify}. Você pode usar \texttt{string}, \texttt{number}, \texttt{bigInt}, \texttt{boolean}, \texttt{null}, \texttt{object}, \texttt{array} e \texttt{Date} (vira ISO).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Operações comuns de sessão: get/put/has/forget/pull/inc/dec/clear},
+  label={lst:session-api}
+]{snippets/fundamentos/sessao-cookies/session_api.ts}
+
+\subsection{Ciclo de vida e regeneração}
+
+O ID é único e persiste até expirar. Regenerar o ID evita \textit{session fixation} (o pacote \texttt{@adonisjs/auth} já faz isso após login).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Regenerando o ID de sessão},
+  label={lst:session-regenerate}
+]{snippets/fundamentos/sessao-cookies/session_regenerate.ts}
+
+\subsection{Flash messages}
+
+Dados de uma requisição para a seguinte (padrão em \textit{POST/Redirect/GET}). Útil para feedback e erros de validação.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Gravando \textit{flash} e redirecionando},
+  label={lst:flash-basic}
+]{snippets/fundamentos/sessao-cookies/flash_basic.ts}
+
+\lstinputlisting[
+  language=html,
+  caption={Lendo \textit{flash} no Edge: \texttt{@flashMessage} e \texttt{@inputError}},
+  label={lst:flash-edge}
+]{snippets/fundamentos/sessao-cookies/flash_edge.edge}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Atalhos para \textit{flash} de dados de formulários},
+  label={lst:flash-shortcuts}
+]{snippets/fundamentos/sessao-cookies/flash_shortcuts.ts}
+
+\begin{tipbox}
+  \texttt{request.validateUsing} integra com sessão: erros e valores anteriores são \textit{flashados} automaticamente quando há \textit{session middleware}.
+\end{tipbox}
+
+\subsection{Eventos da Sessão}
+
+O pacote despacha eventos (leitura, escrita, destruição). Use-os para instrumentação/observabilidade. (Consulte a referência de eventos do pacote.)
+
+\subsection{Store customizada}
+
+Implemente \texttt{SessionStoreContract} com \texttt{read}, \texttt{write}, \texttt{destroy}, \texttt{touch} e exponha uma \textit{factory} para usar no \texttt{config}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo de Store custom (MongoDB) com factory},
+  label={lst:custom-store}
+]{snippets/fundamentos/sessao-cookies/custom_store_mongodb.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Ligando a store custom no \texttt{config/session.ts}},
+  label={lst:custom-store-config}
+]{snippets/fundamentos/sessao-cookies/custom_store_config.ts}
+
+\begin{warningbox}
+  Ao persistir, serialize o objeto; ao ler, desserialize. \texttt{MessageBuilder} do AdonisJS pode ajudar a padronizar.
+\end{warningbox}
+
+\subsection{Cookies}
+
+Cookies são lidos do \texttt{request} e escritos pelo \texttt{response}. O AdonisJS oferece cookies \textbf{assinados} (padrão), \textbf{criptografados} e \textbf{plain} (para acesso via \texttt{document.cookie} quando necessário).
+
+\subsection{Ler, escrever e apagar}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Leitura, escrita e remoção de cookies},
+  label={lst:cookies-basic}
+]{snippets/fundamentos/sessao-cookies/cookies_basic.ts}
+
+\subsection{Configuração padrão}
+
+Opções globais ficam em \texttt{config/app.ts} (seção \texttt{http.cookie}).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Opções globais de cookies (\texttt{config/app.ts})},
+  label={lst:cookies-config}
+]{snippets/fundamentos/sessao-cookies/config_app_cookie.ts}
+
+\begin{tipbox}
+  Em produção, mantenha \texttt{secure: true} e \texttt{sameSite: 'lax'} (ou \texttt{'strict'}). Se o front estiver em domínio diferente, revise \texttt{domain} e \texttt{sameSite}.
+\end{tipbox}
+
+\subsection{Tipos de cookies}
+Assinados (padrão)
+
+Impedem adulteração (assinatura inválida faz o cookie ser ignorado).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Cookie assinado: set e get},
+  label={lst:cookies-signed}
+]{snippets/fundamentos/sessao-cookies/cookies_signed.ts}
+
+Criptografados
+
+Além de assinados, têm conteúdo ilegível (use para dados sensíveis).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Cookie criptografado: set e get},
+  label={lst:cookies-encrypted}
+]{snippets/fundamentos/sessao-cookies/cookies_encrypted.ts}
+
+Plain
+
+Para leitura no cliente via \texttt{document.cookie}. Pode desligar a codificação quando precisar enviar um token já codificado.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Cookie \textit{plain} (com e sem codificação)},
+  label={lst:cookies-plain}
+]{snippets/fundamentos/sessao-cookies/cookies_plain.ts}
+
+\begin{warningbox}
+  Se o front precisa ler cookie no \texttt{browser}, \texttt{httpOnly} deve ser \texttt{false} para \textit{plain}. Para autenticação baseada em cookie, combine com \texttt{SameSite} e \texttt{CSRF} corretamente.
+\end{warningbox}
+
+\section{Logger}
+
+O AdonisJS fornece um logger embutido (baseado em Pino) com suporte a stdout, arquivos e serviços externos. O Pino emite logs em NDJSON (um JSON por linha), focando em alto desempenho.
+
+\begin{tipbox}
+  Durante requisições HTTP, prefira \texttt{ctx.logger} — ele injeta o \textit{request id} automaticamente (quando habilitado), facilitando o \textit{tracing}.
+\end{tipbox}
+
+\subsection{Uso básico}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Uso do logger global e no contexto HTTP},
+  label={lst:logger-uso}
+]{snippets/fundamentos/logger/logger_uso.ts}
+
+\subsection{Configuração base}
+
+A configuração fica em \texttt{config/logger.ts}. Você pode ter múltiplos loggers e escolher um como \textit{default}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configuração base do logger},
+  label={lst:logger-config}
+]{snippets/fundamentos/logger/config_logger.ts}
+
+\begin{tipbox}
+  Para incluir o \textit{request id} automaticamente nos logs HTTP, ative em \texttt{config/app.ts}:
+\end{tipbox}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Habilitando \texttt{generateRequestId}},
+  label={lst:logger-request-id}
+]{snippets/fundamentos/logger/config_app_request_id.ts}
+
+\subsection{Transports e \textit{targets}}
+
+Os \textit{targets} definem onde e como os logs são escritos (ex.: \texttt{pino/file}, \texttt{pino-pretty}). Você pode condicionar por ambiente usando o helper \texttt{targets()}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Targets condicionais com \texttt{targets.pushIf()}},
+  label={lst:logger-targets}
+]{snippets/fundamentos/logger/config_logger_targets.ts}
+
+\begin{infobox}
+  \textbf{File target} (\texttt{pino/file}) escreve em \textit{file descriptor} (1 = stdout).
+  \textbf{Pretty target} (\texttt{pino-pretty}) formata a saída para leitura humana.
+\end{infobox}
+
+\subsection{Múltiplos loggers}
+
+Defina vários loggers por nome e selecione em tempo de execução.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Múltiplos loggers e seleção em runtime},
+  label={lst:logger-multi}
+]{snippets/fundamentos/logger/logger_multiplos.ts}
+
+\subsection{Injeção de dependências}
+
+Você pode injetar o \texttt{Logger} em serviços/controladores. Em requisições, a instância é \textit{request-aware}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Injeção de \texttt{Logger} em serviço},
+  label={lst:logger-di}
+]{snippets/fundamentos/logger/logger_di.ts}
+
+\subsection{Níveis e métodos}
+
+Métodos compatíveis com Pino: \texttt{trace}, \texttt{debug}, \texttt{info}, \texttt{warn}, \texttt{error}, \texttt{fatal}. Você pode enviar um objeto extra para \textit{bindings} e usar \texttt{err} para imprimir erros.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplos de chamadas de log por nível},
+  label={lst:logger-metodos}
+]{snippets/fundamentos/logger/logger_metodos.ts}
+
+\subsection{Log condicional}
+
+Evite computações caras quando o nível não está ativo.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{isLevelEnabled} e \texttt{ifLevelEnabled}},
+  label={lst:logger-condicional}
+]{snippets/fundamentos/logger/logger_condicional.ts}
+
+\subsection{\textit{Child logger}}
+
+Crie \textit{children} com \textit{bindings} fixos (ex.: \texttt{requestId}) ou nível diferente.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Criando e usando \textit{child logger}},
+  label={lst:logger-child}
+]{snippets/fundamentos/logger/logger_child.ts}
+
+\subsection{Escrevendo em arquivo e rotação}
+
+Para arquivo, use \texttt{pino/file}. Para rotação, utilize \texttt{logrotate} (sistema) ou um pacote como \texttt{pino-roll}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Escrevendo em arquivo com \texttt{pino/file}},
+  label={lst:logger-file}
+]{snippets/fundamentos/logger/config_logger_file.ts}
+
+\lstinputlisting[
+  language=bash,
+  caption={Instalando \texttt{pino-roll} para rotação},
+  label={lst:logger-roll-install}
+]{snippets/fundamentos/logger/install_pino_roll.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rotação diária com \texttt{pino-roll}},
+  label={lst:logger-roll}
+]{snippets/fundamentos/logger/config_logger_roll.ts}
+
+\subsection{Protegendo dados sensíveis}
+
+Use \texttt{redact} para mascarar chaves (via \texttt{fast-redact}) ou envolva valores com \texttt{Secret}.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Redação de campos sensíveis no \texttt{config/logger.ts}},
+  label={lst:logger-redact-config}
+]{snippets/fundamentos/logger/config_logger_redact.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Redação em runtime e uso de \texttt{Secret}},
+  label={lst:logger-redact-uso}
+]{snippets/fundamentos/logger/logger_redact_secret.ts}
+
+
+
+
+
+
+
+
+\section{Environment Variables}
+
+Variáveis de ambiente mantêm segredos (chaves, senhas) e configuram o app por ambiente (dev, test, prod) sem acoplar valores no código-fonte. Em AdonisJS, além do process.env, usamos o módulo \texttt{env} para \textbf{validar}, \textbf{tipar} e \textbf{carregar} múltiplos arquivos \texttt{.env}.
+
+\begin{tipbox}
+  Prefira \texttt{env.get()} ao \texttt{process.env}: você ganha validação na inicialização, tipagem estática e suporte a múltiplos \texttt{.env}.
+\end{tipbox}
+
+\subsection{Lendo variáveis}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Comparando \texttt{process.env} com o módulo \texttt{env}},
+  label={lst:env-uso}
+]{snippets/fundamentos/env/env_uso.ts}
+
+\subsection{Compartilhando com Edge (SSR)}
+
+Para usar \texttt{env} nas views (somente server-side), crie um preload \texttt{start/view.ts} e exponha \texttt{env} como global do Edge.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Preload para compartilhar \texttt{env} com o Edge (SSR)},
+  label={lst:env-edge}
+]{snippets/fundamentos/env/start_view.ts}
+
+\begin{warningbox}
+  Isso \textbf{não} expõe \texttt{env} ao navegador — apenas durante a renderização no servidor.
+\end{warningbox}
+
+\subsection{Validando variáveis em \texttt{start/env.ts}}
+
+Defina o schema com \texttt{Env.create}. A validação ocorre quando o arquivo é importado (normalmente via arquivos de \texttt{config/}).
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Schema e carregamento de \texttt{.env} com validação},
+  label={lst:env-schema}
+]{snippets/fundamentos/env/start_env.ts}
+
+\begin{infobox}
+  O schema também \textbf{informa tipos estáticos}: \texttt{env.get('PORT')} infere \texttt{number} se \texttt{PORT} for \texttt{Env.schema.number()}.
+\end{infobox}
+
+\subsection{API do schema (exemplos)}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{string} (opcionalidade e formatos: host, url, email)},
+  label={lst:env-schema-string}
+]{snippets/fundamentos/env/schema_string_examples.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{boolean} (casts e opcionalidade)},
+  label={lst:env-schema-boolean}
+]{snippets/fundamentos/env/schema_boolean.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{number} (casts e opcionalidade)},
+  label={lst:env-schema-number}
+]{snippets/fundamentos/env/schema_number.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{enum} (array de literais e TS enum)},
+  label={lst:env-schema-enum}
+]{snippets/fundamentos/env/schema_enum.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Função custom para validar e transformar (ex.: \texttt{PORT})},
+  label={lst:env-schema-custom}
+]{snippets/fundamentos/env/schema_custom.ts}
+
+\subsection{Arquivos \texttt{.env} por ambiente}
+Desenvolvimento
+
+\lstinputlisting[
+  language=bash,
+  caption={\texttt{.env} (desenvolvimento)},
+  label={lst:env-dev}
+]{snippets/fundamentos/env/env_development.env}
+
+Produção
+
+\lstinputlisting[
+  language=bash,
+  caption={Lendo \protect\texttt{.env} do root ou \protect\texttt{ENV\_PATH}},
+  label={lst:env-prod}
+]{snippets/fundamentos/env/scripts_env_path.sh}
+
+Testes
+
+\lstinputlisting[
+  language=bash,
+  caption={\texttt{.env.test} sobrescreve valores de \texttt{.env}},
+  label={lst:env-test}
+]{snippets/fundamentos/env/env_test.env}
+
+\begin{infobox}
+  Ordem de carregamento (maior prioridade em cima):
+
+  \texttt{.env.{NODE\_ENV}.local} \quad
+
+  \texttt{.env.local} (exceto test) \quad
+
+  \texttt{.env.{NODE\_ENV}} \quad
+
+  \texttt{.env}
+\end{infobox}
+
+\subsection{Identificadores e interpolação}
+
+Você pode registrar \textit{identifiers} (prefixos) para decodificar valores no parse.
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Registrando identificador \texttt{base64:} em \texttt{start/env.ts}},
+  label={lst:env-identifier}
+]{snippets/fundamentos/env/start_env_identifier.ts}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando \texttt{EnvParser} inline (exemplo didático)},
+  label={lst:env-parser-inline}
+]{snippets/fundamentos/env/env_parser_inline.ts}
+
+\subsection{Substituição de variáveis e escaping}
+
+\lstinputlisting[
+  language=bash,
+  caption={Substituição entre variáveis no \texttt{.env}},
+  label={lst:env-substitution}
+]{snippets/fundamentos/env/env_substitution.env}
+
+\lstinputlisting[
+  language=bash,
+  caption={Escapando \protect\texttt{\$} quando for valor literal},
+  label={lst:env-escape}
+]{snippets/fundamentos/env/env_escape.env}

@@ -1,0 +1,183 @@
+\chapter*{Banco de Dados com Lucid}
+
+Este capítulo introduz o uso de bancos SQL no AdonisJS, com foco no \textit{Lucid ORM}. A proposta aqui é dar a visão geral e o “primeiro contato”: por que usar um ORM, quando usar o Lucid, como instalar, criar o primeiro modelo, rodar migrations, fazer CRUD básico, como integrar \emph{outros} ORMs quando necessário e um panorama de testes e Redis como suporte à camada de dados. Os detalhes avançados (relacionamentos, hooks, transações, serialização, consultas complexas) ficam para as próximas seções do livro.
+
+\section{Panorama: SQL e ORMs no AdonisJS}
+
+\subsection{SQL e por que um ORM}
+Bancos relacionais continuam sendo a base de muitos sistemas. Em AdonisJS você pode usar o que preferir: drivers SQL puros, query builders ou ORMs. Um ORM simplifica o \textit{boilerplate}, dá tipagem e ergonomia ao escrever consultas, e integra com outras partes do framework (ex.: Auth e validação).
+
+\subsection{Opções populares (resumo introdutório)}
+\begin{itemize}
+  \item \textbf{Lucid} — Query builder + Active Record sobre Knex, mantido pela equipe do AdonisJS. Integrações prontas (Auth, validação), migrations, factories, seeders.
+  \item \textbf{Prisma} — ORM popular com modelos declarativos, migrações, tipagem forte e DX refinada.
+  \item \textbf{Kysely} — Query builder \emph{end-to-end} tipado. Leve e direto, sem modelos.
+  \item \textbf{Drizzle ORM} — Minimalista, muito usado na comunidade.
+  \item \textbf{MikroORM} — ORM baseado em Knex, verboso porém maduro.
+  \item \textbf{TypeORM} — Amplo no ecossistema TypeScript.
+\end{itemize}
+
+\begin{tipbox}
+  AdonisJS \textbf{não obriga} o uso do Lucid. Se sua equipe já domina Prisma, Kysely ou outro, é viável integrá-los — só fique atento às integrações (ex.: Auth) que o Lucid oferece de fábrica.
+\end{tipbox}
+
+\section{Por que Lucid (quando e por quê)}
+
+\subsection{Pontos fortes do Lucid}
+\begin{itemize}
+  \item Query builder fluente (Knex) + recursos SQL avançados (CTEs, \textit{window}, JSON, locks).
+  \item Modelos \textit{class-based} (Active Record): relações, hooks, serialização.
+  \item Migrations incrementais; factories e seeders.
+  \item Integrações prontas com Auth e validação (regras \texttt{unique}/\texttt{exists}).
+  \item Projeto maduro, de longa data com Knex.
+\end{itemize}
+
+\subsection{Quando considerar outro ORM}
+Se você precisa de um fluxo declarativo com \emph{schema} central (Prisma), ou de um query builder minimalista (Kysely/Drizzle), pode optar por eles. Só lembre: você fará algumas pontes manuais (ex.: provedor de usuário no Auth).
+
+\section{Começando com o Lucid}
+
+\subsection{Instalação}
+\lstinputlisting[
+  language=bash,
+  caption={Adicionar Lucid ao projeto},
+  label={lst:lucid-install}
+]{snippets/lucid/introducao/install_lucid.sh}
+
+\subsection{Seu primeiro modelo}
+\lstinputlisting[
+  language=bash,
+  caption={Gerando o modelo \texttt{User}},
+  label={lst:lucid-make-model-user}
+]{snippets/lucid/introducao/make_model_user.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Modelo inicial \texttt{User}},
+  label={lst:lucid-user-model}
+]{snippets/lucid/introducao/user_model.ts}
+
+\subsection{Migrations em 60 segundos}
+\lstinputlisting[
+  language=bash,
+  caption={Criando e executando migration \texttt{users}},
+  label={lst:lucid-migrations-commands}
+]{snippets/lucid/introducao/migration_commands.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Migration \texttt{users} (esqueleto)},
+  label={lst:lucid-migration-users}
+]{snippets/lucid/introducao/migration_users.ts}
+
+\subsection{Query Builder e Model}
+Use o serviço \texttt{db} para consultas diretas:
+\lstinputlisting[
+  language=TypeScript,
+  caption={Consulta direta com \texttt{db.from('users')}},
+  label={lst:lucid-db-query}
+]{snippets/lucid/introducao/query_builder_db.ts}
+
+Ou use o modelo para consultas tipadas:
+\lstinputlisting[
+  language=TypeScript,
+  caption={Consulta com \texttt{User.query()}},
+  label={lst:lucid-model-query}
+]{snippets/lucid/introducao/user_query_example.ts}
+
+\subsection{CRUD básico}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplos de CRUD básico com \texttt{User}},
+  label={lst:lucid-crud-basico}
+]{snippets/lucid/introducao/crud_basico.ts}
+
+\section{Usando \emph{outro} ORM no AdonisJS (noções)}
+
+\subsection{Auth sem Lucid: provedor de usuário}
+Se você trocar o Lucid por outro ORM/biblioteca, precisará implementar um \textit{User Provider} para o Auth (por exemplo, \texttt{SessionUserProviderContract}). Exemplo conceitual com Kysely (ponte mínima entre o guard e seu usuário):
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{SessionKyselyUserProvider}: ponte mínima para o guard de sessão},
+  label={lst:auth-session-kysely-provider}
+]{snippets/lucid/introducao/session_kysely_user_provider.ts}
+
+\begin{warningbox}
+  Ao não usar Lucid, regras como \texttt{unique}/\texttt{exists} (integração com o validador) não estarão prontas: você precisará prover alternativas.
+\end{warningbox}
+
+\section{Redis como apoio à camada de dados (visão geral)}
+
+\subsection{Para que usar}
+Redis é útil como \textit{cache}, \textit{rate limiting}, filas simples e \textit{pub/sub}. No AdonisJS, use \texttt{@adonisjs/redis} (\emph{wrapper} sobre ioredis) para conexões nomeadas, clusters e assinatura de canais.
+
+\subsection{Instalação e configuração básica}
+\lstinputlisting[
+  language=bash,
+  caption={Instalação do pacote Redis para AdonisJS},
+  label={lst:redis-install}
+]{snippets/lucid/introducao/install_redis.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Config Redis (resumo)},
+  label={lst:redis-config}
+]{snippets/lucid/introducao//redis_config.ts}
+
+\subsection{Uso rápido e Pub/Sub}
+\lstinputlisting[
+  language=TypeScript,
+  caption={SET/GET e assinatura de canal com Redis},
+  label={lst:redis-quick-pubsub}
+]{snippets/lucid/introducao//redis_quick_pubsub.ts}
+
+\begin{infobox}
+  Erros de conexão são registrados e há estratégia de \textit{retry} por padrão. Em produção, monitore eventos e configure \textit{retry/backoff} adequados.
+\end{infobox}
+
+\section{Testes com banco de dados (primeiros passos)}
+
+\subsection{Reset por migration x truncamento}
+Você pode \textbf{migrar e desfazer} ao fim do ciclo de testes, garantindo DB limpo sempre:
+\lstinputlisting[
+  language=TypeScript,
+  caption={tests bootstrap — migrar e limpar},
+  label={lst:tests-migrate-clean}
+]{snippets/lucid/introducao/tests_bootstrap_migrate.ts}
+
+Para grandes \emph{schemas}, prefira \textbf{truncar tabelas} (mantém o schema, limpa dados entre execuções):
+\lstinputlisting[
+  language=TypeScript,
+  caption={tests bootstrap — truncar tabelas},
+  label={lst:tests-truncate}
+]{snippets/lucid/introducao/tests_bootstrap_truncate.ts}
+
+\subsection{Transação global (quando não usar)}
+Transação por teste facilita limpeza, mas \textbf{não} funciona se seu código testado já usa transações aninhadas:
+\lstinputlisting[
+  language=TypeScript,
+  caption={Transação global por teste (use com cautela)},
+  label={lst:tests-global-tx}
+]{snippets/lucid/introducao/tests_global_tx.ts}
+
+\subsection{Seeds em testes}
+\lstinputlisting[
+  language=TypeScript,
+  caption={Seeds no bootstrap de testes},
+  label={lst:tests-seed}
+]{snippets/lucid/introducao/tests_bootstrap_seed.ts}
+
+\section{Próximos passos (o que virá depois)}
+\begin{itemize}
+  \item Modelos em profundidade: colunas, \textit{serialization}, \textit{computed}, \textit{scopes}.
+  \item Relacionamentos: \texttt{hasOne}, \texttt{hasMany}, \texttt{belongsTo}, \texttt{manyToMany}, \textit{eager loading} e \textit{pivot}.
+  \item Hooks de modelo e eventos.
+  \item Consultas avançadas (CTEs, \textit{window functions}, JSON), \textit{soft delete}, paginação.
+  \item Transações e bloqueios de linha; padrões de repositório/serviço.
+  \item Factories e seeders em cenários reais.
+\end{itemize}
+
+\begin{tipbox}
+  Se você já usa outro ORM (Prisma, Kysely, Drizzle), mantenha este capítulo como referência para integrações do ecossistema AdonisJS (Auth, validação, testes, Redis e convenções).
+\end{tipbox}

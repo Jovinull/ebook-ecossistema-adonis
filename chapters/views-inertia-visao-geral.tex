@@ -1,0 +1,82 @@
+\section{InertiaJS: visão geral, instalação e entrypoint do frontend}
+
+\subsection{O que é o InertiaJS no contexto do AdonisJS}
+
+O InertiaJS é uma camada que transforma seu backend AdonisJS em “backend para SPA” sem obrigar você a criar uma API REST separada.
+
+Em vez de:
+
+\begin{itemize}
+  \item Definir rotas que retornam JSON.
+  \item Consumir essa API via fetch/Axios no frontend.
+\end{itemize}
+
+Você define controllers AdonisJS que chamam \verb|inertia.render|, e o Inertia cuida de:
+
+\begin{itemize}
+  \item Trocar dados entre backend e frontend.
+  \item Atualizar o histórico de navegação.
+  \item Renderizar o componente certo no browser.
+\end{itemize}
+
+\subsection{Instalação e configuração}
+
+Para iniciar um projeto novo já com Inertia, o recomendado é usar o \textbf{Inertia starter kit}. Mas, se você quiser adicionar Inertia a um projeto existente:
+
+\lstinputlisting[
+  language=bash,
+  caption={Instalando Inertia no AdonisJS},
+  label={lst:inertia_install}
+]{snippets/templates/inertia_install.sh}
+
+O comando de configuração:
+
+\begin{itemize}
+  \item Registra o middleware \texttt{inertia\_middleware} em \verb|start/kernel.ts|.
+  \item Cria a estrutura \verb|inertia/app| e \verb|inertia/pages|.
+  \item Cria um template root Edge para usar Inertia.
+\end{itemize}
+
+Depois disso, basta subir o servidor de desenvolvimento (\verb|node ace serve --watch|) e acessar \verb|http://localhost:3333| para ver a página inicial renderizada via Inertia + o framework frontend escolhido.
+
+\subsection{Entrypoint do frontend (cliente)}
+
+O Inertia precisa de um \textbf{entrypoint} do lado do cliente, responsável por:
+
+\begin{itemize}
+  \item Inicializar o framework (Vue, React, etc.).
+  \item Resolver o componente da página com base no nome passado pelo backend.
+  \item Montar a aplicação na árvore DOM.
+\end{itemize}
+
+Exemplo de entrypoint para Vue 3:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{inertia/app/app.ts} (cliente Vue 3)},
+  label={lst:inertia_client_entry}
+]{snippets/templates/inertia_client_entry.ts}
+
+Pontos importantes:
+
+\begin{itemize}
+  \item \textbf{\texttt{resolve}}: recebe o nome da página (ex.: \texttt{'users/index'}) e encontra o componente correspondente em \verb|inertia/pages|.
+  \item \textbf{\texttt{setup}}: monta a aplicação Vue (ou React/Svelte/Solid) no elemento \verb|el| fornecido pelo Inertia.
+  \item \textbf{\texttt{@vite}}: esse arquivo é carregado pela template root através da diretiva \verb|@vite|.
+\end{itemize}
+
+\begin{infobox}
+  No fluxo Inertia, você não pensa em “rotas React” ou “rotas Vue”. As rotas continuam sendo AdonisJS; os componentes são apenas “views ricas” que recebem dados via \verb|inertia.render|.
+\end{infobox}
+
+\subsection{Middleware do Inertia}
+
+O middleware registrado em \verb|start/kernel.ts| garante que toda requisição tenha acesso a \verb|ctx.inertia|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Uso de \texttt{inertia.render} em um controller},
+  label={lst:inertia_controller_basic}
+]{snippets/templates/inertia_controller_basic.ts}
+
+O primeiro parâmetro (\texttt{'users/index'}) é mapeado para o arquivo \verb|inertia/pages/users/index.vue| (ou \verb|.tsx|, etc.), e o segundo são as \textbf{props} enviadas para o componente.

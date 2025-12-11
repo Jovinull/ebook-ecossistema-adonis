@@ -1,0 +1,166 @@
+\section{Protegendo Rotas}
+
+Proteger rotas em AdonisJS envolve dois pilares principais:
+
+\begin{enumerate}
+  \item \textbf{Autenticação}: garantir que a requisição está associada a um usuário ou cliente confiável.
+  \item \textbf{Autorização}: garantir que esse usuário de fato pode executar a ação solicitada.
+\end{enumerate}
+
+Nesta seção, vamos focar principalmente na autorização, usando o \texttt{@adonisjs/bouncer}, e em como combinar isso com middlewares, rate limiting e boas práticas de design.
+
+\section{Visão geral do Bouncer}
+
+O pacote \texttt{@adonisjs/bouncer} fornece uma API de baixo nível para autorização:
+
+\begin{itemize}
+  \item \textbf{Abilities}: funções simples, ideais para regras pontuais.
+  \item \textbf{Policies}: classes por recurso, com métodos por ação (\texttt{create}, \texttt{edit}, \texttt{delete}, etc.).
+\end{itemize}
+
+\begin{infobox}
+  O Bouncer \textbf{não} é um RBAC pronto (papéis, perfis, etc.). Ele é o motor de autorização. A modelagem de papéis/permissões você faz em cima dele.
+\end{infobox}
+
+\section{Middleware de inicialização}
+
+Durante o setup, o Adonis cria um middleware \texttt{\#middleware/initialize\_bouncer\_middleware}. Ele é responsável por:
+
+\begin{itemize}
+  \item Criar uma instância de \texttt{Bouncer} para o usuário autenticado.
+  \item Disponibilizar essa instância em \texttt{ctx.bouncer}.
+  \item Compartilhar \texttt{ctx.bouncer.edgeHelpers} com o Edge, quando aplicável.
+\end{itemize}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Middleware de inicialização do Bouncer (resumido)},
+  label={lst:bouncer_middleware}
+]{snippets/seguranca/bouncer_middleware.ts}
+
+\section{Abilities: regras simples e diretas}
+
+\subsection{Definindo uma ability}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Ability básica \texttt{editPost}},
+  label={lst:ability_edit_post}
+]{snippets/seguranca/ability_edit_post.ts}
+
+\subsection{Usando \texttt{ctx.bouncer}}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando ability em rota},
+  label={lst:bouncer_allows}
+]{snippets/seguranca/bouncer_allows.ts}
+
+Em vez de \texttt{allows}, você pode usar o oposto \texttt{denies}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando \texttt{denies}},
+  label={lst:bouncer_denies}
+]{snippets/seguranca/bouncer_denies.ts}
+
+\subsection{Permitindo usuários convidados}
+
+Por padrão, usuários não autenticados falham na autorização. Para abilities que podem trabalhar com convidados:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Ability que permite guest},
+  label={lst:bouncer_allow_guest}
+]{snippets/seguranca/bouncer_allow_guest.ts}
+
+\section{Policies: organizando autorização por recurso}
+
+Para domínios maiores, \textbf{policies} escalam melhor.
+
+\subsection{Criando uma policy}
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando uma policy},
+  label={lst:make_policy}
+]{snippets/seguranca/make_policy.sh}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo de PostPolicy},
+  label={lst:post_policy}
+]{snippets/seguranca/post_policy.ts}
+
+\subsection{Usando uma policy no controller}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando \texttt{bouncer.with} em controller},
+  label={lst:bouncer_with_policy}
+]{snippets/seguranca/bouncer_with_policy.ts}
+
+\subsection{Hooks \texttt{before} e \texttt{after}}
+
+Hooks permitem regras globais, como ``admins sempre podem tudo'':
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Hook \texttt{before} liberando admins},
+  label={lst:policy_before}
+]{snippets/seguranca/policy_before.ts}
+
+\section{Tratando falhas de autorização}
+
+Em vez de lidar com \texttt{allows/denies} manualmente, você pode usar \texttt{authorize}, que lança \texttt{AuthorizationException}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={\texttt{authorize} com exceção},
+  label={lst:bouncer_authorize}
+]{snippets/seguranca/bouncer_authorize.ts}
+
+O \texttt{HttpExceptionHandler} pode personalizar a resposta 403:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Tratando AuthorizationException},
+  label={lst:auth_exception_handler}
+]{snippets/seguranca/auth_exception_handler.ts}
+
+\section{Protegendo rotas com autenticação e rate limiting}
+
+Bouncer cuida de \textbf{autorização}. Para proteger rotas de forma completa, combinamos:
+
+\begin{itemize}
+  \item \textbf{Auth middleware} (session ou tokens).
+  \item \textbf{Bouncer} (autorização por regras/recursos).
+  \item \textbf{Rate limiting} (\texttt{@adonisjs/limiter}) para mitigar brute force e abuso.
+\end{itemize}
+
+\subsection{Exemplo: rota de API protegida}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Rota com auth + bouncer + limiter},
+  label={lst:route_full_protection}
+]{snippets/seguranca/route_full_protection.ts}
+
+\section{Autorização nas views Edge}
+
+Com abilities/policies pré-registradas no middleware, você consegue usar \texttt{@can} e \texttt{@cannot} nas views:
+
+\lstinputlisting[
+  language=html,
+  caption={Checks de autorização no Edge},
+  label={lst:edge_can}
+]{snippets/seguranca/edge_can.edge}
+
+\section{Padrões que funcionam bem na prática}
+
+\begin{itemize}
+  \item \textbf{Uma policy por recurso agregador}: \texttt{UserPolicy}, \texttt{PostPolicy}, \texttt{AlvaraPolicy}, etc.
+  \item \textbf{Abilities} para casos transversais ou muito simples (ex.: \texttt{accessAdminPanel}).
+  \item Regra geral: controllers nunca deveriam conter \textit{if} complexos de autorização; delegue para Bouncer.
+  \item Documentar mentalmente: “\textit{Esta rota só existe se a ability X for verdadeira}”. Isso facilita revisão de segurança.
+\end{itemize}

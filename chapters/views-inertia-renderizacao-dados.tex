@@ -1,0 +1,156 @@
+\section{Renderização, root template, compartilhamento de dados e CSRF}
+
+\subsection{Renderizando páginas e recebendo props}
+
+O método \verb|inertia.render| recebe:
+
+\begin{enumerate}
+  \item Nome do componente (relativo a \verb|inertia/pages|).
+  \item Um objeto de dados que será serializado em JSON e enviado como props.
+  \item Opcionalmente, um objeto extra com dados para a template root.
+\end{enumerate}
+
+Exemplo simples:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Controller usando inertia.render},
+  label={lst:inertia_render}
+]{snippets/templates/inertia_render.ts}
+
+No componente Vue:
+
+\lstinputlisting[
+  language=html,
+  caption={Componente recebendo props},
+  label={lst:inertia_component_props}
+]{snippets/templates/inertia_component_props.vue}
+
+\begin{warningbox}
+  Tudo que você passa para \verb|inertia.render| é serializado em JSON.
+  Não espere receber instâncias de \texttt{Model}, \texttt{Date} ou objetos complexos intactos no frontend.
+\end{warningbox}
+
+\subsection{Template root (Edge) para Inertia}
+
+A primeira visita da aplicação é servida como uma página HTML normal, usando uma \textbf{template root} Edge. É ali que você:
+
+\begin{itemize}
+  \item Define o \texttt{<head>} e as meta tags.
+  \item Inclui CSS/JS via \verb|@vite|.
+  \item Coloca as diretivas \verb|@inertiaHead()| e \verb|@inertia()|.
+\end{itemize}
+
+Exemplo típico:
+
+\lstinputlisting[
+  language=html,
+  caption={Template root com Inertia},
+  label={lst:inertia_root_template}
+]{snippets/templates/inertia_root_template.edge}
+
+Por padrão, o caminho desse template é configurado em \verb|config/inertia.ts| como \verb|resources/views/inertia_layout.edge|, mas você pode alterar:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configurando a root view},
+  label={lst:inertia_root_config}
+]{snippets/templates/inertia_root_config.ts}
+
+Também é possível decidir dinamicamente qual layout usar:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={rootView dinâmico},
+  label={lst:inertia_root_dynamic}
+]{snippets/templates/inertia_root_dynamic.ts}
+
+\subsection{Dados para a template root}
+
+Além das props enviadas para o componente Inertia, você pode passar dados extras para a template root no \textbf{terceiro argumento} de \verb|inertia.render|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Metadados para a root view},
+  label={lst:inertia_root_data}
+]{snippets/templates/inertia_root_data.ts}
+
+Na template root, esses dados são acessíveis como variáveis Edge:
+
+\lstinputlisting[
+  language=html,
+  caption={Usando dados extras na root view},
+  label={lst:inertia_root_data_use}
+]{snippets/templates/inertia_root_data_use.edge}
+
+\subsection{Compartilhando dados com todas as páginas}
+
+Em vez de repetir sempre a mesma informação em todos os controllers, podemos usar:
+
+\begin{itemize}
+  \item \textbf{\texttt{sharedData}} em \verb|config/inertia.ts|.
+  \item \textbf{\texttt{inertia.share}} em um middleware.
+\end{itemize}
+
+\subsubsection{sharedData na configuração}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Dados globais via sharedData},
+  label={lst:inertia_shared_config}
+]{snippets/templates/inertia_shared_config.ts}
+
+\subsubsection{Compartilhando via middleware}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Compartilhando dados em middleware},
+  label={lst:inertia_shared_middleware}
+]{snippets/templates/inertia_shared_middleware.ts}
+
+\subsection{Redirects com Inertia}
+
+Redirecionar com Inertia segue o mesmo padrão do AdonisJS:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Redirect interno padrão},
+  label={lst:inertia_redirect_internal}
+]{snippets/templates/inertia_redirect_internal.ts}
+
+Para redirecionar para URLs externas, use \verb|inertia.location|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Redirect externo com inertia.location},
+  label={lst:inertia_redirect_external}
+]{snippets/templates/inertia_redirect_external.ts}
+
+\subsection{Partial reloads e lazy data}
+
+O Inertia permite \textbf{recarregar apenas parte} das props de uma página. Para isso, você pode:
+
+\begin{itemize}
+  \item Passar funções em vez de valores (lazy).
+  \item Usar \verb|inertia.optional| para dados que não vão na primeira visita.
+\end{itemize}
+
+Exemplo:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lazy evaluation e optional data},
+  label={lst:inertia_lazy}
+]{snippets/templates/inertia_lazy.ts}
+
+\subsection{CSRF e Inertia}
+
+Se a sua aplicação usa proteção CSRF (\texttt{@adonisjs/shield}), basta habilitar a opção \verb|enableXsrfCookie| em \verb|config/shield.ts|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Habilitando cookie XSRF},
+  label={lst:shield_xsrf}
+]{snippets/templates/shield_xsrf.ts}
+
+Isso faz com que o cookie \texttt{XSRF-TOKEN} seja setado no cliente e reenviado em cada requisição. Não é necessário ajuste extra específico para o Inertia: ele se beneficia da mesma proteção que o restante da aplicação.

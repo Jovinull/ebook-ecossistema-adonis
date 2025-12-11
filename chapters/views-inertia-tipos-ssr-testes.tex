@@ -1,0 +1,223 @@
+\section{Tipos, serialização, SSR, versionamento de assets e testes}
+
+\subsection{InferPageProps, tipos compartilhados e \texttt{reference directives}}
+
+Como o frontend Inertia é um projeto TypeScript separado (com próprio \verb|tsconfig.json|), precisamos “ensinar” o compilador sobre:
+
+\begin{itemize}
+  \item As props que cada página recebe.
+  \item Os tipos compartilhados (como \verb|auth| em \verb|HttpContext|).
+\end{itemize}
+
+O tipo principal é o \verb|InferPageProps|, exportado de \verb|@adonisjs/inertia/types|. Exemplo:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Inferindo props de uma página},
+  label={lst:inertia_infer_page_props}
+]{snippets/templates/inertia_infer_page_props.ts}
+
+No componente (ex.: React/TSX):
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando InferPageProps no componente},
+  label={lst:inertia_component_infer}
+]{snippets/templates/inertia_component_infer.tsx}
+
+Como muitos tipos são adicionados via \textbf{module augmentation}, precisamos de \texttt{reference directives} no entrypoint do Inertia:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Reference directives no app.ts},
+  label={lst:inertia_references}
+]{snippets/templates/inertia_references.ts}
+
+Isso garante que tipos estendidos (como \verb|auth| em \verb|HttpContext|) sejam conhecidos pelo projeto Inertia.
+
+\subsection{Serialização em nível de tipo}
+
+O \verb|InferPageProps| simula no tipo aquilo que acontece na rede: \textbf{JSON}.
+
+Exemplo: se você passa um \texttt{Date} para \verb|inertia.render|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Dates viram strings},
+  label={lst:inertia_date_serialization}
+]{snippets/templates/inertia_date_serialization.ts}
+
+Do ponto de vista de tipos, \verb|createdAt| será \texttt{string}, porque é assim que datas serão serializadas em JSON.
+
+\subsection{Models, DTOs e serialização}
+
+Ao passar modelos Lucid diretamente para \verb|inertia.render|, o tipo inferido será algo genérico (\texttt{ModelObject}) — com pouquíssima informação útil.
+
+Duas soluções comuns:
+
+\begin{itemize}
+  \item Serializar manualmente o modelo.
+  \item Usar um sistema de DTOs (Data Transfer Objects).
+\end{itemize}
+
+Exemplo simples com \verb|serialize|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Serializando modelo antes de enviar},
+  label={lst:inertia_model_serialize}
+]{snippets/templates/inertia_model_serialize.ts}
+
+Agora o frontend recebe um tipo bem definido (id, name, etc.), o que melhora a experiência de desenvolvimento.
+
+\subsection{SharedProps e tipos globais compartilhados}
+
+Para tipar os dados compartilhados (\verb|sharedData|), usamos \verb|InferSharedProps| e module augmentation:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Tipando sharedData},
+  label={lst:inertia_shared_types}
+]{snippets/templates/inertia_shared_types.ts}
+
+No entrypoint do Inertia:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Reference para config/inertia.ts},
+  label={lst:inertia_ref_shared}
+]{snippets/templates/inertia_ref_shared.ts}
+
+Então, no componente:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Usando SharedProps},
+  label={lst:inertia_use_shared}
+]{snippets/templates/inertia_use_shared.ts}
+
+\subsection{Versionamento de assets}
+
+Para garantir que o usuário sempre receba a versão mais recente dos assets após um deploy, o Inertia + AdonisJS fazem versionamento automático.
+
+Por padrão, o pacote calcula um hash do arquivo \verb|public/assets/manifest.json| e usa como versão. Se quiser personalizar:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Configurando versão de assets},
+  label={lst:inertia_assets_version}
+]{snippets/templates/inertia_assets_version.ts}
+
+Você também pode usar uma função que lê um valor de env, timestamp de build, etc.
+
+\subsection{SSR com Inertia: habilitando e controlando páginas}
+
+Se você usou o Inertia starter kit, o suporte a SSR já vem configurado. Para habilitar em um projeto existente:
+
+\subsubsection{1. Criar entrypoint de servidor}
+
+Crie \verb|inertia/app/ssr.ts|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Entry SSR para Vue 3},
+  label={lst:inertia_ssr_entry}
+]{snippets/templates/inertia_ssr_entry.ts}
+
+\subsubsection{2. Atualizar config do Inertia}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Habilitando SSR na config},
+  label={lst:inertia_ssr_config}
+]{snippets/templates/inertia_ssr_config.ts}
+
+\subsubsection{3. Atualizar Vite}
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Vite com suporte a SSR},
+  label={lst:inertia_ssr_vite}
+]{snippets/templates/inertia_ssr_vite.ts}
+
+\subsubsection{Allowlist de páginas para SSR}
+
+Você pode limitar o SSR a algumas páginas (ex.: landing pages públicas), deixando dashboards autenticados somente no cliente:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Allowlist simples de páginas},
+  label={lst:inertia_ssr_pages_simple}
+]{snippets/templates/inertia_ssr_pages_simple.ts}
+
+Ou usar uma função:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Allowlist dinâmica},
+  label={lst:inertia_ssr_pages_dynamic}
+]{snippets/templates/inertia_ssr_pages_dynamic.ts}
+
+\subsection{Testando endpoints Inertia}
+
+Além de testes E2E (Playwright) e unitários (Vitest), é possível testar os endpoints Inertia diretamente com Japa.
+
+Primeiro, configure os plugins em \verb|tests/bootstrap.ts|:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Plugins para testes Inertia},
+  label={lst:inertia_test_bootstrap}
+]{snippets/templates/inertia_test_bootstrap.ts}
+
+Exemplo de teste:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Teste de endpoint Inertia},
+  label={lst:inertia_test_endpoint}
+]{snippets/templates/inertia_test_endpoint.ts}
+
+Outras asserções disponíveis:
+
+\begin{itemize}
+  \item \verb|assertInertiaPropsContains()| – verifica subset das props.
+  \item \verb|response.inertiaComponent| – componente retornado.
+  \item \verb|response.inertiaProps| – props completas em JSON.
+\end{itemize}
+
+\subsection{FAQ: problemas comuns}
+
+\subsubsection{Servidor reiniciando a cada mudança no frontend}
+
+Se o servidor Adonis está reiniciando sempre que você altera arquivos em \verb|inertia/**/*|, verifique o \verb|tsconfig.json| da raiz e exclua essa pasta:
+
+\lstinputlisting[
+  language=json,
+  caption={Excluindo pasta inertia do tsconfig raiz},
+  label={lst:tsconfig_exclude_inertia}
+]{snippets/templates/tsconfig_exclude_inertia.json}
+
+\subsubsection{Erro ao carregar \texttt{inertia/app/ssr.ts} em produção}
+
+Se o build de produção acusa que \verb|inertia/app/ssr.ts| não existe, muitas vezes é porque o \texttt{NODE\_ENV} não foi definido como \texttt{production} ao subir o servidor:
+
+\lstinputlisting[
+  language=bash,
+  caption={Executando build em modo produção},
+  label={lst:node_env_production}
+]{snippets/templates/node_env_production.sh}
+
+\subsubsection{Erro de \textit{Top-level await} no bundle}
+
+Se o Vite reclamar de \textit{Top-level await} em pacotes do backend (\texttt{@adonisjs/core}, \texttt{services/hash}, etc.), é quase certo que você está importando código de backend no frontend.
+
+Regra de ouro:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Importando apenas tipos no frontend},
+  label={lst:import_type_only}
+]{snippets/templates/import_type_only.ts}
+
+Sempre que precisar compartilhar tipos com o frontend, use \verb|import type| para evitar que o código de runtime entre no bundle.

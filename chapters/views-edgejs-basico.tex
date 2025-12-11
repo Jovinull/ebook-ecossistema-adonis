@@ -1,0 +1,123 @@
+\section{EdgeJS: instalação, primeiros templates e passagem de dados}
+
+\subsection{Instalando e registrando o EdgeJS}
+
+Edge é o template engine oficial do AdonisJS. A instalação é feita via CLI:
+
+\lstinputlisting[
+  language=bash,
+  caption={Instalando o EdgeJS},
+  label={lst:edge_install}
+]{snippets/templates/edge_install.sh}
+
+O comando:
+
+\begin{itemize}
+  \item Adiciona as dependências necessárias.
+  \item Cria a configuração padrão.
+  \item Registra o serviço de views para que você possa usar \verb|ctx.view|.
+\end{itemize}
+
+\subsection{Criando o primeiro template}
+
+Por convenção, os templates ficam em \verb|resources/views|. Vamos criar uma view chamada \texttt{welcome}:
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando uma view com a CLI},
+  label={lst:edge_make_view}
+]{snippets/templates/edge_make_view.sh}
+
+Esse comando cria o arquivo:
+
+\begin{center}
+  \verb|resources/views/welcome.edge|
+\end{center}
+
+Exemplo de conteúdo inicial:
+
+\lstinputlisting[
+  language=html,
+  caption={Template básico Edge},
+  label={lst:edge_welcome}
+]{snippets/templates/edge_welcome.edge}
+
+Repare que:
+
+\begin{itemize}
+  \item O HTML é padrão.
+  \item As chaves \verb|{{ ... }}| interpolam valores (similar a outras engines).
+  \item Temos acesso a helpers como \verb|request.url()| direto na template.
+\end{itemize}
+
+\subsection{Renderizando views via rotas}
+
+Para servir a view, usamos o serviço de \texttt{router} e o método \texttt{view.render} no contexto HTTP:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Renderizando uma view no controller/rota},
+  label={lst:edge_render_route}
+]{snippets/templates/edge_render_route.ts}
+
+No exemplo acima:
+
+\begin{itemize}
+  \item O nome \texttt{'welcome'} corresponde ao arquivo \texttt{welcome.edge}.
+  \item Não é necessário passar a extensão nem o caminho completo (Adonis já sabe a pasta padrão).
+\end{itemize}
+
+Existe também um atalho quando você não precisa de um callback:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Atalho com \texttt{router.on().render()}},
+  label={lst:edge_router_on}
+]{snippets/templates/edge_router_on.ts}
+
+\subsection{Passando dados para a view}
+
+Para enviar dados dinâmicos, passamos um objeto como segundo argumento de \texttt{view.render}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Passando contexto para o template},
+  label={lst:edge_pass_data}
+]{snippets/templates/edge_pass_data.ts}
+
+No template, podemos usar essa variável diretamente:
+
+\lstinputlisting[
+  language=html,
+  caption={Consumindo dados no Edge},
+  label={lst:edge_use_data}
+]{snippets/templates/edge_use_data.edge}
+
+\begin{tipbox}
+  Uma prática comum é sempre passar \textbf{objetos estruturados} (por exemplo, \verb|{ user, stats, filters }|) em vez de muitas variáveis soltas. Isso facilita a evolução do layout sem quebrar templates antigos.
+\end{tipbox}
+
+\subsection{Views, layout base e Vite}
+
+Embora a documentação desta seção foque no Edge puro, em projetos reais você normalmente:
+
+\begin{itemize}
+  \item Define um \textbf{layout base} (ex.: \verb|layouts/base.edge|) que inclui \verb|@vite| para carregar CSS/JS.
+  \item Usa diretivas do Edge para definir seções, herança, includes e componentes.
+\end{itemize}
+
+Exemplo simplificado de layout base:
+
+\lstinputlisting[
+  language=html,
+  caption={Layout base Edge com Vite},
+  label={lst:edge_base_layout}
+]{snippets/templates/edge_base_layout.edge}
+
+E uma view que estende esse layout:
+
+\lstinputlisting[
+  language=html,
+  caption={View que estende o layout},
+  label={lst:edge_extend_layout}
+]{snippets/templates/edge_extend_layout.edge}

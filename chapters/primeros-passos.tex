@@ -1,0 +1,321 @@
+\chapter{Primeiros Passos}
+\section{Instalação}
+
+\begin{infobox}
+  Antes de começar, é fundamental ter instalado em seu ambiente o \textbf{Node.js} na versão \textbf{20 ou superior}. O AdonisJS depende diretamente dessa versão mínima para funcionar corretamente.
+\end{infobox}
+
+\subsection{Verificando o Node.js}
+
+Verifique se possui o Node.js instalado com o seguinte comando no terminal:
+
+\lstinputlisting[
+  language=bash,
+  caption={Verificando a versão do Node.js},
+  label={lst:node_version_check}
+]{snippets/primeiros-passos/node_version_check.sh}
+
+Se não tiver, você pode instalar diretamente pelo site oficial \url{https://nodejs.org} ou, preferencialmente, utilizar o \textbf{Volta} (\url{https://volta.sh}) — um gerenciador de versões que permite maior controle e consistência no ambiente de desenvolvimento.
+
+\subsection{Criando um Novo Projeto}
+
+O AdonisJS oferece um comando simples para inicializar um novo projeto utilizando o seguinte comando:
+
+\lstinputlisting[
+  language=bash,
+  caption={Criando um novo projeto AdonisJS},
+  label={lst:adonis_new_project}
+]{snippets/primeiros-passos/adonis_new_project.sh}
+
+\begin{warningbox}
+  Quando utilizar parâmetros no comando \texttt{npm init}, lembre-se de adicionar \texttt{--} (dois hífens) antes dos parâmetros para garantir que o npm os repasse corretamente.
+\end{warningbox}
+
+\subsection{Parâmetros mais comuns}
+
+Você pode personalizar seu projeto logo na criação usando os seguintes parâmetros:
+
+\begin{itemize}
+  \item \texttt{--kit}: Define o kit inicial do projeto. Opções: \texttt{web}, \texttt{api}, \texttt{slim}, \texttt{inertia}.
+  \item \texttt{--db}: Define o banco de dados. Opções: \texttt{sqlite}, \texttt{postgres}, \texttt{mysql}, \texttt{mssql}.
+  \item \texttt{--git-init}: Inicializa um repositório Git (opcional).
+  \item \texttt{--auth-guard}: Define o tipo de autenticação: \texttt{session}, \texttt{access\_tokens} ou \texttt{basic\_auth}.
+\end{itemize}
+
+\subsection{Exemplos práticos}
+
+\begin{examplebox}
+  Criar um projeto básico, perguntando todas as opções:
+\end{examplebox}
+
+\lstinputlisting[
+  language=bash,
+  caption={Criando um novo projeto AdonisJS},
+  label={lst:adonis_new_project_basic}
+]{snippets/primeiros-passos/adonis_new_project_basic.sh}
+
+\begin{examplebox}
+  Criar um projeto API usando PostgreSQL:
+\end{examplebox}
+
+\lstinputlisting[
+  language=bash,
+  caption={Projeto API com PostgreSQL},
+  label={lst:adonis_new_project_api_postgres}
+]{snippets/primeiros-passos/adonis_new_project_api_postgres.sh}
+
+\begin{examplebox}
+  Criar um projeto Web com MySQL:
+\end{examplebox}
+
+\lstinputlisting[
+  language=bash,
+  caption={Projeto Web com MySQL},
+  label={lst:adonis_new_project_web_mysql}
+]{snippets/primeiros-passos/adonis_new_project_web_mysql.sh}
+
+\begin{examplebox}
+  Criar um projeto com autenticação baseada em tokens:
+\end{examplebox}
+
+\lstinputlisting[
+  language=bash,
+  caption={Projeto API com guard de autenticação por tokens},
+  label={lst:adonis_new_project_api_tokens}
+]{snippets/primeiros-passos/adonis_new_project_api_tokens.sh}
+
+\subsection{Escolhendo o Starter Kit}
+
+O AdonisJS oferece quatro tipos principais de starter kits, cada um pensado para um tipo de projeto:
+
+\begin{description}
+  \item[\textbf{Web}] Para aplicações que renderizam HTML no backend usando EdgeJS.
+  \item[\textbf{API}] Ideal para backends que servem dados em JSON (para apps mobile, frontend em React, Vue, etc.).
+  \item[\textbf{Slim}] Uma versão mínima do framework, sem ORM, sem autenticação e sem templates.
+  \item[\textbf{Inertia}] Para quem deseja construir SPAs server-driven, usando React, Vue, Solid ou Svelte no frontend.
+\end{description}
+
+\begin{tipbox}
+  Se sua aplicação não precisa de um frontend robusto, o kit \texttt{web} oferece extrema produtividade utilizando apenas EdgeJS para renderização no servidor.
+\end{tipbox}
+
+\subsection{Iniciando o servidor de desenvolvimento}
+
+Após criar o projeto, execute o servidor com:
+
+\lstinputlisting[
+  language=bash,
+  caption={Iniciando o servidor},
+  label={lst:server_start}
+]{snippets/primeiros-passos/server_start.sh}
+
+Acesse no navegador:
+
+\lstinputlisting[
+  language=bash,
+  caption={URL local da aplicação},
+  label={lst:open_localhost}
+]{snippets/primeiros-passos/open_localhost.txt}
+
+\subsection{Build para produção}
+
+Compile sua aplicação para produção com:
+
+\lstinputlisting[
+  language=bash,
+  caption={Gerando build de produção},
+  label={lst:build_production}
+]{snippets/primeiros-passos/build_production.sh}
+
+O código será gerado na pasta \texttt{build/} e está pronto para ser executado com Node.js.
+
+\subsection{Configurando o ambiente de desenvolvimento}
+
+O projeto já vem com \texttt{ESLint} e \texttt{Prettier} configurados com os padrões recomendados pela equipe do AdonisJS.
+
+\lstinputlisting[
+  language=bash,
+  caption={Executando ferramentas de lint e format},
+  label={lst:lint_format}
+]{snippets/primeiros-passos/lint_format.sh}
+
+\begin{tipbox}
+  Recomendo instalar as extensões do AdonisJS, EdgeJS e Japa para VSCode. Elas oferecem recursos como:
+  \begin{itemize}
+    \item Highlight e snippets.
+    \item Rodar comandos Ace direto do VSCode.
+    \item Visualizar rotas e migrations.
+  \end{itemize}
+\end{tipbox}
+
+\section{Primeiro Projeto}
+
+Ao criar um projeto com AdonisJS, você não está apenas iniciando um backend. Você está construindo uma aplicação com uma arquitetura sólida, uma base fortemente tipada e uma série de ferramentas integradas que tornam o desenvolvimento muito mais produtivo.
+
+Depois de executar:
+
+\lstinputlisting[
+  language=bash,
+  caption={Criando o projeto},
+  label={lst:adonis_new_project_basic}
+]{snippets/primeiros-passos/adonis_new_project_basic.sh}
+
+E rodar:
+
+\lstinputlisting[
+  language=bash,
+  caption={Iniciando o servidor},
+  label={lst:server_start}
+]{snippets/primeiros-passos/server_start.sh}
+
+Você verá sua aplicação rodando em:
+
+\lstinputlisting[
+  language=bash,
+  caption={URL local da aplicação},
+  label={lst:open_localhost}
+]{snippets/primeiros-passos/open_localhost.txt}
+
+Por padrão, o projeto já vem com:
+
+\begin{itemize}
+  \item Uma API pronta (se você escolheu o kit \texttt{api}).
+  \item Estrutura MVC bem definida.
+  \item Gerenciamento de banco com Lucid ORM.
+  \item Sistema de autenticação (se escolhido).
+  \item Validações robustas com VineJS.
+  \item Logs, tratamento de erros, middlewares e muito mais.
+\end{itemize}
+
+\begin{infobox}
+  O projeto já está totalmente funcional após o primeiro comando. O AdonisJS gera uma estrutura produtiva desde o primeiro momento, permitindo que você foque no que realmente importa: as regras de negócio.
+\end{infobox}
+
+\section{Estrutura de Diretórios}
+
+\begin{tipbox}
+  O AdonisJS oferece uma estrutura de diretórios opinativa, pensada para escalar e manter sua aplicação organizada. Entretanto, você tem total liberdade para ajustá-la conforme as necessidades do seu projeto.
+\end{tipbox}
+
+A seguir, uma visão geral da estrutura padrão:
+
+\lstinputlisting[
+  language=bash,
+  caption={Estrutura de Diretórios},
+  label={lst:project_structure}
+]{snippets/primeiros-passos/project_structure.txt}
+
+\subsection*{Principais Diretórios}
+
+\begin{description}
+  \item[\textbf{app/}] Onde vive sua lógica de negócio. Controllers, Models, Services, Validators, Middlewares, Listeners e Events.
+  \item[\textbf{config/}] Arquivos de configuração (banco, cache, autenticação, etc.).
+  \item[\textbf{start/}] Arquivos carregados na inicialização da aplicação (\texttt{routes.ts}, \texttt{kernel.ts}, \texttt{events.ts}, \texttt{env.ts}).
+  \item[\textbf{resources/}] Views EdgeJS e assets do frontend.
+  \item[\textbf{database/}] Migrations e Seeders.
+  \item[\textbf{providers/}] Service Providers para extender funcionalidades do framework.
+  \item[\textbf{types/}] Arquivos TypeScript para contratos e definições de tipos.
+  \item[\textbf{public/}] Arquivos estáticos acessíveis externamente (\texttt{/style.css} → \url{http://localhost:3333/style.css}).
+\end{description}
+
+\begin{examplebox}
+  O arquivo \texttt{start/routes.ts} é onde você define suas rotas HTTP.
+  O \texttt{app/controllers/} guarda os controllers que recebem essas requisições.
+  O \texttt{app/services/} pode ser usado para regras de negócio mais complexas.
+\end{examplebox}
+
+\section{Ambiente e Configurações}
+
+A configuração no AdonisJS é simples, escalável e baseada em dois pilares fundamentais:
+
+\begin{itemize}
+  \item Arquivos dentro da pasta \texttt{config/}.
+  \item Variáveis de ambiente (\texttt{.env}).
+\end{itemize}
+
+\subsection{Configurações do Projeto}
+
+Todos os arquivos da pasta \texttt{config/} são módulos TypeScript e podem ser importados diretamente:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Importando diretamente},
+  label={lst:config_import_direct}
+]{snippets/primeiros-passos/import_config_direct.ts}
+
+Ou, de forma dinâmica, utilizando o \texttt{config service}:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Acessando via Config Service},
+  label={lst:config_service_access}
+]{snippets/primeiros-passos/config_service_access.ts}
+
+\begin{tipbox}
+  Usar o \texttt{config service} permite acessar as configurações dentro de Providers, Edge Templates e ambientes onde importações diretas não funcionam.
+\end{tipbox}
+
+\subsection{Variáveis de Ambiente}
+
+O arquivo \texttt{start/env.ts} controla as variáveis de ambiente, valida suas existências e tipos:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Exemplo básico de env.ts},
+  label={lst:env_ts_example}
+]{snippets/primeiros-passos/env_ts_example.ts}
+
+O \texttt{env.get()} é utilizado para acessar os valores:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Lendo valores do .env},
+  label={lst:env_read_values}
+]{snippets/primeiros-passos/env_read_values.ts}
+
+\begin{warningbox}
+  Se uma variável não estiver declarada no arquivo \texttt{start/env.ts}, o AdonisJS acusará erro de boot — isso garante segurança e previsibilidade.
+\end{warningbox}
+
+\subsection{Estrutura do .env}
+
+\lstinputlisting[
+  language=bash,
+  caption={Exemplo de .env},
+  label={lst:dotenv_example}
+]{snippets/primeiros-passos/dotenv_example.env}
+
+\subsection{Configurações no Edge Templates}
+
+\lstinputlisting[
+  language=html,
+  caption={Utilizando config e env nas views},
+  label={lst:edge_config_env}
+]{snippets/primeiros-passos/edge_config_env.edge}
+
+\begin{infobox}
+  O acesso a variáveis no Edge é restrito ao server-side. Nenhuma informação sensível vaza para o cliente.
+\end{infobox}
+
+\subsection{Alterando Configuração em Tempo de Execução}
+
+Você pode alterar valores durante a execução:
+
+\lstinputlisting[
+  language=TypeScript,
+  caption={Alterando valor de configuração em tempo de execução},
+  label={lst:config_runtime_set}
+]{snippets/primeiros-passos/config_runtime_set.ts}
+
+\begin{warningbox}
+  Essa alteração é feita apenas em memória, válida para toda a instância da aplicação até ser reiniciada. Isso não altera os arquivos no disco.
+\end{warningbox}
+
+\begin{tipbox}
+  Boas práticas:
+  \begin{itemize}
+    \item Nunca versionar arquivos \texttt{.env} em repositórios públicos.
+    \item Utilizar chaves seguras para \texttt{APP\_KEY} e senhas de banco.
+    \item Configurar múltiplos arquivos \texttt{.env} para ambientes diferentes: \texttt{.env.development.local}, \texttt{.env.production}.
+  \end{itemize}
+\end{tipbox}
