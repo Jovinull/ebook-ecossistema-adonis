@@ -1,0 +1,7 @@
+@eval(await auth.check())
+
+<header>
+  @if(auth.isAuthenticated)
+    <p>Olá {{ auth.user.email }}</p>
+  @end
+</header>

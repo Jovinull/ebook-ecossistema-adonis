@@ -1,0 +1,162 @@
+\section{Session guard: autenticação stateful para SSR e apps no mesmo domínio}
+
+O session guard usa o pacote \verb|@adonisjs/session| para manter estado do usuário logado. É a opção mais natural para aplicações server-rendered.
+
+\subsection{Configuração do guard}
+
+Guards ficam em \verb|config/auth.ts|. Um setup típico:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração do session guard (\texttt{web})},
+    label={lst:auth_session_config}
+]{snippets/auth/auth_session_config.ts}
+
+\subsection{Login: verificando credenciais e criando sessão}
+
+Fluxo clássico:
+
+\begin{enumerate}
+    \item Ler credenciais do request.
+    \item Verificar com \verb|User.verifyCredentials|.
+    \item \verb|auth.use('web').login(user)|.
+    \item Redirecionar para rota protegida.
+\end{enumerate}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Controller de sessão com login via session guard},
+    label={lst:auth_session_login_controller}
+]{snippets/auth/auth_session_login_controller.ts}
+
+\subsection{Protegendo rotas com o middleware \texttt{auth}}
+
+O middleware \textbf{auth} é o que bloqueia usuários não autenticados. Ele deve estar registrado como named middleware em \verb|start/kernel.ts|.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Registrando o middleware \texttt{auth} como named middleware},
+    label={lst:auth_register_named_middleware}
+]{snippets/auth/auth_register_named_middleware.ts}
+
+Aplicando em rotas:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Protegendo uma rota com \texttt{middleware.auth()}},
+    label={lst:auth_protect_route}
+]{snippets/auth/auth_protect_route.ts}
+
+\subsection{Usando múltiplos guards na mesma rota}
+
+Você pode tentar autenticar por mais de um guard:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Autenticando por múltiplos guards (ordem importa)},
+    label={lst:auth_multi_guards}
+]{snippets/auth/auth_multi_guards.ts}
+
+\subsection{Acessando o usuário autenticado}
+
+Com \verb|middleware.auth()| aplicado, você pode usar \verb|auth.user|. Se preferir evitar non-null assertion, use \verb|auth.getUserOrFail|.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Acessando o usuário logado com segurança},
+    label={lst:auth_get_user_or_fail}
+]{snippets/auth/auth_get_user_or_fail.ts}
+
+\subsection{Autenticando manualmente}
+
+Em rotas onde você quer controle fino, pode chamar:
+
+\begin{itemize}
+    \item \verb|auth.authenticate()| (lança exceção se falhar)
+    \item \verb|auth.check()| (verifica sem quebrar)
+\end{itemize}
+
+\subsection{Silent auth middleware}
+
+O \textbf{silent\_auth} autentica se possível, mas não bloqueia o request. Útil em páginas públicas onde você quer “se tiver logado, mostra info”.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Registrando \texttt{silent\_auth} no kernel},
+    label={lst:auth_register_silent_auth}
+]{snippets/auth/auth_register_silent_auth.ts}
+
+\subsection{Usando auth dentro de templates Edge}
+
+Como o Authenticator é compartilhado, você pode usar \verb|auth| em Edge. Inclusive em rotas públicas, com \verb|auth.check()|:
+
+\lstinputlisting[
+    language=html,
+    caption={Exemplo de \texttt{auth.check()} em rota pública no Edge},
+    label={lst:auth_edge_check_public}
+]{snippets/auth/auth_edge_check_public.edge}
+
+\subsection{Logout}
+
+Logout remove estado da sessão e também invalida remember token ativo, se existir:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Logout com session guard},
+    label={lst:auth_session_logout}
+]{snippets/auth/auth_session_logout.ts}
+
+\section{Remember Me e Guest middleware}
+
+\subsection{Remember Me}
+
+O “remember me” gera um token seguro, salva cookie e recria a sessão automaticamente após expirar. Para isso você precisa:
+
+\begin{enumerate}
+    \item Criar a tabela \verb|remember_me_tokens|.
+    \item Configurar provider no \texttt{User model}.
+    \item Habilitar no \verb|config/auth.ts|.
+    \item Passar o flag \verb|remember_me| no login.
+\end{enumerate}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Migration da tabela \texttt{remember\_me\_tokens}},
+    label={lst:auth_remember_tokens_migration}
+]{snippets/auth/auth_remember_tokens_migration.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configurando tokens provider no User model},
+    label={lst:auth_remember_provider_user_model}
+]{snippets/auth/auth_remember_provider_user_model.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Habilitando remember tokens no session guard},
+    label={lst:auth_enable_remember_me}
+]{snippets/auth/auth_enable_remember_me.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Gerando remember token durante login},
+    label={lst:auth_login_with_remember_me}
+]{snippets/auth/auth_login_with_remember_me.ts}
+
+\begin{tipbox}
+    Em produto real, eu sempre deixo “remember me” opcional e claramente exposto no UI (checkbox). Lembrar sessão sem o usuário entender tende a virar dor de suporte (principalmente em máquinas compartilhadas).
+\end{tipbox}
+
+\subsection{Guest middleware}
+
+O middleware \textbf{guest} serve para impedir que usuários logados acessem \verb|/login| (evita múltiplas sessões por dispositivo e melhora UX).
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Redirecionando usuários autenticados para fora do login com \texttt{guest}},
+    label={lst:auth_guest_middleware_usage}
+]{snippets/auth/auth_guest_middleware_usage.ts}
+
+\subsection{Eventos}
+
+O Auth emite eventos úteis para auditoria/observabilidade. Em sistemas corporativos, isso é ótimo para \textit{logs de segurança} e alertas (ex.: login, logout, token criado, token invalidado).

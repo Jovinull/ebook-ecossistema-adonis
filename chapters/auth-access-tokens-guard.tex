@@ -1,0 +1,163 @@
+\section{Access tokens guard: autenticação stateless para APIs e mobile}
+
+Access tokens existem para cenários onde o servidor não consegue persistir cookies/sessão. No AdonisJS, tokens são \textbf{opacos} (opaque tokens), não JWT por padrão.
+
+\subsection{Como os tokens do AdonisJS são estruturados}
+
+No AdonisJS:
+
+\begin{itemize}
+    \item o token é um valor aleatório criptograficamente seguro, com sufixo CRC32;
+    \item o banco armazena o \textbf{hash} do token (não o token em si);
+    \item o valor final é base64 e vem com prefixo (por padrão \verb|oat_|);
+    \item prefixo + CRC ajudam ferramentas de secret scanning a detectar vazamentos.
+\end{itemize}
+
+\begin{warningbox}
+    Token é “chave mestra” do usuário. Em SPA, evite armazenar em \textbf{localStorage} sem pensar: XSS + localStorage é combinação perigosa. Se o cenário permitir cookies com flags seguras, melhor ainda; caso contrário, trate storage como parte do seu modelo de ameaça.
+\end{warningbox}
+
+\subsection{Configurando o provider no User model}
+
+Antes de usar o guard, configure o tokens provider no \texttt{User model}:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configurando \texttt{DbAccessTokensProvider} no User model},
+    label={lst:auth_access_tokens_provider}
+]{snippets/auth/auth_access_tokens_provider.ts}
+
+Você pode customizar expiração, prefixo, tabela, tipo e tamanho do segredo:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Opções avançadas do provider de access tokens},
+    label={lst:auth_access_tokens_provider_options}
+]{snippets/auth/auth_access_tokens_provider_options.ts}
+
+\subsection{Tabela \texttt{auth\_access\_tokens}}
+
+Durante setup, a migration é criada. Se precisar criar manualmente:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Migration da tabela \texttt{auth\_access\_tokens}},
+    label={lst:auth_access_tokens_migration}
+]{snippets/auth/auth_access_tokens_migration.ts}
+
+\subsection{Emitindo tokens}
+
+Você pode emitir token via \verb|User.accessTokens.create(user)|:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Emitindo um access token para um usuário},
+    label={lst:auth_issue_token_basic}
+]{snippets/auth/auth_issue_token_basic.ts}
+
+\subsection{Abilities: limitando escopo do token}
+
+É possível emitir token com abilities:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Emitindo token com abilities},
+    label={lst:auth_issue_token_abilities}
+]{snippets/auth/auth_issue_token_abilities.ts}
+
+\subsection{Abilities de token vs Bouncer}
+
+Abilities de token não substituem Bouncer. Um padrão útil é: usuário admin pode fazer tudo, mas token admin pode ser limitado.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Exemplo de Bouncer considerando \texttt{currentAccessToken}},
+    label={lst:auth_bouncer_token_abilities}
+]{snippets/auth/auth_bouncer_token_abilities.ts}
+
+\subsection{Expiração e nome do token}
+
+Você pode definir expiração e nome por token:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Token com nome e expiração},
+    label={lst:auth_token_name_expires}
+]{snippets/auth/auth_token_name_expires.ts}
+
+\subsection{Configurando o guard \texttt{api}}
+
+Agora configure o guard em \verb|config/auth.ts|:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração do tokens guard (\texttt{api})},
+    label={lst:auth_tokens_guard_config}
+]{snippets/auth/auth_tokens_guard_config.ts}
+
+\subsection{Autenticando requests}
+
+Com guard configurado, você pode autenticar manualmente:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Autenticando manualmente com \texttt{auth.authenticate}},
+    label={lst:auth_tokens_authenticate_manual}
+]{snippets/auth/auth_tokens_authenticate_manual.ts}
+
+Ou, mais comum, usar middleware:
+
+\lstinputlisting[
+language=TypeScript,
+caption={Protegendo rota API com \texttt{middleware.auth({ guards: ['api'] })}},
+label={lst:auth_tokens_middleware_auth}
+]{snippets/auth/auth_tokens_middleware_auth.ts}
+
+\subsection{O \texttt{currentAccessToken}}
+
+Quando autenticado por tokens, o guard define \verb|currentAccessToken| no user. Isso permite checar abilities/expiração e também atualiza \verb|last_used_at|.
+
+\begin{tipbox}
+    Eu recomendo declarar \verb|currentAccessToken?: AccessToken| no model para melhorar tipagem no restante do código e reduzir “casts” espalhados.
+\end{tipbox}
+
+\subsection{Listando e deletando tokens}
+
+Listar:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Listando tokens do usuário},
+    label={lst:auth_list_tokens}
+]{snippets/auth/auth_list_tokens.ts}
+
+Deletar:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Deletando token por identificador},
+    label={lst:auth_delete_token}
+]{snippets/auth/auth_delete_token.ts}
+
+\subsection{Login e logout com guard de tokens}
+
+O tokens guard tem API parecida com sessão:
+
+\begin{itemize}
+    \item \verb|auth.use('api').createToken(user)|
+    \item \verb|auth.use('api').invalidateToken()|
+\end{itemize}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Controller de sessão para API usando access tokens},
+    label={lst:auth_tokens_session_controller}
+]{snippets/auth/auth_tokens_session_controller.ts}
+
+\begin{warningbox}
+    Para clientes externos (mobile/SPA), lembre de enviar \verb|Accept: application/json| nos requests de login, para evitar redirects e receber respostas estruturadas quando \verb|verifyCredentials| falhar.
+\end{warningbox}
+
+\subsection{CSRF e rotas de sessão em API}
+
+Se seu login via token é usado por clientes externos, pode ser necessário configurar exceções de CSRF (via Shield) para rotas de API. Evite desligar CSRF globalmente se o mesmo servidor também atende SSR.

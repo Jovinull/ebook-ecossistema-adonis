@@ -1,0 +1,38 @@
+\section{Criando um guard customizado: quando e por que}
+
+O Auth do AdonisJS permite criar guards customizados para requisitos que fogem dos drivers embutidos. Um exemplo típico é JWT.
+
+\begin{infobox}
+    Eu só recomendo guard customizado quando existe uma justificativa clara: integração com terceiros que exigem JWT, arquitetura já padronizada em JWT na empresa, ou um fluxo que realmente pede esse formato. Para a maioria dos casos, \textbf{opaque tokens} resolvem com menos superfície de ataque.
+\end{infobox}
+
+\subsection{Conceitos: GuardContract e User Provider}
+
+Um guard precisa:
+
+\begin{itemize}
+    \item Definir um \textbf{UserProvider} (abstrato, independente de ORM).
+    \item Implementar um guard compatível com \textbf{GuardContract}.
+\end{itemize}
+
+\subsection{Exemplo: JWT guard (visão geral do esqueleto)}
+
+Um guard JWT típico implementa:
+
+\begin{itemize}
+    \item \verb|generate(user)| para emitir token.
+    \item \verb|authenticate()| para validar token e resolver user.
+    \item \verb|check()| (silencioso).
+    \item \verb|getUserOrFail()|.
+    \item \verb|authenticateAsClient()| para testes (Japa).
+\end{itemize}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Registro do guard JWT no \texttt{config/auth.ts}},
+    label={lst:auth_custom_jwt_register}
+]{snippets/auth/auth_custom_jwt_register.ts}
+
+\begin{warningbox}
+    Se você assina JWT com \verb|APP_KEY|, trate isso com cuidado e pense em rotação/ambiente. Em projeto real, eu prefiro uma variável dedicada (ex.: \verb|JWT_SECRET|) para não “misturar responsabilidades” e facilitar rotação.
+\end{warningbox}

@@ -1,0 +1,27 @@
+\section{Tabela de usuários e ajustes no modelo}
+
+Ao configurar o Auth, o AdonisJS gera uma migration para a tabela \texttt{users}. Ela fica em \verb|database/migrations| e é o ponto onde você ajusta a estrutura para o seu domínio.
+
+Por padrão, a migration cria colunas como:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Migration padrão da tabela \texttt{users}},
+    label={lst:auth_users_migration_default}
+]{snippets/auth/auth_users_migration_default.ts}
+
+Se você renomear ou remover colunas, lembre-se de atualizar o \textbf{User model} também.
+
+\begin{tipbox}
+    Em aplicações reais, eu quase sempre adiciono campos como \verb|username|, \verb|phone| ou \verb|is_active|. O ponto é: defina cedo quais campos serão \textbf{UIDs} de login (email? username? telefone?) para não “remendar” depois.
+\end{tipbox}
+
+\section{Próximos passos do Auth}
+
+Depois da instalação, o fluxo natural é:
+
+\begin{enumerate}
+    \item Verificar credenciais de forma segura (evitar timing attacks).
+    \item Implementar autenticação stateful com \textbf{session guard}.
+    \item Implementar autenticação stateless com \textbf{access tokens}.
+\end{enumerate}

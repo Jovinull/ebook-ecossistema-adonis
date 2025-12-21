@@ -1,0 +1,32 @@
+\chapter{Autenticação}
+
+\section{Visão geral: autenticar usuários sem sacrificar segurança}
+
+O AdonisJS entrega um sistema de autenticação \textbf{robusto} e \textbf{seguro} para cenários comuns: aplicações server-rendered, SPAs e clientes mobile. O foco do pacote é \textbf{autenticar requisições HTTP} com boas práticas já embutidas, em vez de te empurrar um “framework de login completo”.
+
+O pacote de autenticação é construído em torno de dois conceitos centrais:
+
+\begin{itemize}
+    \item \textbf{Guards}: implementações ponta a ponta de um tipo de login (ex.: sessão/cookies, access tokens ou basic auth).
+    \item \textbf{Providers}: responsáveis por localizar usuários e tokens no armazenamento (normalmente banco de dados).
+\end{itemize}
+
+Além disso, o AdonisJS cuida de detalhes que, em muitos stacks, ficam “por sua conta”: hashing consistente, primitives protegidas contra \textbf{timing attacks} e mitigação de problemas como \textbf{session fixation}.
+
+\begin{infobox}
+    Na prática, isso significa que dá para implementar autenticação em AdonisJS com menos código, e com menos pontos “fáceis de errar”. Ainda assim, a decisão de \textbf{qual guard usar} e \textbf{como o cliente armazena credenciais} continua sendo responsabilidade sua.
+\end{infobox}
+
+\section{O que o pacote de Auth \textit{não} resolve}
+
+O pacote de autenticação do AdonisJS tem um escopo propositalmente enxuto. Ele \textbf{não} implementa, por padrão:
+
+\begin{itemize}
+    \item \textbf{Cadastro de usuário} (formulários, verificação de email, ativação de conta).
+    \item \textbf{Gestão de conta} (recuperação de senha, troca de email).
+    \item \textbf{Papéis e permissões} (para isso, a recomendação é usar o \textbf{Bouncer} para autorização).
+\end{itemize}
+
+\begin{warningbox}
+    Uma confusão comum é misturar \textbf{autenticação} (quem é o usuário?) com \textbf{autorização} (o que ele pode fazer?). No AdonisJS, auth resolve o primeiro; o segundo é Bouncer (ou um sistema de RBAC/ACL por cima).
+\end{warningbox}

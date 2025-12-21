@@ -1,0 +1,34 @@
+\section{Instalação e configuração inicial}
+
+O sistema de autenticação já vem pré-configurado nos starter kits \textbf{web} e \textbf{api}. Porém, se você está montando o projeto manualmente, pode instalar via CLI escolhendo o guard principal.
+
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o pacote de Auth com guards diferentes},
+    label={lst:auth_install}
+]{snippets/auth/auth_install.sh}
+
+\subsection{O middleware de inicialização do Auth}
+
+Durante o setup, o AdonisJS registra o middleware \textbf{InitializeAuthMiddleware}. Esse middleware:
+
+\begin{itemize}
+    \item instancia a classe \textbf{Authenticator};
+    \item expõe a instância em \verb|ctx.auth| para o resto do request.
+\end{itemize}
+
+Um detalhe importante: \textbf{ele não autentica a requisição}. Ele apenas inicializa o Authenticator.
+
+\begin{warningbox}
+    Para proteger rotas, você deve usar o middleware \textbf{auth}. Iniciar Auth \(\neq\) autenticar.
+\end{warningbox}
+
+\subsection{Auth disponível em templates Edge}
+
+Se seu projeto usa EdgeJS, a mesma instância de \verb|ctx.auth| é compartilhada com templates como \verb|auth|. Por exemplo:
+
+\lstinputlisting[
+    language=html,
+    caption={Acessando \texttt{auth} dentro de templates Edge},
+    label={lst:auth_edge_usage}
+]{snippets/auth/auth_edge_usage.edge}

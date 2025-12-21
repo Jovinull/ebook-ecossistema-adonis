@@ -1,0 +1,31 @@
+\section{Basic auth guard: útil em desenvolvimento, raro em produção}
+
+Basic auth é a autenticação HTTP clássica: o cliente envia credenciais base64 no header Authorization. Funciona, mas geralmente existem alternativas melhores.
+
+\subsection{Configuração}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração do basic auth guard},
+    label={lst:auth_basic_auth_config}
+]{snippets/auth/auth_basic_auth_config.ts}
+
+\subsection{Preparando o User model}
+
+O model usado pelo basic auth provider deve usar \textbf{AuthFinder} para verificação segura de credenciais (mesmo princípio do login por sessão).
+
+\subsection{Protegendo rotas}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Protegendo rota com guard \texttt{basicAuth}},
+    label={lst:auth_basic_auth_protect}
+]{snippets/auth/auth_basic_auth_protect.ts}
+
+\subsection{Exceções e resposta WWW-Authenticate}
+
+Quando falha, o middleware retorna \verb|WWW-Authenticate| e o navegador pode exibir prompt nativo para credenciais.
+
+\subsection{Acessando usuário}
+
+Com auth aplicado, \verb|auth.user| está disponível. Se preferir, use \verb|auth.getUserOrFail()|.

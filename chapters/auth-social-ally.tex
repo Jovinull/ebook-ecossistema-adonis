@@ -1,0 +1,97 @@
+\section{Autenticação social com Ally (OAuth)}
+
+Para login social (GitHub, Google, Discord etc.), o AdonisJS recomenda o pacote \verb|@adonisjs/ally|. O Ally implementa OAuth1/OAuth2, autentica com o provedor e retorna dados do usuário, mas \textbf{não} persiste usuários nem tokens por você.
+
+\subsection{Instalação e providers}
+
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o Ally e definindo providers},
+    label={lst:ally_install}
+]{snippets/auth/ally_install.sh}
+
+\subsection{Configuração: \texttt{config/ally.ts}}
+
+Você define múltiplos serviços no mesmo arquivo:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração base do Ally},
+    label={lst:ally_config}
+]{snippets/auth/ally_config.ts}
+
+\subsection{Callback URL}
+
+OAuth exige que você registre a \textbf{callback URL} no provedor e também no \verb|config/ally.ts|. A callback precisa bater \textbf{exatamente} (inclusive schema/https).
+
+\begin{tipbox}
+    Em produção, eu sempre valido cedo as URLs de callback por ambiente (local/staging/prod). Muitos bugs “fantasmas” de OAuth são apenas mismatch de URL.
+\end{tipbox}
+
+\subsection{Redirect: iniciando o fluxo OAuth}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Redirecionando para o provedor via \texttt{redirect()}},
+    label={lst:ally_redirect}
+]{snippets/auth/ally_redirect.ts}
+
+Você pode definir scopes e params:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Definindo scopes e query params no redirect},
+    label={lst:ally_redirect_scopes_params}
+]{snippets/auth/ally_redirect_scopes_params.ts}
+
+\subsection{Callback: tratando erros e obtendo usuário}
+
+Na callback, cheque estados de erro antes de chamar \verb|user()|:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Tratando callback OAuth com verificações recomendadas},
+    label={lst:ally_callback_handling}
+]{snippets/auth/ally_callback_handling.ts}
+
+\subsection{Propriedades do usuário retornado}
+
+O \verb|user| retornado é normalizado (id, email, name, avatar, token, original). Um cuidado: \verb|email| pode ser null se você não pedir permissão suficiente.
+
+\subsection{Email verification state}
+
+Alguns provedores permitem login com email não verificado. Use \verb|emailVerificationState| para decidir se você permite ou bloqueia.
+
+\begin{warningbox}
+    Em sistemas corporativos, eu costumo bloquear \textbf{unverified} e também tratar \textbf{unsupported} com cuidado (depende da política). Login social sem checar verificação vira porta de entrada para contas fracas/descartáveis.
+\end{warningbox}
+
+\subsection{Scopes: no config ou no redirect}
+
+Scopes podem ser definidos no \verb|config/ally.ts| ou no redirect. Com TypeScript, você ganha autocomplete.
+
+\subsection{Buscar usuário a partir de token}
+
+Se você já tem token (ex.: fluxo nativo mobile), use \verb|userFromToken| (OAuth2) ou \verb|userFromTokenAndSecret| (OAuth1).
+
+\subsection{Stateless mode}
+
+Se cookies não são possíveis, você pode usar modo stateless (sem verificação de state/CSRF). Use com responsabilidade:
+
+\begin{warningbox}
+    Stateless reduz proteção contra CSRF no fluxo OAuth. Eu só uso quando realmente não tenho alternativa de cookies e consigo compensar com outras medidas (ex.: validações extras, curta duração, checagens no backend).
+\end{warningbox}
+
+\subsection{Persistindo usuário e criando sessão/token no seu sistema}
+
+O Ally apenas entrega dados. O fluxo comum é:
+
+\begin{enumerate}
+    \item Buscar/registrar usuário no seu banco (por email/id do provider).
+    \item Criar sessão (session guard) ou emitir token (access tokens guard).
+    \item Redirecionar para área autenticada.
+\end{enumerate}
+
+\subsection{Drivers customizados}
+
+Se você precisar de um provedor que não existe, o Ally tem API extensível e um starter kit para criar drivers customizados.

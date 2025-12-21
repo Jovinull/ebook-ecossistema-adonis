@@ -1,0 +1,58 @@
+\section{Verificando credenciais com segurança}
+
+No AdonisJS, verificar credenciais é \textbf{desacoplado} da camada de autenticação. Isso te dá liberdade para trocar o método de verificação (senha, OTP, 2FA) mantendo guards e fluxo de proteção de rotas.
+
+\subsection{Exemplo básico (e o problema de timing attack)}
+
+É possível fazer “na unha”: buscar usuário e verificar hash da senha. Funciona, mas é perigoso. A diferença de tempo entre “email não existe” e “senha inválida” pode vazar informação.
+
+\begin{warningbox}
+    Se o request termina rápido quando o email não existe, e demora quando o email existe mas a senha falha, um atacante consegue inferir quais emails são válidos (timing attack) e depois tentar força bruta.
+\end{warningbox}
+
+\subsection{AuthFinder mixin: API segura e melhor DX}
+
+A recomendação do AdonisJS é usar o \textbf{AuthFinder mixin}. Ele adiciona ao model métodos como \verb|findForAuth| e \verb|verifyCredentials|, oferecendo um fluxo mais seguro (incluindo proteção contra timing attacks).
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Aplicando \texttt{withAuthFinder} no \texttt{User model}},
+    label={lst:auth_with_auth_finder}
+]{snippets/auth/auth_with_auth_finder.ts}
+
+\subsection{Verificando credenciais via \texttt{User.verifyCredentials}}
+
+Uma vez aplicado o mixin, o login fica direto e seguro:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Verificando credenciais com \texttt{verifyCredentials}},
+    label={lst:auth_verify_credentials}
+]{snippets/auth/auth_verify_credentials.ts}
+
+\subsection{Tratando exceções: \texttt{E\_INVALID\_CREDENTIALS}}
+
+Quando as credenciais são inválidas, \verb|verifyCredentials| lança \textbf{E\_INVALID\_CREDENTIALS}. Por padrão, ela é “self-handled” e vira resposta seguindo regras de content negotiation:
+
+\begin{itemize}
+    \item \verb|Accept: application/json| \(\rightarrow\) retorna erros em JSON.
+    \item \verb|Accept: application/vnd.api+json| \(\rightarrow\) erros no formato JSON:API.
+    \item Sessão/SSR \(\rightarrow\) redirect com flash messages.
+    \item Outros \(\rightarrow\) texto puro.
+\end{itemize}
+
+Se você quiser centralizar o comportamento, pode tratar no Exception Handler global:
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Tratando \texttt{E\_INVALID\_CREDENTIALS} no handler global},
+    label={lst:auth_handle_invalid_credentials}
+]{snippets/auth/auth_handle_invalid_credentials.ts}
+
+\subsection{Hashing automático da senha}
+
+O \textbf{AuthFinder mixin} registra um hook \verb|beforeSave| que faz hashing automático de senha em INSERT/UPDATE. Ou seja, em um fluxo padrão, você não precisa lembrar de “hashear na mão” toda vez.
+
+\begin{tipbox}
+    Mesmo com hashing automático, eu gosto de manter validações claras (tamanho mínimo, força de senha) no VineJS e sempre evitar salvar senha “crua” em qualquer log/debug.
+\end{tipbox}

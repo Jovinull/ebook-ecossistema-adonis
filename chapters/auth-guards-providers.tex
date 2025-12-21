@@ -1,0 +1,62 @@
+\section{Guards e Providers: a arquitetura por trás do Auth}
+
+\subsection{Guards: o “tipo de login” ponta a ponta}
+
+Guards são implementações completas de um estilo de autenticação. Por exemplo:
+
+\begin{itemize}
+    \item \textbf{Session guard}: autentica com cookies e sessão, ideal para aplicações server-rendered.
+    \item \textbf{Access tokens guard}: autentica via tokens opacos (opaque tokens) enviados pelo cliente.
+    \item \textbf{Basic auth guard}: autenticação HTTP básica via header Authorization.
+\end{itemize}
+
+No dia a dia, a escolha do guard define toda a dinâmica do login: como você autentica, como protege rotas e como o usuário “permanece logado”.
+
+\subsection{Providers: de onde vêm usuários e tokens}
+
+Providers existem para \textbf{buscar usuários/tokens} durante o processo de autenticação. Eles são específicos do guard:
+
+\begin{itemize}
+    \item No \textbf{session guard}, o provider encontra usuário pelo ID armazenado na sessão.
+    \item No \textbf{access tokens guard}, o provider verifica o token e encontra o usuário vinculado.
+\end{itemize}
+
+O AdonisJS já fornece providers prontos para Lucid, mas você pode implementar os seus para outros ORMs ou estratégias.
+
+\begin{tipbox}
+    Em projetos grandes, eu costumo manter a regra: \textbf{guard cuida de autenticar requisições} e \textbf{service cuida de regra de negócio}. Assim, controllers ficam pequenos e consistentes (login, logout, refresh/invalidar token, etc.).
+\end{tipbox}
+
+\section{Escolhendo o guard certo}
+
+\subsection{Session guard (sessão/cookies)}
+
+Recomendado quando:
+
+\begin{itemize}
+    \item Você está criando uma aplicação \textbf{server-rendered}.
+    \item Ou uma API cujo cliente está no \textbf{mesmo top-level domain} (ex.: \texttt{api.exemplo.com} e \texttt{exemplo.com}).
+\end{itemize}
+
+Sessões e cookies existem “desde sempre” na web e continuam sendo uma solução sólida para a maioria dos sistemas tradicionais.
+
+\subsection{Access tokens (tokens opacos)}
+
+Recomendado quando o servidor \textbf{não consegue} ler/escrever cookies no dispositivo do usuário, por exemplo:
+
+\begin{itemize}
+    \item App mobile nativo.
+    \item SPA hospedada em domínio diferente da API.
+\end{itemize}
+
+\begin{warningbox}
+    Quando você usa access tokens, o problema “mudou de lugar”: o servidor autentica bem, mas \textbf{o cliente precisa armazenar token de forma segura}. Token vazado equivale a acesso total em nome do usuário.
+\end{warningbox}
+
+\subsection{Basic auth (uso temporário)}
+
+Basic auth funciona, mas raramente é a melhor solução para produção. Eu uso como \textbf{atalho em desenvolvimento} (ex.: endpoint interno, testes rápidos, protótipos), e migro para sessão ou tokens quando o projeto estabiliza.
+
+\begin{infobox}
+    Um padrão comum em sistemas reais com AdonisJS é ter \textbf{dois guards}: \texttt{web} (session) e \texttt{api} (tokens). Isso mantém SSR confortável e API segura para integrações/mobile.
+\end{infobox}
