@@ -1,0 +1,111 @@
+\section{Event Emitter}
+
+\subsection{Visão geral}
+O AdonisJS possui um \textit{event emitter} nativo baseado em Emittery, com dispatch assíncrono, tipos estáticos e suporte a listeners em classe, eventos em classe e fakes para testes.
+
+\subsection{Uso básico}
+Listeners geralmente são definidos em \texttt{start/events.ts}. Se o arquivo ainda não existir, crie com:
+
+\lstinputlisting[
+    language=bash,
+    caption={Criando preload de events},
+    label={lst:events_make_preload}
+]{snippets/event-emitter/make_preload_events.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Listener básico em \texttt{start/events.ts}},
+    label={lst:events_basic}
+]{snippets/event-emitter/events_basic_start_events.ts}
+
+\subsection{Emissão de eventos}
+Você emite com \texttt{emitter.emit('evento', payload)}. Em muitos cenários, o evento nasce no controller/serviço e listeners fazem \textit{side effects}.
+
+\subsection{Tipagem obrigatória de eventos}
+Os tipos são registrados em \texttt{types/events.ts}.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Tipando eventos em \texttt{types/events.ts}},
+    label={lst:events_types}
+]{snippets/event-emitter/events_types.ts}
+
+\subsection{Listeners em classe}
+\lstinputlisting[
+    language=bash,
+    caption={Gerando listener com Ace},
+    label={lst:events_make_listener}
+]{snippets/event-emitter/make_listener.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Listener class-based},
+    label={lst:events_listener_class}
+]{snippets/event-emitter/listener_class.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Bind do listener em \texttt{start/events.ts}},
+    label={lst:events_bind_listener}
+]{snippets/event-emitter/events_bind_listener.ts}
+
+\subsection{Lazy-loading}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Lazy-loading de listeners para acelerar boot},
+    label={lst:events_lazy_load_listener}
+]{snippets/event-emitter/events_lazy_load_listener.ts}
+
+\subsection{Injeção de dependências}
+Como listeners rodam assíncronos, você não injeta \texttt{HttpContext}. Mas pode injetar serviços via IoC.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Injeção via construtor},
+    label={lst:events_constructor_injection}
+]{snippets/event-emitter/events_constructor_injection.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Injeção via método (payload sempre é o primeiro argumento)},
+    label={lst:events_method_injection}
+]{snippets/event-emitter/events_method_injection.ts}
+
+\subsection{Eventos em classe}
+\lstinputlisting[
+    language=bash,
+    caption={Gerando um evento em classe},
+    label={lst:events_make_event}
+]{snippets/event-emitter/make_event.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Evento em classe (data container)},
+    label={lst:events_event_class}
+]{snippets/event-emitter/event_class.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Ouvindo evento em classe},
+    label={lst:events_listen_class_event}
+]{snippets/event-emitter/listen_class_event.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Emitindo via \texttt{dispatch}},
+    label={lst:events_emit_class_event}
+]{snippets/event-emitter/emit_class_event.ts}
+
+\subsection{Tratamento de erros}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Capturando erros de listeners com \texttt{onError}},
+    label={lst:events_on_error}
+]{snippets/event-emitter/emitter_on_error.ts}
+
+\subsection{Fakes em testes}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Fake do emitter para evitar side effects e fazer asserts},
+    label={lst:events_fake_test}
+]{snippets/event-emitter/emitter_fake_test.ts}

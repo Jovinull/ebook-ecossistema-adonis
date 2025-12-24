@@ -1,0 +1,105 @@
+\chapter{Recursos Avançados}
+
+\section{Cache com \texttt{@adonisjs/cache}}
+
+\subsection{Visão geral}
+O \texttt{@adonisjs/cache} é um wrapper leve sobre o BentoCache, oferecendo uma API unificada para cachear dados e melhorar desempenho. Ele suporta múltiplos drivers (Redis, DynamoDB, PostgreSQL, in-memory etc.) e recursos avançados como \textit{multi-tier}, \textit{grace period}, \textit{timeouts}, \textit{tagging} e \textit{namespaces}.
+
+\begin{tipbox}
+    Para uso avançado (multi-tier, proteção contra \textit{stampede}, tags e \textit{grace}), vale ler a documentação do BentoCache, pois o AdonisJS expõe esses conceitos de forma direta.
+\end{tipbox}
+
+\subsection{Instalação}
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o pacote de cache},
+    label={lst:cache_install}
+]{snippets/cache/install_cache.sh}
+
+\subsection{Configuração}
+O arquivo de configuração fica em \texttt{config/cache.ts}. Você define o \texttt{default} e os \texttt{stores}.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Exemplo de configuração do cache com múltiplas camadas},
+    label={lst:cache_config}
+]{snippets/cache/cache_config.ts}
+
+\subsection{Redis e Database}
+Para usar Redis, você precisa do \texttt{@adonisjs/redis} configurado. Para usar o driver de banco, você precisa do \texttt{@adonisjs/lucid} e executar a migration publicada para armazenar as entradas de cache.
+
+\subsection{Uso}
+\subsection{Cacheando via \texttt{getOrSet}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Exemplo de uso do cache para armazenar dados por TTL},
+    label={lst:cache_usage_route}
+]{snippets/cache/cache_usage_route.ts}
+
+\begin{infobox}
+    Caches distribuídos exigem serialização: modelos Lucid, \texttt{Date} e instâncias de classe devem ser convertidos (ex.: \texttt{toJSON()}).
+\end{infobox}
+
+\subsection{Tagging e Namespaces}
+\subsection{Tagging}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Cache com tags e invalidação por tag},
+    label={lst:cache_tagging}
+]{snippets/cache/cache_tagging.ts}
+
+\subsection{Namespaces}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Agrupando chaves com namespaces},
+    label={lst:cache_namespaces}
+]{snippets/cache/cache_namespaces.ts}
+
+\subsection{Grace period e Timeouts}
+\subsection{Grace period}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Grace period para retornar dado stale enquanto revalida},
+    label={lst:cache_grace_timeout}
+]{snippets/cache/cache_grace_timeout.ts}
+
+\subsection{Hard timeout}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Hard timeout para interromper a factory após limite},
+    label={lst:cache_hard_timeout}
+]{snippets/cache/cache_hard_timeout.ts}
+
+\subsection{Cache service e Edge helper}
+\subsection{Alternando stores com \texttt{use}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Alternando o store em tempo de execução},
+    label={lst:cache_service_use}
+]{snippets/cache/cache_service_use.ts}
+
+\subsection{Usando no Edge}
+\lstinputlisting[
+    language=html,
+    caption={Lendo cache diretamente no Edge (async helper)},
+    label={lst:cache_edge_helper}
+]{snippets/cache/cache_edge_helper.edge}
+
+\subsection{Ace commands}
+\lstinputlisting[
+    language=bash,
+    caption={Limpando cache (default e stores específicos)},
+    label={lst:cache_ace_clear}
+]{snippets/cache/cache_ace_clear.sh}
+
+\lstinputlisting[
+    language=bash,
+    caption={Removendo uma chave de cache},
+    label={lst:cache_ace_delete}
+]{snippets/cache/cache_ace_delete.sh}
+
+\lstinputlisting[
+    language=bash,
+    caption={Podando chaves expiradas (drivers sem TTL nativo)},
+    label={lst:cache_ace_prune}
+]{snippets/cache/cache_ace_prune.sh}

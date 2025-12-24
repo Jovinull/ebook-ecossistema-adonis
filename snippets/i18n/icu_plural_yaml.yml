@@ -1,0 +1,6 @@
+cart_summary:
+  "You have {itemsCount, plural,
+    =0 {no items}
+    one {1 item}
+    other {# items}
+  } in your cart"

@@ -1,0 +1,44 @@
+\section{REPL}
+
+\subsection{Visão geral}
+O REPL do AdonisJS é um shell interativo com contexto da aplicação, suportando imports, execução de TypeScript, atalhos para serviços e extensões com métodos customizados.
+
+\subsection{Iniciando}
+\lstinputlisting[
+    language=bash,
+    caption={Iniciando o REPL},
+    label={lst:repl_start}
+]{snippets/repl/start_repl.sh}
+
+\subsection{Editor mode e histórico}
+\lstinputlisting[
+    language=text,
+    caption={Editor mode e execução multiline},
+    label={lst:repl_editor}
+]{snippets/repl/repl_editor.txt}
+
+\subsection{Importando módulos}
+\lstinputlisting[
+    language=text,
+    caption={Import dinâmico no REPL},
+    label={lst:repl_import_dynamic}
+]{snippets/repl/repl_import_dynamic.txt}
+
+\lstinputlisting[
+    language=text,
+    caption={Import default helper},
+    label={lst:repl_import_default}
+]{snippets/repl/repl_import_default.txt}
+
+\subsection{Adicionando métodos customizados}
+\lstinputlisting[
+    language=bash,
+    caption={Criando preload do REPL},
+    label={lst:repl_make_preload}
+]{snippets/repl/make_preload_repl.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Exemplo em \texttt{start/repl.ts} adicionando método},
+    label={lst:repl_start_repl_ts}
+]{snippets/repl/start_repl_ts.ts}

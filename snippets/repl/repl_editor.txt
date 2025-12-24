@@ -1,0 +1,2 @@
+> (js) .editor
+# // Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)

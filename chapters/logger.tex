@@ -1,0 +1,75 @@
+\section{Logger}
+
+\subsection{Visão geral}
+O logger do AdonisJS é baseado em Pino e gera logs em NDJSON, com alto desempenho e suporte a múltiplos loggers, targets, níveis, redaction e \textit{child loggers}.
+
+\subsection{Uso}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Uso básico},
+    label={lst:logger_basic_usage}
+]{snippets/logger/logger_basic_usage.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Logger por request no HttpContext},
+    label={lst:logger_http_ctx}
+]{snippets/logger/logger_http_ctx.ts}
+
+\subsection{Configuração}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração em \texttt{config/logger.ts}},
+    label={lst:logger_config}
+]{snippets/logger/logger_config.ts}
+
+\subsection{Targets e pretty logs}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Targets (file + pretty)},
+    label={lst:logger_transport_targets}
+]{snippets/logger/logger_transport_targets.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Helper \texttt{targets()} para conditionals},
+    label={lst:logger_targets_helper}
+]{snippets/logger/logger_targets_helper.ts}
+
+\subsection{Rotação e segurança}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Rotação com \texttt{pino-roll}},
+    label={lst:logger_file_rotation}
+]{snippets/logger/logger_file_rotation.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Redact de campos sensíveis},
+    label={lst:logger_redact}
+]{snippets/logger/logger_redact.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Secret para valores sensíveis},
+    label={lst:logger_secret}
+]{snippets/logger/logger_secret.ts}
+
+\subsection{Boas práticas}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Checando nível antes de computar payload caro},
+    label={lst:logger_if_level_enabled}
+]{snippets/logger/logger_if_level_enabled.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Child logger},
+    label={lst:logger_child}
+]{snippets/logger/logger_child.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={DI com Logger},
+    label={lst:logger_di}
+]{snippets/logger/logger_di.ts}

@@ -1,0 +1,69 @@
+\section{Drive com \texttt{@adonisjs/drive}}
+
+\subsection{Visão geral}
+O \texttt{@adonisjs/drive} é um wrapper sobre o FlyDrive e oferece uma API unificada para armazenamento em disco local e provedores cloud (S3/R2/GCS/Spaces etc.), com foco em compatibilidade e organização.
+
+\subsection{Instalação}
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o Drive},
+    label={lst:drive_install}
+]{snippets/drive/install_drive.sh}
+
+\subsection{Configuração}
+A configuração fica em \texttt{config/drive.ts}. Você define o disco padrão e os serviços disponíveis.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração do Drive (fs + Spaces)},
+    label={lst:drive_config}
+]{snippets/drive/drive_config.ts}
+
+\subsection{Upload com \texttt{moveToDisk}}
+No AdonisJS, o \texttt{MultipartFile} é estendido e ganha o método \texttt{moveToDisk}. Isso simplifica o upload e também permite URL pública via \texttt{meta.url} quando aplicável.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Upload com validação e armazenamento via Drive},
+    label={lst:drive_upload_route}
+]{snippets/drive/drive_upload_route.ts}
+
+\subsection{Drive service e Disk API}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Obtendo instâncias de disk com \texttt{drive.use}},
+    label={lst:drive_service_use}
+]{snippets/drive/drive_service_use.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Operações comuns na Disk API},
+    label={lst:drive_disk_api}
+]{snippets/drive/drive_disk_api.ts}
+
+\subsection{Helpers no Edge}
+\lstinputlisting[
+    language=html,
+    caption={Gerando URLs públicas e URLs assinadas no Edge},
+    label={lst:drive_edge_helpers}
+]{snippets/drive/drive_edge_helpers.edge}
+
+\subsection{MultipartFile avançado}
+\lstinputlisting[
+    language=TypeScript,
+    caption={MoveToDisk no disco padrão e em discos nomeados},
+    label={lst:drive_multipart_move_to_disk}
+]{snippets/drive/drive_multipart_move_to_disk.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Opção \texttt{moveAs: 'buffer'} para evitar arquivos quebrados em alguns providers},
+    label={lst:drive_move_buffer_option}
+]{snippets/drive/drive_move_buffer_option.ts}
+
+\subsection{Fakes durante testes}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Fake disk para testes funcionais (sem rede / sem cloud)},
+    label={lst:drive_fake_disk_test}
+]{snippets/drive/drive_fake_disk_test.ts}

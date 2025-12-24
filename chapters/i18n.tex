@@ -1,0 +1,142 @@
+\section{Internationalization e Localization \texttt{@adonisjs/i18n}}
+
+\subsection{Visão geral}
+O pacote \texttt{@adonisjs/i18n} oferece:
+traduções por locale (ICU message format), fallback de idioma e formatação regional (datas, números, moeda, listas e tempo relativo).
+
+\subsection{Instalação}
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o i18n},
+    label={lst:i18n_install}
+]{snippets/i18n/install_i18n.sh}
+
+\subsection{Configuração}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração do i18n (\texttt{config/i18n.ts})},
+    label={lst:i18n_config}
+]{snippets/i18n/i18n_config.ts}
+
+\subsection{Estrutura de arquivos}
+\lstinputlisting[
+    language=bash,
+    caption={Estrutura típica em \texttt{resources/lang}},
+    label={lst:i18n_lang_tree}
+]{snippets/i18n/lang_tree.txt}
+
+\lstinputlisting[
+    language=json,
+    caption={Exemplo de mensagens em inglês},
+    label={lst:i18n_messages_en}
+]{snippets/i18n/messages_en.json}
+
+\lstinputlisting[
+    language=json,
+    caption={Exemplo de mensagens em francês},
+    label={lst:i18n_messages_fr}
+]{snippets/i18n/messages_fr.json}
+
+\subsection{Resolvendo traduções}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Resolvendo traduções com \texttt{i18nManager.locale}},
+    label={lst:i18n_resolve}
+]{snippets/i18n/i18n_resolve.ts}
+
+\subsection{Fallback e tradução ausente}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Mensagem de tradução ausente e fallback value},
+    label={lst:i18n_missing_translation}
+]{snippets/i18n/missing_translation.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Fallback global no config},
+    label={lst:i18n_fallback_in_config}
+]{snippets/i18n/fallback_in_config.ts}
+
+\subsection{Locale durante requests (middleware)}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Controller usando \texttt{i18n} do HttpContext},
+    label={lst:i18n_controller_using_i18n}
+]{snippets/i18n/controller_using_i18n.ts}
+
+\lstinputlisting[
+    language=html,
+    caption={Edge usando helper \texttt{t}},
+    label={lst:i18n_edge_using_t}
+]{snippets/i18n/edge_using_t.edge}
+
+\subsection{Mensagens de validação traduzidas}
+\lstinputlisting[
+    language=json,
+    caption={validator.json (en)},
+    label={lst:i18n_validator_en}
+]{snippets/i18n/validator_en.json}
+
+\lstinputlisting[
+    language=json,
+    caption={validator.json (fr)},
+    label={lst:i18n_validator_fr}
+]{snippets/i18n/validator_fr.json}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Usando messagesProvider fora de HTTP (jobs/ace)},
+    label={lst:i18n_job_messages_provider}
+]{snippets/i18n/job_vinejs_messages_provider.ts}
+
+\subsection{ICU: plural e select}
+\lstinputlisting[
+    language=yaml,
+    caption={Plural rules (YAML)},
+    label={lst:i18n_icu_plural}
+]{snippets/i18n/icu_plural_yaml.yml}
+
+\lstinputlisting[
+    language=yaml,
+    caption={Select format (YAML)},
+    label={lst:i18n_icu_select}
+]{snippets/i18n/icu_select_yaml.yml}
+
+\subsection{Formatação regional}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Formatando números},
+    label={lst:i18n_format_number}
+]{snippets/i18n/format_number.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Formatando datas},
+    label={lst:i18n_format_date}
+]{snippets/i18n/format_date.ts}
+
+\subsection{Integração com VSCode (i18n Ally)}
+\lstinputlisting[
+    language=json,
+    caption={.vscode/settings.json},
+    label={lst:i18n_vscode_settings}
+]{snippets/i18n/vscode_settings.json}
+
+\lstinputlisting[
+    language=yaml,
+    caption={.vscode/i18n-ally-custom-framework.yml},
+    label={lst:i18n_vscode_custom_framework}
+]{snippets/i18n/vscode_custom_framework.yml}
+
+\subsection{Operações úteis}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Listener para \texttt{i18n:missing:translation}},
+    label={lst:i18n_missing_event_listener}
+]{snippets/i18n/i18n_missing_event_listener.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Forçando reload das traduções em runtime},
+    label={lst:i18n_reload_translations}
+]{snippets/i18n/reload_translations.ts}

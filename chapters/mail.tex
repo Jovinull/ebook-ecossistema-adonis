@@ -1,0 +1,168 @@
+\section{Mail \texttt{@adonisjs/mail}}
+
+\subsection{Visão geral}
+O \texttt{@adonisjs/mail} é construído sobre Nodemailer e adiciona API fluente, classes de email, transports oficiais e fakes para testes. Também oferece \textit{sendLater} via messenger (fila).
+
+\subsection{Instalação}
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o Mail},
+    label={lst:mail_install}
+]{snippets/mail/install_mail.sh}
+
+\lstinputlisting[
+    language=bash,
+    caption={Instalando com transports pré-definidos},
+    label={lst:mail_install_transports_flag}
+]{snippets/mail/install_mail_transports_flag.sh}
+
+\subsection{Configuração}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração em \texttt{config/mail.ts}},
+    label={lst:mail_config}
+]{snippets/mail/mail_config.ts}
+
+\subsection{Envio básico}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Enviando email em controller},
+    label={lst:mail_send_controller}
+]{snippets/mail/mail_send_controller.ts}
+
+\subsection{Fila com \texttt{sendLater}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={SendLater (in-memory por padrão)},
+    label={lst:mail_send_later}
+]{snippets/mail/mail_send_later.ts}
+
+\subsection{BullMQ como messenger}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configurando messenger com BullMQ},
+    label={lst:mail_bullmq_messenger}
+]{snippets/mail/mail_bullmq_messenger.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Worker BullMQ para enviar emails compilados},
+    label={lst:mail_bullmq_worker}
+]{snippets/mail/mail_bullmq_worker.ts}
+
+\subsection{Alternando mailers}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Switch entre mailers com \texttt{mail.use}},
+    label={lst:mail_switch_mailers}
+]{snippets/mail/mail_switch_mailers.ts}
+
+\subsection{Conteúdo e templates}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Conteúdo inline (html/text)},
+    label={lst:mail_inline_contents}
+]{snippets/mail/mail_inline_contents.ts}
+
+\lstinputlisting[
+    language=bash,
+    caption={Criando views de email},
+    label={lst:mail_edge_views}
+]{snippets/mail/mail_edge_views.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Usando \texttt{htmlView/textView}},
+    label={lst:mail_edge_use_views}
+]{snippets/mail/mail_edge_use_views.ts}
+
+\subsection{MJML}
+\lstinputlisting[
+    language=html,
+    caption={MJML dentro do Edge (\texttt{@mjml})},
+    label={lst:mail_mjml}
+]{snippets/mail/mail_mjml.edge}
+
+\subsection{Anexos e embeds}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Anexando arquivo do disco},
+    label={lst:mail_attach_file}
+]{snippets/mail/mail_attach_file.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Anexando dados (buffer/stream) — evitar com sendLater},
+    label={lst:mail_attach_data}
+]{snippets/mail/mail_attach_data.ts}
+
+\lstinputlisting[
+    language=html,
+    caption={Embed de imagem via CID helper},
+    label={lst:mail_embed_image}
+]{snippets/mail/mail_embed_image.edge}
+
+\subsection{Eventos de calendário}
+\lstinputlisting[
+    language=TypeScript,
+    caption={iCal manual},
+    label={lst:mail_ical_manual}
+]{snippets/mail/mail_ical_manual.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={iCal via callback},
+    label={lst:mail_ical_callback}
+]{snippets/mail/mail_ical_callback.ts}
+
+\subsection{Headers}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Headers e list headers},
+    label={lst:mail_headers}
+]{snippets/mail/mail_headers.ts}
+
+\subsection{Emails em classe}
+\lstinputlisting[
+    language=bash,
+    caption={Gerando mail class},
+    label={lst:mail_make_mail}
+]{snippets/mail/make_mail.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Mail class (BaseMail)},
+    label={lst:mail_class}
+]{snippets/mail/mail_class.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Enviando mail class},
+    label={lst:mail_send_class}
+]{snippets/mail/mail_send_class.ts}
+
+\subsection{Testes e fakes}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Build com conteúdos e asserts},
+    label={lst:mail_test_build}
+]{snippets/mail/mail_test_build.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Fake mailer e asserts},
+    label={lst:mail_fake_assert}
+]{snippets/mail/mail_fake_assert.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Restore com cleanup},
+    label={lst:mail_restore_cleanup}
+]{snippets/mail/mail_restore_cleanup.ts}
+
+\subsection{Transport customizado}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Exemplo de transport customizado (adapter Nodemailer)},
+    label={lst:mail_custom_transport}
+]{snippets/mail/mail_custom_transport.ts}

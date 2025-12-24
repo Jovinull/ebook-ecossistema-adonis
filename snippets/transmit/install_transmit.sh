@@ -1,0 +1,1 @@
+node ace add @adonisjs/transmit

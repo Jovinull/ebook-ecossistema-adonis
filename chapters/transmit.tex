@@ -1,0 +1,28 @@
+\section{Transmit (SSE)}
+
+\subsection{Visão geral}
+Transmit é um módulo nativo para Server-Sent Events (SSE) no AdonisJS. Ele permite enviar atualizações em tempo real do servidor para o cliente (server \textrightarrow client). Para client \textrightarrow server, use formulários ou fetch/HTTP.
+
+\subsection{Instalação}
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o Transmit},
+    label={lst:transmit_install}
+]{snippets/transmit/install_transmit.sh}
+
+\lstinputlisting[
+    language=bash,
+    caption={Instalando o client},
+    label={lst:transmit_install_client}
+]{snippets/transmit/install_transmit_client.sh}
+
+\subsection{Configuração}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração em \texttt{config/transmit.ts}},
+    label={lst:transmit_config}
+]{snippets/transmit/transmit_config.ts}
+
+\begin{tipbox}
+    O \texttt{pingInterval} pode ser útil em ambientes com proxies/load balancers, e o \texttt{transport} é usado quando você precisa sincronizar eventos entre múltiplas instâncias do app.
+\end{tipbox}

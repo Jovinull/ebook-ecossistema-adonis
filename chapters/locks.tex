@@ -1,0 +1,72 @@
+\section{Atomic Locks \texttt{@adonisjs/lock}}
+
+\subsection{Visão geral}
+Locks (mutex) evitam que múltiplos processos/requests executem uma sessão crítica simultaneamente. O \texttt{@adonisjs/lock} é baseado no Verrou e suporta stores como Redis, database e memory.
+
+\subsection{Instalação}
+\lstinputlisting[
+    language=bash,
+    caption={Instalando locks},
+    label={lst:locks_install}
+]{snippets/locks/install_locks.sh}
+
+\subsection{Configuração}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Configuração \texttt{config/lock.ts}},
+    label={lst:lock_config}
+]{snippets/locks/lock_config.ts}
+
+\subsection{Schema de env}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Validando LOCK\_STORE no \texttt{start/env.ts}},
+    label={lst:lock_env_schema}
+]{snippets/locks/env_lock_schema.ts}
+
+\subsection{Lock manual com \texttt{try/finally}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Adquirindo lock e liberando com segurança},
+    label={lst:lock_manual_controller}
+]{snippets/locks/lock_manual_controller.ts}
+
+\subsection{Usando outro store}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Escolhendo store com \texttt{use}},
+    label={lst:lock_use_another_store}
+]{snippets/locks/lock_use_another_store.ts}
+
+\subsection{Locks em múltiplos processos}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Serializando lock no servidor},
+    label={lst:lock_restore_server}
+]{snippets/locks/lock_restore_across_processes_server.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Restaurando lock em worker/job},
+    label={lst:lock_restore_job}
+]{snippets/locks/lock_restore_across_processes_job.ts}
+
+\subsection{Testes}
+\lstinputlisting[
+    language=bash,
+    caption={Usando memory store em testes},
+    label={lst:lock_env_test}
+]{snippets/locks/env_test_lock_store.env}
+
+\subsection{Criando store customizado}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Store customizado (skeleton)},
+    label={lst:lock_custom_store}
+]{snippets/locks/lock_custom_store.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Factory do store customizado},
+    label={lst:lock_custom_store_factory}
+]{snippets/locks/lock_custom_store_factory.ts}

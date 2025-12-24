@@ -1,0 +1,1 @@
+const { default: User } = await import('#models/user')

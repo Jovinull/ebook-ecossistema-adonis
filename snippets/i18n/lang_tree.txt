@@ -1,0 +1,6 @@
+resources
+├── lang
+│   ├── en
+│   │   └── messages.json
+│   └── fr
+│       └── messages.json

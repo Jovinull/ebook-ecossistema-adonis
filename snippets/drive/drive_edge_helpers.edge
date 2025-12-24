@@ -1,0 +1,11 @@
+<img src="{{ await driveUrl(user.avatar) }}" />
+
+<a href="{{ await driveSignedUrl(invoice.key) }}">
+  Download Invoice
+</a>
+
+<a href="{{ await driveSignedUrl(invoice.key, {
+  expiresIn: '30 mins',
+}) }}">
+  Download Invoice
+</a>

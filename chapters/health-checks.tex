@@ -1,0 +1,58 @@
+\section{Health Checks}
+
+\subsection{Visão geral}
+Health checks validam se a aplicação está saudável em produção (disco, memória, banco, redis etc.). O AdonisJS fornece checks prontos e permite criar checks customizados.
+
+\subsection{Configuração inicial}
+\lstinputlisting[
+    language=bash,
+    caption={Configurando health checks},
+    label={lst:health_configure}
+]{snippets/health/configure_health_checks.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Arquivo \texttt{start/health.ts}},
+    label={lst:health_start_health}
+]{snippets/health/start_health.ts}
+
+\subsection{Expondo endpoint}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Rota /health},
+    label={lst:health_route}
+]{snippets/health/route_health.ts}
+
+\subsection{Protegendo o endpoint}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Protegendo /health por header secret},
+    label={lst:health_protect_route}
+]{snippets/health/protect_health_route.ts}
+
+\subsection{Checks de banco e múltiplas conexões}
+\lstinputlisting[
+    language=TypeScript,
+    caption={DbCheck com Lucid},
+    label={lst:health_dbcheck}
+]{snippets/health/health_dbcheck.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Monitorando múltiplas conexões},
+    label={lst:health_multiple_connections}
+]{snippets/health/health_multiple_connections.ts}
+
+\subsection{Cacheando resultados}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Cacheando checks (ex.: disco) para reduzir custo},
+    label={lst:health_cache_results}
+]{snippets/health/health_cache_results.ts}
+
+\subsection{Criando um health check customizado}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Check customizado com Result (ok/warning/failed)},
+    label={lst:health_custom_check}
+]{snippets/health/health_custom_check.ts}

@@ -1,0 +1,1 @@
+npm install @adonisjs/transmit-client
