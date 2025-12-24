@@ -1,0 +1,621 @@
+% =========================
+% Ace Commands
+% =========================
+\section{Ace Commands (CLI) com \texttt{@adonisjs/core/ace}}
+
+\subsection{Visão geral}
+O Ace é o framework de linha de comando do AdonisJS. É com ele que você cria controllers, models, migrations, executa tarefas internas e também escreve comandos customizados para automatizar rotinas do seu projeto.
+
+No dia a dia profissional, eu uso Ace para três objetivos principais:
+(1) \textbf{automação reprodutível} (tarefas de setup, rotinas administrativas, \textit{data fixes}),
+(2) \textbf{ferramentas internas} (geração de código, manutenção, diagnósticos),
+(3) \textbf{execução controlada em ambientes} (CI/CD, servidores, jobs manuais com logs).
+
+Um ponto importante: o Ace não é “só um runner de scripts”. Ele é um \textbf{runtime consistente} para tarefas de manutenção, com parsing de argumentos/flags, prompts interativos, logger padronizado e primitives de UI no terminal. Isso muda a qualidade do seu ecossistema interno: em vez de scripts soltos em \texttt{package.json} ou arquivos \texttt{.sh} espalhados, você centraliza automações dentro do mesmo padrão do framework.
+
+\begin{infobox}
+    Um bom comando Ace é \textbf{idempotente}: rodar duas vezes não deve quebrar estado. Isso reduz riscos quando alguém repete um comando em produção ou quando uma pipeline reinicia.
+\end{infobox}
+
+Em times, também vale pensar em comandos como “\textit{produtos internos}”: eles precisam ser previsíveis, documentados (\texttt{--help}), com mensagens claras e com saída/exit code confiáveis para integração com CI.
+
+\subsection{Entry point e por que o \texttt{ace.js} é JavaScript}
+O ponto de entrada do Ace fica na raiz do projeto. Você executa:
+
+\lstinputlisting[
+    language=bash,
+    caption={Executando o entry point do Ace},
+    label={lst:ace_entrypoint}
+]{snippets/ace/ace_entrypoint.sh}
+
+Como o Node não executa TypeScript diretamente, o arquivo de entrada é mantido em JavaScript e, por baixo dos panos, ele registra o TS Node como loader ESM e então carrega o \texttt{bin/console.ts}.
+
+Na prática, o \texttt{ace.js} faz o papel de “ponte” entre o Node e o seu código TypeScript. Isso é crucial para a DX (Developer Experience): você mantém o projeto todo em TS, mas garante um binário de entrada que o Node consegue executar sem build prévio.
+
+\begin{tipbox}
+    Quando algum comando “não aparece” na lista, geralmente é porque o app não carregou os comandos (ou o build/loader está com problema). Antes de caçar bug em código, valide se o \texttt{ace.js} está íntegro e se o projeto está rodando no modo correto (ESM/TS Node).
+\end{tipbox}
+
+Além disso, entender o entry point ajuda a depurar cenários onde o terminal “não enxerga” o mesmo contexto do app HTTP. Muitas vezes o problema não é o comando em si, e sim a forma como o projeto está sendo executado (por exemplo, diferenças de \texttt{NODE\_ENV}, \texttt{cwd}, variáveis no \texttt{.env} ou permissões do usuário no servidor).
+
+\subsection{Listando comandos e acessando ajuda}
+Rodar \texttt{node ace} sem argumentos lista os comandos disponíveis. Isso é equivalente ao \texttt{list}.
+
+\lstinputlisting[
+    language=bash,
+    caption={Listando comandos com Ace},
+    label={lst:ace_list_commands}
+]{snippets/ace/ace_help_list.sh}
+
+Para ver ajuda de um comando específico, use \texttt{--help}.
+
+\lstinputlisting[
+    language=bash,
+    caption={Ajuda de um comando específico (formato docopt)},
+    label={lst:ace_command_help}
+]{snippets/ace/ace_command_help.sh}
+
+O detalhe do “formato docopt” importa porque ele padroniza como o help é estruturado: nome do comando, sintaxe, descrição, argumentos e flags. Essa padronização é o que permite que um time inteiro leia e execute comandos com segurança, sem depender de “memória” ou de documentação externa.
+
+Quando você cria comandos customizados, é uma boa prática tratar o \texttt{--help} como parte do produto: se o comando é perigoso ou tem várias opções, o help precisa ser autoexplicativo e conter exemplos realistas.
+
+\subsection{ANSI: habilitando ou desabilitando cores}
+O Ace detecta o ambiente e desliga cores quando não há suporte. Em logs de CI, isso é ótimo para reduzir ruído. Mas em terminais compatíveis, o output colorido ajuda muito.
+
+\lstinputlisting[
+    language=bash,
+    caption={Controlando saída colorida com \texttt{--ansi}},
+    label={lst:ace_ansi}
+]{snippets/ace/ace_ansi.sh}
+
+\begin{tipbox}
+    Em pipelines, eu costumo preferir \texttt{--no-ansi} para gerar logs mais “limpos” e fáceis de buscar (\textit{grep}). Já no terminal local, eu deixo o comportamento padrão.
+\end{tipbox}
+
+Em ambientes automatizados, também é comum redirecionar saída para arquivo. Nesse contexto, remover ANSI evita “lixo” nos logs e melhora a rastreabilidade (principalmente quando você precisa provar o que aconteceu em uma execução).
+
+% -------------------------------------------------
+% Aliases
+% -------------------------------------------------
+\subsection{Aliases de comandos no \texttt{adonisrc.ts}}
+Aliases viram um “atalho oficial” para o time. É especialmente útil quando você padroniza como controllers/resources devem ser gerados.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Criando alias no \texttt{adonisrc.ts}},
+    label={lst:ace_aliases_adonisrc}
+]{snippets/ace/commands_aliases_adonisrc.ts}
+
+Após definir o alias, você pode usá-lo como se fosse um comando normal.
+
+\lstinputlisting[
+    language=bash,
+    caption={Usando alias de comando},
+    label={lst:ace_alias_usage}
+]{snippets/ace/ace_alias_usage.sh}
+
+Na prática, aliases ajudam a reduzir variações no time. Sem alias, cada pessoa tende a lembrar flags diferentes e gerar artefatos diferentes (controllers com plural/singular inconsistentes, por exemplo). Com alias, você “codifica a convenção” uma única vez.
+
+\subsection{Como a expansão do alias funciona}
+Ao rodar um comando, o Ace verifica o objeto \texttt{commandsAliases}. Se existir um alias, ele usa o primeiro segmento para localizar o comando real e anexa os demais segmentos como parâmetros/flags adicionais.
+
+Isso significa que um alias é, essencialmente, uma composição: ele pré-configura flags e deixa o restante para o usuário complementar. É uma ótima estratégia para padronizar scaffolding sem impedir customizações pontuais.
+
+\begin{warningbox}
+    Em time grande, alias mal nomeado vira confusão. Eu recomendo manter um padrão claro (ex.: \texttt{resource}, \texttt{resource:singular}, \texttt{make:crud}) e documentar o que cada um faz.
+\end{warningbox}
+
+Também é prudente evitar aliases “mágicos” demais. Se o alias faz algo que foge do óbvio, ele vira uma armadilha (principalmente para quem está chegando no projeto).
+
+% -------------------------------------------------
+% Executando programaticamente
+% -------------------------------------------------
+\subsection{Executando comandos programaticamente}
+Você pode rodar comandos via código usando o service \texttt{ace}. Ele fica disponível após o app ser bootado.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Executando um comando via \texttt{ace.exec}},
+    label={lst:ace_exec_basic}
+]{snippets/ace/ace_exec_basic.ts}
+
+Se você quer checar se um comando existe antes, carregue os comandos (boot) e use \texttt{ace.hasCommand}.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Verificando existência de comando com \texttt{ace.hasCommand}},
+    label={lst:ace_exec_has_command}
+]{snippets/ace/ace_exec_has_command.ts}
+
+Um caso de uso bem comum é criar um “setup wizard” interno: você executa uma sequência de comandos (migrações, seeds, geração de chaves) de forma guiada e com UI padronizada. Outro caso é criar comandos compostos (um comando que orquestra outros comandos) para reduzir o número de passos manuais.
+
+\begin{tipbox}
+    Executar comandos programaticamente é excelente para ferramentas internas (ex.: um \textit{setup wizard}). Mas evite “mandar Ace rodar Ace” dentro de rotas HTTP — isso costuma gerar efeitos colaterais difíceis de debugar em produção.
+\end{tipbox}
+
+Quando essa necessidade surge em endpoints HTTP, geralmente é um sinal de que você precisa de um serviço interno (job/queue) ou de uma camada de orquestração própria, em vez de acoplar comportamento de CLI ao ciclo de request/response.
+
+% -------------------------------------------------
+% Criando comandos
+% -------------------------------------------------
+\subsection{Criando comandos customizados}
+Comandos customizados ficam em \texttt{commands/} na raiz do projeto. Para criar um comando:
+
+\lstinputlisting[
+    language=bash,
+    caption={Gerando um comando com \texttt{make:command}},
+    label={lst:ace_make_command}
+]{snippets/ace/make_command_greet.sh}
+
+Além de criar o arquivo, esse workflow incentiva que os comandos “morem” junto do restante do código e sigam o mesmo padrão de qualidade (lint, tipos, testes, revisão). Isso é um ganho enorme quando comparado a scripts isolados.
+
+\subsection{Estrutura básica e metadados}
+Um comando Ace é uma classe que estende \texttt{BaseCommand}. O mínimo é definir nome, descrição e implementar \texttt{run}. Metadados e opções controlam comportamento, help e parsing.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Metadados básicos de um comando},
+    label={lst:ace_command_metadata}
+]{snippets/ace/greet_command_metadata.ts}
+
+O conjunto \texttt{commandName}, \texttt{description} e \texttt{help} existe para que o comando seja autoexplicativo. Em termos de engenharia, isso reduz dependência de documentação externa, facilita onboarding e diminui suporte interno (“como roda mesmo?”).
+
+\subsection{Texto de ajuda (\texttt{help})}
+Para detalhar uso, exemplos e texto longo, use \texttt{static help}. O \texttt{\{\{ binaryName \}\}} é substituído pelo executável real do Ace.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Texto de ajuda com exemplos},
+    label={lst:ace_command_help_text}
+]{snippets/ace/greet_command_help.ts}
+
+Um help bom costuma conter pelo menos um exemplo de uso “feliz” e um exemplo com flags que alterem o comportamento do comando. Quando o comando é perigoso, vale escrever explicitamente no help o impacto e as condições de segurança.
+
+\subsection{Aliases do comando}
+Você pode expor nomes alternativos para o mesmo comando.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Aliases de um comando},
+    label={lst:ace_command_aliases}
+]{snippets/ace/greet_command_aliases.ts}
+
+Aliases no próprio comando são úteis para compatibilidade e ergonomia. Por exemplo, você pode renomear um comando e manter um alias com o nome antigo para não quebrar scripts internos e pipelines.
+
+\subsection{Opções de execução do comando}
+As \texttt{CommandOptions} definem como o Ace executa o comando.
+
+\subsubsection{\texttt{startApp}}
+Por padrão, Ace \textbf{não} sobe o app para rodar comandos rápidos. Se o comando depende do estado do app (IoC, config, Lucid, providers), habilite \texttt{startApp}.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Habilitando \texttt{startApp} em comandos que dependem do app},
+    label={lst:ace_command_start_app}
+]{snippets/ace/greet_command_start_app.ts}
+
+Esse ponto tem impacto direto em performance. Subir o app significa passar por inicialização de providers, configuração e, frequentemente, conexões. Para comandos “simples”, isso é desperdício. Para comandos que dependem de Lucid, Redis, Mail, etc., é obrigatório.
+
+\subsubsection{\texttt{allowUnknownFlags}}
+Útil quando você quer aceitar flags extras (por exemplo, repassar parâmetros para um binário externo) sem o Ace interromper a execução.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Aceitando flags desconhecidas},
+    label={lst:ace_command_allow_unknown_flags}
+]{snippets/ace/greet_command_allow_unknown_flags.ts}
+
+Aqui vale cautela: aceitar flags desconhecidas pode mascarar typos (\texttt{--conection} em vez de \texttt{--connection}). Em comandos críticos, eu prefiro ser estrito e liberar desconhecidas apenas quando existe um motivo claro.
+
+\subsubsection{\texttt{staysAlive}}
+Comandos normalmente terminam o processo ao final. Para processos longos, habilite \texttt{staysAlive} e finalize explicitamente.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Comandos long-running com \texttt{staysAlive}},
+    label={lst:ace_command_stays_alive}
+]{snippets/ace/greet_command_stays_alive.ts}
+
+\begin{warningbox}
+    Em produção, comandos long-running exigem disciplina: trate sinais (SIGTERM), finalize conexões e evite loops sem pausa. Caso contrário, você cria processos “zumbis” difíceis de rastrear.
+\end{warningbox}
+
+Um padrão comum em comandos long-running é suportar uma flag como \texttt{--once} (executa uma vez e sai) e outra como \texttt{--watch} (fica rodando). Isso evita duplicar comandos e deixa explícito o modo de execução.
+
+% -------------------------------------------------
+% Lifecycle
+% -------------------------------------------------
+\subsection{Lifecycle do comando}
+O Ace executa métodos em ordem: \texttt{prepare} $\rightarrow$ \texttt{interact} $\rightarrow$ \texttt{run} $\rightarrow$ \texttt{completed}. Isso facilita separar setup, prompts e execução.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Lifecycle methods: prepare, interact, run, completed},
+    label={lst:ace_command_lifecycle}
+]{snippets/ace/greet_command_lifecycle.ts}
+
+Na prática, uma divisão saudável costuma ser: \texttt{prepare} para configurar dependências/estado, \texttt{interact} para coletar inputs do usuário (quando aplicável), \texttt{run} para a operação principal, e \texttt{completed} para cleanup e “relatório final” (inclusive tratamento de erros).
+
+\subsection{Dependency Injection (IoC) nos métodos}
+Comandos são construídos pelo container. Você pode injetar services em lifecycle methods via \texttt{@inject}.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Injeção de dependências com \texttt{@inject}},
+    label={lst:ace_command_di}
+]{snippets/ace/greet_command_di.ts}
+
+\begin{tipbox}
+    Eu prefiro injetar services e manter o comando “fino”: o comando orquestra, e a regra de negócio fica no service (testável e reutilizável). Comando não deve virar um “controller de terminal”.
+\end{tipbox}
+
+Isso também facilita testes: você testa o service com testes unitários e o comando com testes mais simples, focados no parsing de args/flags e no fluxo de execução.
+
+% -------------------------------------------------
+% Errors / exitCode
+% -------------------------------------------------
+\subsection{Tratamento de erros e \texttt{exitCode}}
+Erros lançados no comando geralmente aparecem via logger CLI e resultam em \texttt{exitCode = 1}. Em comandos críticos (migração interna, reparos, rotinas), eu prefiro controlar isso explicitamente.
+
+O \texttt{exitCode} é a “linguagem” que o shell e a pipeline entendem. Em CI/CD, um \texttt{exitCode} diferente de zero deve significar falha real e acionável. Por isso, é melhor tratar erros esperados e retornar mensagens claras do que deixar exceptions genéricas estourarem.
+
+\subsubsection{try/catch dentro do \texttt{run}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Tratando erros manualmente com try/catch},
+    label={lst:ace_command_try_catch}
+]{snippets/ace/greet_command_try_catch.ts}
+
+\subsubsection{Tratando erros no \texttt{completed}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Tratando erros no \texttt{completed} e marcando como handled},
+    label={lst:ace_command_completed_error}
+]{snippets/ace/greet_command_completed_error.ts}
+
+A abordagem com \texttt{completed} é especialmente útil quando você quer centralizar o “pós-processamento” de erro, garantindo que qualquer falha em \texttt{prepare}/\texttt{interact}/\texttt{run} passe por um ponto único de log, cleanup e padronização de retorno.
+
+% -------------------------------------------------
+% Termination / cleanup
+% -------------------------------------------------
+\subsection{Terminação explícita e cleanup}
+Se você habilitar \texttt{staysAlive}, finalize usando \texttt{this.terminate()}. O exemplo abaixo mostra uma conexão que encerra o app ao falhar.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Encerrando o comando com \texttt{this.terminate()}},
+    label={lst:ace_command_terminate}
+]{snippets/ace/greet_command_terminate.ts}
+
+Como diversos eventos podem encerrar o processo (SIGTERM, falhas, timeouts), use o hook \texttt{terminating} para cleanup.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Cleanup no hook \texttt{app.terminating}},
+    label={lst:ace_command_cleanup_terminating}
+]{snippets/ace/greet_command_cleanup_terminating.ts}
+
+Cleanup é onde comandos long-running costumam falhar na vida real: conexões abertas, arquivos parcialmente escritos, locks não liberados, transações não finalizadas. Tratar término corretamente é o que separa um comando “que funciona no meu computador” de um comando robusto para produção.
+
+% -------------------------------------------------
+% Arguments
+% -------------------------------------------------
+\subsection{Argumentos posicionais (\texttt{@args})}
+Argumentos são posicionais e devem ser definidos como propriedades com decorators. O Ace os interpreta na mesma ordem em que são declarados.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Argumento string com \texttt{@args.string}},
+    label={lst:ace_args_string}
+]{snippets/ace/greet_command_args_string.ts}
+
+Para aceitar múltiplos valores, use \texttt{@args.spread} (precisa ser o último argumento).
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Argumento spread com \texttt{@args.spread}},
+    label={lst:ace_args_spread}
+]{snippets/ace/greet_command_args_spread.ts}
+
+O erro mais comum com argumentos posicionais é “inverter a ordem” ou esquecer um argumento obrigatório. Por isso, para comandos complexos, às vezes vale migrar parte dos inputs para flags nomeadas, que são mais autoexplicativas e menos frágeis.
+
+\subsection{Nome, descrição e argumentos opcionais}
+Você pode personalizar o nome exibido e a descrição do argumento, além de torná-lo opcional com valor padrão.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Argumento com nome/descrição customizados},
+    label={lst:ace_args_custom_name_desc}
+]{snippets/ace/greet_command_args_custom_name_desc.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Argumento opcional com default},
+    label={lst:ace_args_optional_default}
+]{snippets/ace/greet_command_args_optional_default.ts}
+
+A regra “opcionais por último” é um detalhe que evita ambiguidade no parser. Se você colocar um argumento opcional no meio, você quebra a previsibilidade e o comando vira um quebra-cabeça para o usuário.
+
+\subsection{Processando argumento com \texttt{parse}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Processando o argumento com \texttt{parse}},
+    label={lst:ace_args_parse}
+]{snippets/ace/greet_command_args_parse.ts}
+
+O \texttt{parse} é uma ferramenta poderosa para normalizar input. Em cenários reais, ele ajuda a evitar “variações humanas” (maiúsculas/minúsculas, espaços, formatos), tornando o comando mais tolerante e menos propenso a erro operacional.
+
+\subsection{Acessando todos os argumentos parseados}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Lendo \texttt{this.parsed.args}},
+    label={lst:ace_args_parsed_args}
+]{snippets/ace/greet_command_parsed_args.ts}
+
+% -------------------------------------------------
+% Flags
+% -------------------------------------------------
+\subsection{Flags (\texttt{@flags})}
+Flags são parâmetros nomeados (ex.: \texttt{--resource}, \texttt{--model user}). Elas podem ser declaradas com tipos diferentes.
+
+Uma boa heurística: use argumentos para “entidades principais” (ex.: nome do usuário) e flags para “modificadores de comportamento” (ex.: \texttt{--dry-run}, \texttt{--force}, \texttt{--verbose}). Isso mantém a UX do comando intuitiva.
+
+\subsection{Boolean flags e negação com \texttt{--no-}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Boolean flags com \texttt{@flags.boolean}},
+    label={lst:ace_flags_boolean}
+]{snippets/ace/make_controller_flags.ts}
+
+\lstinputlisting[
+    language=bash,
+    caption={Comportamento de flags boolean e \texttt{--no-}},
+    label={lst:ace_flags_boolean_negated}
+]{snippets/ace/flags_boolean_negated.sh}
+
+O comportamento “\texttt{undefined} quando não informado” é útil porque você consegue distinguir “usuário não opinou” de “usuário explicitamente desligou”. Em comandos compostos, isso permite merge de configurações e defaults mais inteligentes.
+
+Se quiser exibir a variante negada no help, use \texttt{showNegatedVariantInHelp}.
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Exibindo a variante negada no help},
+    label={lst:ace_flags_show_negated}
+]{snippets/ace/flags_show_negated.ts}
+
+\subsection{String e number flags}
+\lstinputlisting[
+    language=TypeScript,
+    caption={String flag com \texttt{@flags.string}},
+    label={lst:ace_flags_string}
+]{snippets/ace/flags_string.ts}
+
+\lstinputlisting[
+    language=bash,
+    caption={Flags string com valores e aspas},
+    label={lst:ace_flags_string_quotes}
+]{snippets/ace/flags_string_quotes.sh}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Number flag com \texttt{@flags.number}},
+    label={lst:ace_flags_number}
+]{snippets/ace/flags_number.ts}
+
+Em flags string, o detalhe das aspas é o que evita bugs “fantasmas” (o usuário acha que passou um valor, mas na verdade passou dois tokens). Em flags number, o ganho é segurança: o parser já falha cedo quando o valor não é numérico.
+
+\subsection{Array flags (uso repetido da mesma flag)}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Array flag com \texttt{@flags.array}},
+    label={lst:ace_flags_array}
+]{snippets/ace/flags_array.ts}
+
+\lstinputlisting[
+    language=bash,
+    caption={Usando array flags repetidas vezes},
+    label={lst:ace_flags_array_usage}
+]{snippets/ace/flags_array_usage.sh}
+
+Array flags são uma alternativa elegante a pedir que o usuário passe listas separadas por vírgula (que exigem parsing manual). Além disso, elas combinam bem com autocomplete do shell e histórico de comandos.
+
+\subsection{Nome, descrição, alias e valores padrão}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Flag customizada (nome, descrição e alias)},
+    label={lst:ace_flags_custom_name_desc_alias}
+]{snippets/ace/flags_custom_name_desc_alias.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Default value em flags},
+    label={lst:ace_flags_default}
+]{snippets/ace/flags_default.ts}
+
+Defaults são úteis quando você quer um “caminho feliz” sem exigir muitas opções. Mas, quando o comando é perigoso, tome cuidado com defaults agressivos. Em comandos destrutivos, eu prefiro defaults conservadores e exigir confirmação/flags explícitas.
+
+\subsection{Processando flags com \texttt{parse}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Processando flag com \texttt{parse}},
+    label={lst:ace_flags_parse}
+]{snippets/ace/flags_parse.ts}
+
+\subsection{Acessando flags parseadas e desconhecidas}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Lendo \texttt{this.parsed.flags} e \texttt{unknownFlags}},
+    label={lst:ace_flags_parsed_flags}
+]{snippets/ace/flags_parsed_flags.ts}
+
+O \texttt{unknownFlags} é excelente para diagnosticar erros de digitação e para construir um modo “tolerante” (quando você habilita \texttt{allowUnknownFlags}) e ainda quer alertar o usuário sobre flags não reconhecidas.
+
+% -------------------------------------------------
+% Prompts
+% -------------------------------------------------
+\subsection{Prompts interativos (\texttt{this.prompt})}
+Prompts são widgets para entrada do usuário no terminal. Eles são powered por \texttt{@poppinss/prompts} e foram desenhados para serem testáveis (você consegue “trapar” prompts em testes).
+
+Prompts elevam muito a UX quando você quer um comando “assistido” (wizard). Mas é importante lembrar que prompts exigem um terminal interativo. Em CI, normalmente você deve ter um caminho não-interativo via flags (ex.: \texttt{--yes} para assumir confirmações).
+
+\subsection{Input simples e validação}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Prompt \texttt{ask} com validação e default},
+    label={lst:ace_prompts_ask_validate_default}
+]{snippets/ace/prompts_ask_validate_default.ts}
+
+\subsection{Senha (masked input)}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Prompt \texttt{secure} para dados sensíveis},
+    label={lst:ace_prompts_secure}
+]{snippets/ace/prompts_secure.ts}
+
+Mesmo com input mascarado, trate valores sensíveis com disciplina: evite logar e evite reimprimir o valor em telas de sucesso. Em ambientes corporativos, isso evita vazamento acidental em logs.
+
+\subsection{Select e multi-select}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Prompt \texttt{choice} com lista simples e objetos},
+    label={lst:ace_prompts_choice}
+]{snippets/ace/prompts_choice.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Prompt \texttt{multiple} (multi-select)},
+    label={lst:ace_prompts_multiple}
+]{snippets/ace/prompts_multiple.ts}
+
+\subsection{Confirm e toggle}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Prompt \texttt{confirm} e \texttt{toggle}},
+    label={lst:ace_prompts_confirm_toggle}
+]{snippets/ace/prompts_confirm_toggle.ts}
+
+\subsection{Autocomplete}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Prompt \texttt{autocomplete} com busca fuzzy},
+    label={lst:ace_prompts_autocomplete}
+]{snippets/ace/prompts_autocomplete.ts}
+
+\begin{tipbox}
+    Em comandos perigosos (ex.: \texttt{purge}, \texttt{reset}, \textit{data fixes}), eu sempre uso \texttt{confirm/toggle} e ainda peço o usuário digitar um texto exato (ex.: \texttt{DELETE}) para reduzir erro humano.
+\end{tipbox}
+
+Esse padrão (confirmar + digitar uma palavra) é simples, mas extremamente eficaz. Ele reduz o risco de “enter automático” e força o usuário a perceber a gravidade da ação.
+
+% -------------------------------------------------
+% Terminal UI
+% -------------------------------------------------
+\subsection{Terminal UI (\texttt{this.logger} e \texttt{this.ui})}
+A UI do Ace é baseada em \texttt{@poppinss/cliui}. Você tem logger com níveis e helpers para tabelas, stickers e tasks. Em comandos longos, isso dá uma ergonomia profissional absurda.
+
+Aqui, a palavra-chave é consistência: quando todos os comandos usam os mesmos padrões visuais (sucesso, warning, erro, duração, progresso), o time aprende a “ler” o terminal rapidamente. Isso é produtividade e também segurança operacional.
+
+\subsection{Logger: níveis e mensagens}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Logger CLI com níveis e stderr},
+    label={lst:ace_logger_methods}
+]{snippets/ace/logger_methods.ts}
+
+Além de comunicar ao humano, os níveis ajudam na integração com sistemas de observabilidade. Logs em \texttt{stderr} para erros e \texttt{stdout} para informação padrão facilitam pipelines e redirecionamento de saída.
+
+\subsection{Prefixo, sufixo e animação}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Prefixo/sufixo e loading animation},
+    label={lst:ace_logger_prefix_suffix_animation}
+]{snippets/ace/logger_prefix_suffix_and_animation.ts}
+
+O sufixo é ótimo para “colar” o comando executado ou a ação tomada, criando rastreabilidade. Já a animação melhora a percepção de progresso e reduz ansiedade do usuário em operações demoradas.
+
+\subsection{Actions: sucesso, falha e duração}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Actions com \texttt{displayDuration}},
+    label={lst:ace_logger_action}
+]{snippets/ace/logger_action.ts}
+
+Actions são uma forma muito limpa de reportar etapas. Elas também funcionam como um mini “relatório” do que ocorreu, especialmente quando você encadeia várias operações.
+
+\subsection{Cores (ANSI) com \texttt{kleur}}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Formatando texto com \texttt{this.colors}},
+    label={lst:ace_colors_kleur}
+]{snippets/ace/colors_kleur.ts}
+
+\subsection{Tabelas}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Renderizando tabelas no terminal},
+    label={lst:ace_ui_table}
+]{snippets/ace/ui_table.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Cores e alinhamento à direita},
+    label={lst:ace_ui_table_colors_align}
+]{snippets/ace/ui_table_colors_align.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Full-width e coluna fluida},
+    label={lst:ace_ui_table_full_width}
+]{snippets/ace/ui_table_full_width.ts}
+
+Tabelas são ideais para “resultados em lote”: migrações executadas, arquivos gerados, validações feitas, registros processados. Em vez de spam de logs linha a linha, a tabela cria uma visão consolidada e fácil de ler.
+
+\subsection{Stickers e instruções}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Sticker (box) para chamar atenção},
+    label={lst:ace_ui_sticker}
+]{snippets/ace/ui_sticker.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Instructions para passos guiados},
+    label={lst:ace_ui_instructions}
+]{snippets/ace/ui_instructions.ts}
+
+Stickers funcionam muito bem para destacar informações de acesso (URLs, credenciais temporárias, próximos passos). Já instructions é perfeito para finalizar um comando com um “checklist” do que o usuário precisa fazer manualmente.
+
+\subsection{Tasks widget: progresso de múltiplas etapas}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Tasks widget básico},
+    label={lst:ace_ui_tasks_basic}
+]{snippets/ace/ui_tasks_basic.ts}
+
+\lstinputlisting[
+    language=TypeScript,
+    caption={Atualizando progresso com \texttt{task.update}},
+    label={lst:ace_ui_tasks_progress}
+]{snippets/ace/ui_tasks_progress.ts}
+
+O widget de tasks é ideal quando você quer comunicar progresso real e reduzir o risco de o usuário achar que o terminal travou. Ele também incentiva uma arquitetura melhor: em vez de um comando monolítico, você estrutura o fluxo em etapas bem nomeadas.
+
+\subsection{Verbose mode via flag}
+\lstinputlisting[
+    language=TypeScript,
+    caption={Flag \texttt{--verbose} para alternar renderer},
+    label={lst:ace_ui_tasks_verbose_flag}
+]{snippets/ace/ui_tasks_verbose_flag.ts}
+
+\begin{infobox}
+    Em comandos demorados, eu padronizo: \texttt{--verbose} para debug e \texttt{--no-ansi} para CI. Isso vira uma “linguagem” comum do time e reduz suporte interno.
+\end{infobox}
+
+\subsection{Boas práticas operacionais para comandos em produção}
+Mesmo quando um comando é “interno”, ele pode acabar sendo executado sob pressão (incidente, correção urgente, manutenção fora de janela). Por isso, eu gosto de pensar em alguns princípios: previsibilidade, reversibilidade quando possível, e segurança por padrão.
+
+Quando o comando altera dados, um \texttt{--dry-run} (simular sem aplicar) costuma valer ouro. Quando o comando pode sobrescrever coisas, uma flag \texttt{--force} explícita evita acidente. E, quando o comando é interativo, um modo não-interativo via flags (ex.: \texttt{--yes}) facilita automação e CI.
+
+\begin{warningbox}
+    Se um comando pode causar perda de dados, trate isso como requisito de engenharia: confirme a ação, valide o ambiente (\texttt{NODE\_ENV}), exiba claramente o alvo (database/tenant/host) e só então execute.
+\end{warningbox}
